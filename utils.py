@@ -5,6 +5,7 @@ from agent import Agent, Experience
 from random_mdp import MDPEnv
 from collections import defaultdict
 import pickle
+from tqdm import tqdm
 
 MC_SAMPLES = 500
 
@@ -122,7 +123,8 @@ def train_predictor(quantile_net, data_tr, epochs, quantile, lr, momentum):
     #y_val = xy_val[:,1].unsqueeze(1)
     y_val = ((xy_val[:,1]-y_avg)/y_std).unsqueeze(1)
 
-    for epoch in range(epochs):
+    tqdm_epochs = tqdm(range(epochs))
+    for epoch in tqdm_epochs:
         for batch in list(data_batches):
             batch = torch.stack(batch, 0)
             x_batch = batch[:,0].unsqueeze(1)
@@ -143,12 +145,14 @@ def train_predictor(quantile_net, data_tr, epochs, quantile, lr, momentum):
 
                 early_stopping(loss.item(), loss_val.item())
 
-                print("Epoch {} - Training quantile {} - Loss: {} - Loss val: {}".format(epoch, quantile, loss.item(), loss_val.item()))
+                desc = "Epoch {} - Training quantile {} - Loss: {} - Loss val: {}".format(epoch, quantile, loss.item(), loss_val.item())
+                tqdm_epochs.set_description(desc)
             #if early_stopping.early_stop:
                 #print("Early stopping at epoch {}".format(epoch))
                 #break
         else:
-            print("Epoch {} - Training quantile {} - Loss: {}".format(epoch, quantile, loss.item()))
+            desc = "Epoch {} - Training quantile {} - Loss: {}".format(epoch, quantile, loss.item())
+            tqdm_epochs.set_description(desc)
         
     return y_avg, y_std
             
@@ -163,6 +167,7 @@ def train_weight_function(training_dataset, weights_labels, weight_network, lr, 
 
     xy_val = [[trajectory[0].state, cumul_rew, weights_labels[idx]] for idx, (trajectory, cumul_rew) in enumerate(data_val)]
     xy_val = torch.tensor(xy_val, dtype = torch.float32)
+
     x_val = xy_val[:,:-1]
     y_val = xy_val[:,-1].unsqueeze(1)
 
@@ -172,7 +177,8 @@ def train_weight_function(training_dataset, weights_labels, weight_network, lr, 
     rand_idxs = torch.randperm(xy.size()[0])
     data_batches = torch.utils.data.BatchSampler(xy[rand_idxs], 200, False)
 
-    for epoch in range(epochs):
+    tqdm_epochs = tqdm(range(epochs))
+    for epoch in tqdm_epochs:
         for batch in list(data_batches):
             batch = torch.stack(batch, 0)
             x_batch = batch[:,:-1]
@@ -189,9 +195,11 @@ def train_weight_function(training_dataset, weights_labels, weight_network, lr, 
                 output_val = weight_network(x_val)
                 loss_val = criterion(output_val, y_val)
 
-                print("Epoch {} - Training weights network - Loss: {} - Loss val: {}".format(epoch, loss.item(), loss_val.item()))
+                desc = "Epoch {} - Training weights network - Loss: {} - Loss val: {}".format(epoch, loss.item(), loss_val.item())
+                tqdm_epochs.set_description(desc)
         else:
-            print("Epoch {} - Training weights network - Loss: {}".format(epoch, loss.item()))
+            desc = "Epoch {} - Training weights network - Loss: {}".format(epoch, loss.item())
+            tqdm_epochs.set_description(desc)
 
 def train_behaviour_policy(env: MDPEnv, agent: Agent, MAX_STEPS):
     

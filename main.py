@@ -31,7 +31,7 @@ NUM_REWARDS = 10                                                                
 DISCOUNT_FACTOR = 0.99                                                              # behaviour agent discount factor
 ALPHA = 0.6                                                                         # behaviour agent alpha
 NUM_STEPS = 10000                                                                   # behaviour agent learning steps
-N_TRAJECTORIES = 50000                                                              # number of trajectories collected as dataset
+N_TRAJECTORIES = 20000                                                              # number of trajectories collected as dataset
 HORIZON = 30                                                                        # trajectory horizon
 
 P = np.random.dirichlet(np.ones(NUM_STATES), size=(NUM_STATES, NUM_ACTIONS))        # MDP transition probability functions
@@ -52,7 +52,6 @@ elif REWARD_TYPE == "continuous":
 pi_star_probs = np.random.dirichlet(np.ones(NUM_ACTIONS), size=(NUM_STATES))
 pi_star_pre = TableBasedPolicy(pi_star_probs)
 
-epsilons = np.linspace(0,1,100)
 
 #Train behaviour policy using Q-learning
 agent = QlearningAgent(env.ns, NUM_ACTIONS, DISCOUNT_FACTOR, ALPHA)
@@ -65,7 +64,7 @@ behaviour_policy = EpsilonGreedyPolicy(q_table, EPSILON, NUM_ACTIONS)
 model, dataset = get_data(env, N_TRAJECTORIES, behaviour_policy, model, REWARD_TYPE, HORIZON)
 
 #Split dataset into training (90%) and calibration data (10%)
-calibration_trajectories = 5000
+calibration_trajectories = N_TRAJECTORIES // 10
 data_tr = dataset[:N_TRAJECTORIES - calibration_trajectories]
 data_cal = dataset[N_TRAJECTORIES - calibration_trajectories:N_TRAJECTORIES]
 test_state = np.random.randint(NUM_STATES)
@@ -85,6 +84,8 @@ if not upper_quantile_net.load('./data/networks/upper_quantile_net.pth'):
     upper_quantile_net.set_normalization(y_avg, y_std)
     upper_quantile_net.save('./data/networks/upper_quantile_net.pth')
 
+
+epsilons = np.linspace(0,1,100)
 epsilon_lengths = []
 for epsilon_value in epsilons:
 
