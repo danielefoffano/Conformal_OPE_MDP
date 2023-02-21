@@ -1,6 +1,6 @@
 import numpy as np
 
-class MDP_env():
+class MDPEnv():
 
     def __init__(self, ns, na, P, R):
 
@@ -28,7 +28,7 @@ class MDP_env():
         # return same shape of gym: s', r, done
         return self.cur_state, r, False
     
-class MDP_env_discrete_rew():
+class MDPEnvDiscreteRew():
 
     def __init__(self, ns, na, nr, P, R):
 
@@ -59,7 +59,7 @@ class MDP_env_discrete_rew():
         # return same shape of gym: s', r, done
         return self.cur_state, r, False
     
-class MDP_env_bernoulli_rew():
+class MDPEnvBernoulliRew():
 
     def __init__(self, ns, na, P, R):
 

@@ -2,8 +2,9 @@ import numpy as np
 from agent import Experience
 import torch
 from agent import Agent, Experience
-from random_mdp import MDP_env
+from random_mdp import MDPEnv
 from collections import defaultdict
+import pickle
 
 MC_SAMPLES = 500
 
@@ -13,6 +14,7 @@ class PinballLoss():
         assert 0 < self.quantile
         assert self.quantile < 1
         self.reduction = reduction
+
     def __call__(self, output, target):
         assert output.shape == target.shape
         loss = torch.zeros_like(target, dtype=torch.float)
@@ -27,7 +29,7 @@ class PinballLoss():
             loss = loss.mean()
         return loss
     
-class EarlyStopping:
+class EarlyStopping(object):
     def __init__(self, tolerance=5, min_delta=0):
 
         self.tolerance = tolerance
@@ -40,8 +42,30 @@ class EarlyStopping:
             self.counter +=1
             if self.counter >= self.tolerance:  
                 self.early_stop = True
+                
+                
+def get_data(env, n_trajectories: int, behaviour_policy, model, reward_type: str, horizon: int):
+    print('> Loading/collecting data')
+    try:
+        with open("./data/saved_data_"+reward_type+"/dataset_"+ str(horizon)+"_MDP.pkl", "rb") as f1:
+            dataset = pickle.load(f1)
+        with open("./data/saved_data_"+reward_type+"/transition_"+ str(horizon)+"_model.pkl", "rb") as f2:
+            transition_function = pickle.load(f2)
+        with open("./data/saved_data_"+reward_type+"/reward_"+ str(horizon)+"_model.pkl", "rb") as f3:
+            reward_function = pickle.load(f3)
+        model.transition_function = transition_function
+        model.reward_function = reward_function
+    except:
+        dataset = collect_exp(env, n_trajectories, horizon, behaviour_policy, model, None)
+        with open("./data/saved_data_"+reward_type+"/dataset_"+ str(horizon)+"_MDP.pkl", "wb") as f1:
+            pickle.dump(dataset, f1)
+        with open("./data/saved_data_"+reward_type+"/transition_"+ str(horizon)+"_model.pkl", "wb") as f2:
+            pickle.dump(model.transition_function, f2)
+        with open("./data/saved_data_"+reward_type+"/reward_"+ str(horizon)+"_model.pkl", "wb") as f3:
+            pickle.dump(model.reward_function, f3)
+    return model, dataset
 
-def collect_exp (env, n_trajectories, horizon, policy, model, start_state):
+def collect_exp(env, n_trajectories, horizon, policy, model, start_state):
 
     dataset = []
 
@@ -169,7 +193,7 @@ def train_weight_function(training_dataset, weights_labels, weight_network, lr, 
         else:
             print("Epoch {} - Training weights network - Loss: {}".format(epoch, loss.item()))
 
-def train_behaviour_policy(env: MDP_env, agent: Agent, MAX_STEPS):
+def train_behaviour_policy(env: MDPEnv, agent: Agent, MAX_STEPS):
     
     #model = EmpiricalModel(env.ns, env.na)
     episode_rewards = []

@@ -1,6 +1,6 @@
 import numpy as np
 
-class Epsilon_Greedy_Policy:
+class EpsilonGreedyPolicy:
 
     def __init__(self, q_table, epsilon, na):
         self.epsilon = epsilon
@@ -19,7 +19,7 @@ class Epsilon_Greedy_Policy:
         else:
             return (self.epsilon)*(1/self.na)
 
-class Table_Based_Policy:
+class TableBasedPolicy:
 
     def __init__(self,prob_table):
 

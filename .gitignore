@@ -1,2 +1,4 @@
 *.pkl
 .DS_Store
+data/**/*
+__pycache__/**/*

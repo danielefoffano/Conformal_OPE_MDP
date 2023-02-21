@@ -13,7 +13,7 @@ class Experience(NamedTuple):
 class Agent(ABC):
     ns: int # Number of states
     na: int # Number of actions
-    discount_factor: float # Discuount factor
+    discount_factor: float # Discount factor
 
     def __init__(self, ns: int, na: int, discount_factor: float):
         self.ns = ns
