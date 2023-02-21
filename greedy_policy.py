@@ -37,3 +37,19 @@ class TableBasedPolicy:
     def get_action_prob(self, state, action):
 
         return self.probabilities[state][action]
+    
+class MixedPolicy:
+
+    def __init__(self, pi_star, pi_b, epsilon):
+
+        self.pi_star = pi_star
+        self.pi_b = pi_b
+        self.epsilon = epsilon
+
+    def get_action(self, state):
+        action = self.pi_b.get_action(state) if np.random.uniform() < self.epsilon else self.pi_star.get_action(state)
+        return action
+    
+    def get_action_prob(self,state,action):
+
+        return self.epsilon*self.pi_b.get_action_prob(state,action) + (1-self.epsilon)*self.pi_star.get_action_prob(state,action)
