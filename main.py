@@ -90,7 +90,7 @@ for epsilon_value in epsilons:
 
     pi_star = MixedPolicy(pi_star_pre, behaviour_policy, epsilon_value)
     test_points = collect_exp(env, 100, HORIZON, pi_star, None, test_state)
-    
+
     print(f'> Estimate weights for calibration data')
     weights_estimator = WeightsEstimator(behaviour_policy, pi_star, lower_quantile_net, upper_quantile_net)
     if GRADIENT_BASED:
