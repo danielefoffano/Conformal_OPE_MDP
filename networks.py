@@ -56,12 +56,14 @@ class MLP(nn.Module):
         
 
 class WeightsMLP(nn.Module):
-        def __init__(self, input_size:int, hidden_size: int, output_size: int, max_value: float = 5.):
+        def __init__(self, input_size:int, hidden_size: int, output_size: int, y_mean: float, y_std: float, max_value: float = 5.):
             super(WeightsMLP, self).__init__()
             self.max_value = max_value
             self.input_size = input_size
             self.hidden_size  = hidden_size
             self.output_size = output_size
+            self.y_mean = y_mean
+            self.y_std = y_std
             
             self.network = nn.Sequential(*[
                 nn.Linear(self.input_size, self.hidden_size),
@@ -71,6 +73,7 @@ class WeightsMLP(nn.Module):
             ])
     
         def forward(self, x: torch.Tensor) -> torch.Tensor:
+            x[1] = (x[1]-self.y_mean)/self.y_std
             y = self.network(x)
             return self.max_value*(1+y)/2
         

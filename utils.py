@@ -158,10 +158,10 @@ def train_weight_function(training_dataset, weights_labels, weight_network, lr, 
     data_val = training_dataset[len(training_dataset) - split_idx:len(training_dataset)]
     training_dataset = training_dataset[:len(training_dataset) - split_idx]
 
-    xy = [[trajectory[0].state,trajectory[0].action, weights_labels[idx]] for idx, (trajectory, cumul_rew) in enumerate(training_dataset)]
+    xy = [[trajectory[0].state, cumul_rew, weights_labels[idx]] for idx, (trajectory, cumul_rew) in enumerate(training_dataset)]
     xy = torch.tensor(xy, dtype = torch.float32)
 
-    xy_val = [[trajectory[0].state,trajectory[0].action, weights_labels[idx]] for idx, (trajectory, cumul_rew) in enumerate(data_val)]
+    xy_val = [[trajectory[0].state, cumul_rew, weights_labels[idx]] for idx, (trajectory, cumul_rew) in enumerate(data_val)]
     xy_val = torch.tensor(xy_val, dtype = torch.float32)
     x_val = xy_val[:,:-1]
     y_val = xy_val[:,-1].unsqueeze(1)

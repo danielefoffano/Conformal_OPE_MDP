@@ -87,7 +87,7 @@ if not upper_quantile_net.load('./data/networks/upper_quantile_net.pth'):
 print(f'> Estimate weights for calibration data')
 weights_estimator = WeightsEstimator(behaviour_policy, pi_star, lower_quantile_net, upper_quantile_net)
 if GRADIENT_BASED:
-    scores, weights, weight_network = weights_estimator.gradient_method(data_tr, data_cal, LR, EPOCHS, lambda:WeightsMLP(2, 32, 1))
+    scores, weights, weight_network = weights_estimator.gradient_method(data_tr, data_cal, LR, EPOCHS, lambda:WeightsMLP(2, 32, 1, y_avg, y_std))
 else:
     scores, weight = weights_estimator.model_based(data_tr, data_cal, HORIZON, model)
 

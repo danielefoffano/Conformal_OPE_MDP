@@ -25,7 +25,7 @@ class ConformalSet(object):
         # Use scores and weights to find the scores quantile to conformalize the predictors
         for y in y_vals_test:
             if gradient_based:
-                x = torch.tensor([test_point[0][0].state, test_point[0][0].action], dtype = torch.float32)
+                x = torch.tensor([test_point[0][0].state, y], dtype = torch.float32)
                 test_point_weight = weight_network(x).item()
             else:
                 test_point_weight = compute_weight(test_point[0][0].state, y, self.behaviour_policy, self.pi_star, self.model, self.horizon)

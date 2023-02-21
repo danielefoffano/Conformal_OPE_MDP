@@ -60,7 +60,7 @@ class WeightsEstimator(object):
         calibration_weights = []
         for traj, cumul_rew in data_cal:
             # Compute weight
-            x = torch.tensor([traj[0].state, traj[0].action], dtype = torch.float32)
+            x = torch.tensor([traj[0].state, cumul_rew], dtype = torch.float32)
             w  = weight_network(x).item()
             calibration_weights.append(w)
 
