@@ -55,7 +55,7 @@ class WeightsEstimator(object):
 
         # Compute weights and scores (on calibration data) - gradient approach
         weight_network = make_network()
-        train_weight_function(data_tr, weights, weight_network, lr, epochs)
+        train_weight_function(data_tr, weights, weight_network, lr, epochs, self.behaviour_policy, self.pi_star)
 
         calibration_weights = []
         for traj, cumul_rew in data_cal:

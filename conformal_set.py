@@ -15,7 +15,7 @@ class ConformalSet(object):
     def build_set(self, test_points, weights, scores, weight_network: WeightsMLP = None, gradient_based: bool = False):
         intervals = []
         for test_point in test_points:
-            scores = torch.tensor(scores)
+            #scores = torch.tensor(scores)
             x = torch.tensor([test_point[0][0].state], dtype = torch.float32)
             lower_val = int(self.lower_quantile_nework(x).item())
             upper_val = int(self.upper_quantile_network(x).item())
@@ -53,15 +53,5 @@ class ConformalSet(object):
                     conf_range.append(y)
                 
                 intervals.append([test_point[0][0].state, y, lower_val - quantile_val, upper_val + quantile_val, test_point[1]])
-                
-                #print("Original interval: {}-{} | Quantile: {} | y: {} | Conformal interval: {}-{} | score_test: {} | true y: {}".format(
-                #    lower_val,
-                #    upper_val,
-                #    quantile_val,
-                #    y,
-                #    lower_val - quantile_val,
-                #    upper_val + quantile_val,
-                #    score_test,
-                #    test_point[1]
-                #))
+
         return conf_range, np.array(intervals)

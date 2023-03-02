@@ -6,6 +6,8 @@ from random_mdp import MDPEnv
 from collections import defaultdict
 import pickle
 from tqdm import tqdm
+from typing import Tuple
+import random
 
 MC_SAMPLES = 500
 
@@ -50,20 +52,12 @@ def get_data(env, n_trajectories: int, behaviour_policy, model, reward_type: str
     try:
         with open("./data/saved_data_"+reward_type+"/dataset_"+ str(horizon)+"_MDP.pkl", "rb") as f1:
             dataset = pickle.load(f1)
-        with open("./data/saved_data_"+reward_type+"/transition_"+ str(horizon)+"_model.pkl", "rb") as f2:
-            transition_function = pickle.load(f2)
-        with open("./data/saved_data_"+reward_type+"/reward_"+ str(horizon)+"_model.pkl", "rb") as f3:
-            reward_function = pickle.load(f3)
-        model.transition_function = transition_function
-        model.reward_function = reward_function
+        model.load_functions(reward_type, horizon)
     except:
         dataset = collect_exp(env, n_trajectories, horizon, behaviour_policy, model, None)
         with open("./data/saved_data_"+reward_type+"/dataset_"+ str(horizon)+"_MDP.pkl", "wb") as f1:
             pickle.dump(dataset, f1)
-        with open("./data/saved_data_"+reward_type+"/transition_"+ str(horizon)+"_model.pkl", "wb") as f2:
-            pickle.dump(model.transition_function, f2)
-        with open("./data/saved_data_"+reward_type+"/reward_"+ str(horizon)+"_model.pkl", "wb") as f3:
-            pickle.dump(model.reward_function, f3)
+        model.save_functions(reward_type, horizon)
     return model, dataset
 
 def collect_exp(env, n_trajectories, horizon, policy, model, start_state):
@@ -74,7 +68,7 @@ def collect_exp(env, n_trajectories, horizon, policy, model, start_state):
         if start_state is None:
             s = env.reset()
         else:
-            env.cur_state = start_state
+            env.set_state(start_state)
             s = start_state
         trajectory = []
         c_reward = 0
@@ -113,7 +107,7 @@ def train_predictor(quantile_net, data_tr, epochs, quantile, lr, momentum):
     xy_val = torch.tensor(xy_val, dtype = torch.float32)
 
     rand_idxs = torch.randperm(xy.size()[0])
-    data_batches = torch.utils.data.BatchSampler(xy[rand_idxs], 200, False)
+    data_batches = torch.utils.data.BatchSampler(xy[rand_idxs], 32, False)
     
     y = xy[:,1]
     y_avg = torch.mean(y).item()
@@ -125,7 +119,9 @@ def train_predictor(quantile_net, data_tr, epochs, quantile, lr, momentum):
 
     tqdm_epochs = tqdm(range(epochs))
     for epoch in tqdm_epochs:
-        for batch in list(data_batches):
+        random_batches = list(data_batches)
+        random.shuffle(random_batches)
+        for batch in random_batches:
             batch = torch.stack(batch, 0)
             x_batch = batch[:,0].unsqueeze(1)
             #y_batch = batch[:,1].unsqueeze(1)
@@ -156,7 +152,8 @@ def train_predictor(quantile_net, data_tr, epochs, quantile, lr, momentum):
         
     return y_avg, y_std
             
-def train_weight_function(training_dataset, weights_labels, weight_network, lr, epochs):
+def train_weight_function(training_dataset, weights_labels, weight_network, lr, epochs, pi_b, pi_target):
+    
 
     split_idx = len(training_dataset) // 10
     data_val = training_dataset[len(training_dataset) - split_idx:len(training_dataset)]
@@ -173,13 +170,14 @@ def train_weight_function(training_dataset, weights_labels, weight_network, lr, 
 
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(weight_network.parameters(), lr = lr)
-
     rand_idxs = torch.randperm(xy.size()[0])
-    data_batches = torch.utils.data.BatchSampler(xy[rand_idxs], 200, False)
+    data_batches = torch.utils.data.BatchSampler(xy[rand_idxs], 64, False)
 
     tqdm_epochs = tqdm(range(epochs))
     for epoch in tqdm_epochs:
-        for batch in list(data_batches):
+        random_batches = list(data_batches)
+        random.shuffle(random_batches)
+        for batch in random_batches:
             batch = torch.stack(batch, 0)
             x_batch = batch[:,:-1]
             y_batch = batch[:,-1].unsqueeze(1)
@@ -190,6 +188,8 @@ def train_weight_function(training_dataset, weights_labels, weight_network, lr, 
             loss = criterion(output, y_batch)
             loss.backward()
             optimizer.step()
+
+            weight_network
         if epoch > 19:
             with torch.no_grad():
                 output_val = weight_network(x_val)
@@ -306,3 +306,35 @@ def compute_weights_gradient(traj, pi_b, pi_star):
         prod_pi_star *= pi_star.get_action_prob(step.state, step.action)
 
     return prod_pi_star/prod_pi_b
+
+def value_iteration(env, gamma: float, eps: float = 1e-9) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Value iteration
+    
+    Parameters
+    ------------------
+        env: Inventory
+            Environment
+        gamma: float
+            Discount factor
+        eps: float, optional
+            Value iteration tolerance
+    Returns
+    ------------------
+        V: List[float]
+            Value function
+        pi: List[int]
+            Policy
+    """
+    P, R = env.P, env.R
+    dim_state, dim_action = P.shape[0], P.shape[1]
+    V = np.zeros((dim_state))
+    pi = np.zeros((dim_state, dim_action))
+    while True:
+        prevV = np.copy(V)
+        V = np.sum(P * (R + gamma * V), axis=-1).max(axis=-1)
+        if np.abs(prevV - V).max() < eps:
+            break
+    x = np.sum(P * (R + gamma * V), axis=-1).argmax(axis=-1)
+    pi[np.arange(x.size), x] = 1
+    return V, pi

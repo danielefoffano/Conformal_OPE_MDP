@@ -1,4 +1,5 @@
 import numpy as np
+import pickle
 
 class DynamicsModel(object):
 
@@ -109,3 +110,96 @@ class DiscreteRewardDynamicsModel(object):
         self.cur_state = next_state
         # return same shape of gym: s', r, done
         return self.cur_state, r, False
+    
+    def save_functions(self, reward_type, horizon):
+        with open("./data/saved_data_"+reward_type+"/transition_"+ str(horizon)+"_model.pkl", "wb") as f2:
+            pickle.dump(self.transition_function, f2)
+        with open("./data/saved_data_"+reward_type+"/reward_"+ str(horizon)+"_model.pkl", "wb") as f3:
+            pickle.dump(self.reward_function, f3)
+
+    def load_functions(self, reward_type, horizon):
+        with open("./data/saved_data_"+reward_type+"/transition_"+ str(horizon)+"_model.pkl", "rb") as f2:
+            self.transition_function = pickle.load(f2)
+        with open("./data/saved_data_"+reward_type+"/reward_"+ str(horizon)+"_model.pkl", "rb") as f3:
+            self.reward_function = pickle.load(f3)
+
+class ContinuousRewardDynamicsModel(object):
+
+    def __init__(self, num_states: int, num_actions: int):
+        """
+        Transition function model for a grids
+
+        Args:
+            num_states (int): Number of states
+            num_actions (int): Number of actions
+        """
+        self.num_states = num_states
+        self.num_actions = num_actions
+        self.num_visits_actions = np.zeros(shape=(num_states, num_actions, num_states), dtype=np.int64)
+        self.transition_function = np.ones_like(self.num_visits_actions, dtype=np.float64) / num_states
+        self.num_visits_rewards = np.zeros(shape=(num_states, num_actions), dtype=np.int64)
+        self.reward_function_mean = np.zeros(shape=(num_states, num_actions), dtype=np.float64)
+        self.reward_function_std = np.ones(shape=(num_states, num_actions), dtype=np.float64)
+        self.cur_state = 0
+
+    def update_visits(self, from_state: int, action: int, to_state: int, reward: float):
+        """Updates the transition function given an experience
+
+        Args:
+            from_state (Coordinate): state s
+            action (int): action a
+            to_state (Coordinate): next state s'
+            reward (float): ereward
+        """
+        self.num_visits_actions[from_state, action, to_state] += 1
+        
+
+        self.transition_function[from_state, action] = (
+            self.num_visits_actions[from_state, action] / self.num_visits_actions[from_state, action].sum()
+        )
+        old_mean = self.reward_function_mean[from_state, action]
+        old_std = self.reward_function_std[from_state, action]
+        past_visits = self.num_visits_rewards[from_state, action]
+        self.num_visits_rewards[from_state, action] += 1
+
+        self.reward_function_mean[from_state, action] = (old_mean * past_visits + reward)/(self.num_visits_rewards[from_state, action])
+        # E[R^2]
+        new_e_r_sq = ((old_std**2 + old_mean**2) * past_visits + reward**2)/(self.num_visits_rewards[from_state, action])
+        self.reward_function_std[from_state, action] = np.sqrt(new_e_r_sq - self.reward_function_mean[from_state, action]**2)
+        
+    def reset(self):
+
+        self.cur_state = np.random.randint(self.num_states)
+        return self.cur_state
+
+    def step(self, a):
+
+        probs_s = self.transition_function[self.cur_state][a]
+
+        next_state = np.random.choice(range(self.num_states), 1, p= probs_s)[0]
+        
+        r_mean  = self.reward_function_mean[self.cur_state, a]
+        r_std = self.reward_function_std[self.cur_state, a]
+        r = np.random.normal(r_mean, r_std)
+        self.cur_state = next_state
+        # return same shape of gym: s', r, done
+        return self.cur_state, r, False
+    
+    def save_functions(self, reward_type, horizon):
+        with open("./data/saved_data_"+reward_type+"/transition_"+ str(horizon)+"_model.pkl", "wb") as f2:
+            pickle.dump(self.transition_function, f2)
+        with open("./data/saved_data_"+reward_type+"/reward_mean_"+ str(horizon)+"_model.pkl", "wb") as f3:
+            pickle.dump(self.reward_function_mean, f3)
+        with open("./data/saved_data_"+reward_type+"/reward_std_"+ str(horizon)+"_model.pkl", "wb") as f4:
+            pickle.dump(self.reward_function_std, f4)
+
+    def load_functions(self, reward_type, horizon):
+        with open("./data/saved_data_"+reward_type+"/transition_"+ str(horizon)+"_model.pkl", "rb") as f2:
+            self.transition_function = pickle.load(f2)
+        with open("./data/saved_data_"+reward_type+"/reward_mean_"+ str(horizon)+"_model.pkl", "rb") as f3:
+            self.reward_function_mean = pickle.load(f3)
+        with open("./data/saved_data_"+reward_type+"/reward_std_"+ str(horizon)+"_model.pkl", "rb") as f4:
+            self.reward_function_mean = pickle.load(f4)
+
+    def set_state(self, state):
+        self.cur_state = state

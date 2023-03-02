@@ -55,6 +55,41 @@ class MLP(nn.Module):
                 return False
         
 
+class WeightsTransformerMLP(nn.Module):
+        def __init__(self, input_size:int, hidden_size: int, output_size: int, y_mean: float, y_std: float, pi_b, pi_target, max_value: float = 5.):
+            super(WeightsTransformerMLP, self).__init__()
+            self.max_value = max_value
+            self.input_size = input_size
+            self.hidden_size  = hidden_size
+            self.output_size = output_size
+            self.y_mean = y_mean
+            self.y_std = y_std
+
+            flatten_pi_b = torch.tensor(pi_b.probabilities, dtype = torch.float32).flatten()
+            flatten_pi_target = torch.tensor(pi_target.probabilities, dtype = torch.float32).flatten()
+            self.stacked_pi = torch.hstack([flatten_pi_b, flatten_pi_target])
+
+            self.network = nn.Sequential(*[
+                #nn.Flatten(),
+                nn.TransformerEncoderLayer(self.input_size, nhead = 4, dim_feedforward = self.hidden_size),
+                nn.ReLU(),
+                nn.Linear(self.input_size, self.hidden_size),
+                nn.ReLU(),
+                nn.Linear(self.hidden_size, self.output_size)
+            ])
+    
+        def forward(self, x: torch.Tensor) -> torch.Tensor:
+            if len(x.shape) == 1:
+                x = x.unsqueeze(0)
+            
+            prob_concat = self.stacked_pi.repeat((len(x), 1))
+
+            x = torch.hstack([x, prob_concat])
+
+            x[...,1] = (x[...,1]-self.y_mean)/self.y_std
+            y = self.network(x)
+            return torch.clip(y, min = -4, max = 4).exp()
+        
 class WeightsMLP(nn.Module):
         def __init__(self, input_size:int, hidden_size: int, output_size: int, y_mean: float, y_std: float, max_value: float = 5.):
             super(WeightsMLP, self).__init__()
@@ -64,16 +99,18 @@ class WeightsMLP(nn.Module):
             self.output_size = output_size
             self.y_mean = y_mean
             self.y_std = y_std
-            
+
             self.network = nn.Sequential(*[
                 nn.Linear(self.input_size, self.hidden_size),
                 nn.ReLU(),
-                nn.Linear(self.hidden_size, self.output_size),
-                nn.Tanh()
+                nn.Linear(self.hidden_size, self.hidden_size),
+                nn.ReLU(),
+                nn.Linear(self.hidden_size, self.output_size)
             ])
     
         def forward(self, x: torch.Tensor) -> torch.Tensor:
-            x[1] = (x[1]-self.y_mean)/self.y_std
+
+            x[...,1] = (x[...,1]-self.y_mean)/self.y_std
             y = self.network(x)
-            return self.max_value*(1+y)/2
+            return torch.clip(y, min = -4, max = 4).exp()
         

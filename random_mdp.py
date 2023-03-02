@@ -28,6 +28,9 @@ class MDPEnv():
         # return same shape of gym: s', r, done
         return self.cur_state, r, False
     
+    def set_state(self, state):
+        self.cur_state = state
+    
 class MDPEnvDiscreteRew():
 
     def __init__(self, ns, na, nr, P, R):
@@ -59,6 +62,9 @@ class MDPEnvDiscreteRew():
         # return same shape of gym: s', r, done
         return self.cur_state, r, False
     
+    def set_state(self, state):
+        self.cur_state = state
+    
 class MDPEnvBernoulliRew():
 
     def __init__(self, ns, na, P, R):
@@ -88,3 +94,6 @@ class MDPEnvBernoulliRew():
         self.cur_state = next_state
         # return same shape of gym: s', r, done
         return self.cur_state, r, False
+    
+    def set_state(self, state):
+        self.cur_state = state
