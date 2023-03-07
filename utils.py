@@ -8,6 +8,7 @@ import pickle
 from tqdm import tqdm
 from typing import Tuple
 import random
+import os
 
 MC_SAMPLES = 500
 
@@ -47,17 +48,18 @@ class EarlyStopping(object):
                 self.early_stop = True
                 
                 
-def get_data(env, n_trajectories: int, behaviour_policy, model, reward_type: str, horizon: int):
+def get_data(env, n_trajectories: int, behaviour_policy, model, horizon: int, path: str):
     print('> Loading/collecting data')
     try:
-        with open("./data/saved_data_"+reward_type+"/dataset_"+ str(horizon)+"_MDP.pkl", "rb") as f1:
+        with open(path + "data/saved_dataset.pkl", "rb") as f1:
             dataset = pickle.load(f1)
-        model.load_functions(reward_type, horizon)
+        model.load_functions(path)
     except:
         dataset = collect_exp(env, n_trajectories, horizon, behaviour_policy, model, None)
-        with open("./data/saved_data_"+reward_type+"/dataset_"+ str(horizon)+"_MDP.pkl", "wb") as f1:
+        os.makedirs(os.path.dirname(path + "data/"), exist_ok=True)
+        with open(path + "data/saved_dataset.pkl", "wb") as f1:
             pickle.dump(dataset, f1)
-        model.save_functions(reward_type, horizon)
+        model.save_functions(path)
     return model, dataset
 
 def collect_exp(env, n_trajectories, horizon, policy, model, start_state):
@@ -177,6 +179,7 @@ def train_weight_function(training_dataset, weights_labels, weight_network, lr, 
     for epoch in tqdm_epochs:
         random_batches = list(data_batches)
         random.shuffle(random_batches)
+        losses = []
         for batch in random_batches:
             batch = torch.stack(batch, 0)
             x_batch = batch[:,:-1]
@@ -188,6 +191,7 @@ def train_weight_function(training_dataset, weights_labels, weight_network, lr, 
             loss = criterion(output, y_batch)
             loss.backward()
             optimizer.step()
+            losses.append(loss.item())
 
             weight_network
         if epoch > 19:
@@ -195,10 +199,10 @@ def train_weight_function(training_dataset, weights_labels, weight_network, lr, 
                 output_val = weight_network(x_val)
                 loss_val = criterion(output_val, y_val)
 
-                desc = "Epoch {} - Training weights network - Loss: {} - Loss val: {}".format(epoch, loss.item(), loss_val.item())
+                desc = "Epoch {} - Training weights network - Loss: {} - Loss val: {}".format(epoch, np.mean(losses), loss_val.item())
                 tqdm_epochs.set_description(desc)
         else:
-            desc = "Epoch {} - Training weights network - Loss: {}".format(epoch, loss.item())
+            desc = "Epoch {} - Training weights network - Avg Loss: {}".format(epoch, np.mean(losses))
             tqdm_epochs.set_description(desc)
 
 def train_behaviour_policy(env: MDPEnv, agent: Agent, MAX_STEPS):

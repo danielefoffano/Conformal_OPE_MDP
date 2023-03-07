@@ -42,6 +42,8 @@ class Inventory(object):
         self.holding_cost = holding_cost
         self.item_price = item_price
         self.order_rate = order_rate
+        self.min_r = -fixed_cost - item_cost*inventory_size - holding_cost*inventory_size
+        self.max_r = item_price*inventory_size
 
         self.ns = inventory_size+1
         self.observation_space = inventory_size+1
@@ -96,7 +98,7 @@ class Inventory(object):
         holding_cost = -self.holding_cost * state
         item_cost = -self.item_cost * max(min(state + action, self.inventory_size) - state, 0)
         sellings = self.item_price * max(min(state + action, self.inventory_size) - next_state, 0)
-        return fixed_cost + holding_cost + item_cost + sellings
+        return fixed_cost + holding_cost + item_cost + sellings 
 
     def step(self, action: int) -> Tuple[int, float]:
         ''' Takes an action and returns next state and reward '''

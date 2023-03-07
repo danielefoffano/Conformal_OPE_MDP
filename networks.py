@@ -13,6 +13,8 @@ class MLP(nn.Module):
             self.network = [
                 nn.Linear(self.input_size, self.hidden_size),
                 nn.ReLU(),
+                nn.Linear(self.hidden_size, self.hidden_size),
+                nn.ReLU(),
                 nn.Linear(self.hidden_size, self.output_size)
             ]
             if self.softmax:
