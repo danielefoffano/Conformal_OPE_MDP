@@ -83,6 +83,6 @@ class ConformalSet(object):
                 with mp.Pool(n_cpu) as pool:
                     intervals, quantiles = zip(*list(pool.starmap(compute_weight_iterator, [
                     (idx, test_point, y, self.behaviour_policy, self.pi_star, self.model, self.horizon, weights, scores, lower_val, upper_val)
-                    for idx, y in enumerate(y_vals_test)]))*)
+                    for idx, y in enumerate(y_vals_test)])))
 
         return np.array(intervals), lower_val, upper_val, quantiles
