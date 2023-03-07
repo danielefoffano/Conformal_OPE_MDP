@@ -43,7 +43,7 @@ if __name__ == "__main__":
     ALPHA = 0.6                                                                         # behaviour agent alpha
     NUM_STEPS = 20000                                                                   # behaviour agent learning steps
     N_TRAJECTORIES = 20000                                                              # number of trajectories collected as dataset
-    HORIZONS = np.geomspace(3, 25, num=8, dtype=int)                                    # trajectory horizon
+    HORIZONS = np.geomspace(5, 25, num=5, dtype=int)                                    # trajectory horizon
     
     for HORIZON in HORIZONS:
         print(f'Starting with horizon: {HORIZON}')
