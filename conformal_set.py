@@ -27,7 +27,7 @@ def compute_weight_iterator(idx, test_point, y, behaviour_policy, pi_star, model
     #if score_test <= quantile_val:
     #    conf_range.append(y)
     
-    return [test_point[0][0].state, y, lower_val - quantile_val, upper_val + quantile_val, test_point[1]]
+    return ([test_point[0][0].state, y, lower_val - quantile_val, upper_val + quantile_val, test_point[1]], quantile_val)
 
 class ConformalSet(object):
     def __init__(self, lower_quantile_network: MLP, upper_quantile_network: MLP,  behaviour_policy, pi_star, model, horizon):
@@ -81,8 +81,8 @@ class ConformalSet(object):
                     intervals.append([test_point[0][0].state, y, lower_val - quantile_val, upper_val + quantile_val, test_point[1]])
             else:
                 with mp.Pool(n_cpu) as pool:
-                    intervals = list(pool.starmap(compute_weight_iterator, [
+                    intervals, quantiles = zip(*list(pool.starmap(compute_weight_iterator, [
                     (idx, test_point, y, self.behaviour_policy, self.pi_star, self.model, self.horizon, weights, scores, lower_val, upper_val)
-                    for idx, y in enumerate(y_vals_test)]))
+                    for idx, y in enumerate(y_vals_test)]))*)
 
         return np.array(intervals), lower_val, upper_val, quantiles
