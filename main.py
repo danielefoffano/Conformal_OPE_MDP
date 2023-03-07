@@ -48,7 +48,7 @@ if __name__ == "__main__":
     for HORIZON in HORIZONS:
         print(f'Starting with horizon: {HORIZON}')
         method = "gradient_based" if GRADIENT_BASED else "model_based"
-        columns = ["epsilon", "Coverage", "Avg_length", "Original_interval_bottom", "Original_interval_upper", "horizon", "epsilon_pi_b"]
+        columns = ["epsilon", "Coverage", "Avg_length", "Original_interval_bottom", "Original_interval_upper", "quantile", "horizon", "epsilon_pi_b"]
         path = f"results/{ENV_NAME}/{method}/horizon_{HORIZON}/"
 
         for RUN_NUMBER in range(RUNS_NUMBER):
@@ -145,7 +145,7 @@ if __name__ == "__main__":
                 # Generate y values for test point
                 print(f'> Computing conformal set')
                 conformal_set = ConformalSet(lower_quantile_net, upper_quantile_net, behaviour_policy, pi_target, model, HORIZON)
-                intervals, lower_quantile, upper_quantile = conformal_set.build_set(test_points, weights, scores, N_CPU, weight_network, GRADIENT_BASED)
+                intervals, lower_quantile, upper_quantile, quantiles = conformal_set.build_set(test_points, weights, scores, N_CPU, weight_network, GRADIENT_BASED)
 
                 included = 0
                 lengths = []
@@ -160,5 +160,5 @@ if __name__ == "__main__":
                 mean_length = np.mean(lengths)
                 epsilon_lengths.append(mean_length)
 
-                print("Epsilon: {} | Coverage: {:.2f}% | Average interval length: {} | Original interval: {}-{}".format(epsilon_value, included*100, mean_length, lower_quantile, upper_quantile))
-                file_logger.write([epsilon_value, included*100, mean_length, lower_quantile, upper_quantile, HORIZON, EPSILON])
+                print("Epsilon: {} | Coverage: {:.2f}% | Average interval length: {} | Original interval: {}-{}| Quantile: {}".format(epsilon_value, included*100, mean_length, lower_quantile, upper_quantile, np.mean(quantiles)))
+                file_logger.write([epsilon_value, included*100, mean_length, lower_quantile, upper_quantile, np.mean(quantiles), HORIZON, EPSILON])

@@ -40,6 +40,7 @@ class ConformalSet(object):
     
     def build_set(self, test_points, weights, scores, n_cpu: int = 2, weight_network: WeightsMLP = None, gradient_based: bool = False):
         intervals = []
+        quantiles = []
         for test_point in test_points:
             #scores = torch.tensor(scores)
             x = torch.tensor([test_point[0][0].state], dtype = torch.float32)
@@ -76,7 +77,7 @@ class ConformalSet(object):
 
                     #if score_test <= quantile_val:
                     #    conf_range.append(y)
-                    
+                    quantiles.append(quantile_val)
                     intervals.append([test_point[0][0].state, y, lower_val - quantile_val, upper_val + quantile_val, test_point[1]])
             else:
                 with mp.Pool(n_cpu) as pool:
@@ -84,4 +85,4 @@ class ConformalSet(object):
                     (idx, test_point, y, self.behaviour_policy, self.pi_star, self.model, self.horizon, weights, scores, lower_val, upper_val)
                     for idx, y in enumerate(y_vals_test)]))
 
-        return np.array(intervals), lower_val, upper_val
+        return np.array(intervals), lower_val, upper_val, quantiles
