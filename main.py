@@ -25,7 +25,7 @@ if __name__ == "__main__":
     freeze_support()
     set_seed(1)
 
-    RUNS_NUMBER = 1
+    RUNS_NUMBER = 5
     N_CPU = 1
     ENV_NAME = "inventory"
     REWARD_TYPE = "discrete_multiple"
@@ -44,6 +44,7 @@ if __name__ == "__main__":
     NUM_STEPS = 20000                                                                   # behaviour agent learning steps
     N_TRAJECTORIES = 20000                                                              # number of trajectories collected as dataset
     HORIZONS = np.geomspace(3, 25, num=8, dtype=int)                                    # trajectory horizon
+    
     for HORIZON in HORIZONS:
         print(f'Starting with horizon: {HORIZON}')
         method = "gradient_based" if GRADIENT_BASED else "model_based"
