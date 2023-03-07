@@ -22,14 +22,14 @@ def set_seed(seed: int):
     np.random.seed(seed)
 
 if __name__ == "__main__":
-    freeze_support()
+    #freeze_support()
     set_seed(1)
 
     RUNS_NUMBER = 5
-    N_CPU = 1
+    N_CPU = 8
     ENV_NAME = "inventory"
     REWARD_TYPE = "discrete_multiple"
-    GRADIENT_BASED = True
+    GRADIENT_BASED = False
     TRANSFORMER = False
     EPSILON = 0.2
     QUANTILE = 0.1
