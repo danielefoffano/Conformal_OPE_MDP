@@ -29,9 +29,9 @@ if __name__ == "__main__":
     N_CPU = 8
     ENV_NAME = "inventory"
     REWARD_TYPE = "discrete_multiple"
-    GRADIENT_BASED = False
+    GRADIENT_BASED = True
     TRANSFORMER = False
-    EPSILON = 0.2
+    EPSILON = 0.4
     QUANTILE = 0.1
     LR = 1e-4
     MOMENTUM = 0.9
@@ -42,9 +42,51 @@ if __name__ == "__main__":
     DISCOUNT_FACTOR = 0.99                                                              # behaviour agent discount factor
     ALPHA = 0.6                                                                         # behaviour agent alpha
     NUM_STEPS = 20000                                                                   # behaviour agent learning steps
-    N_TRAJECTORIES = 20000                                                              # number of trajectories collected as dataset
-    HORIZONS = [5, 10, 15, 20, 25]                                                      # trajectory horizon
-    
+    N_TRAJECTORIES = 40000                                                              # number of trajectories collected as dataset
+    HORIZONS = [ 20, 25]                                                      # trajectory horizon
+
+    P = np.random.dirichlet(np.ones(NUM_STATES), size=(NUM_STATES, NUM_ACTIONS))        # MDP transition probability functions
+    if ENV_NAME == "random_mdp":
+        if REWARD_TYPE == "bernoulli":
+            R = np.random.rand(NUM_STATES, NUM_ACTIONS)                                     # MDP reward function Bernoulli
+            env = MDPEnvBernoulliRew(NUM_STATES, NUM_ACTIONS, P, R)
+            model = DiscreteRewardDynamicsModel(NUM_STATES, NUM_ACTIONS, NUM_REWARDS)
+        elif REWARD_TYPE == "discrete_multiple":                                 
+            R = np.random.dirichlet(np.ones(NUM_REWARDS), size=(NUM_STATES, NUM_ACTIONS))   # MDP reward function multiple discrete r values
+            env = MDPEnvDiscreteRew(NUM_STATES, NUM_ACTIONS, NUM_REWARDS, P, R)
+            model = DiscreteRewardDynamicsModel(NUM_STATES, NUM_ACTIONS, NUM_REWARDS)
+        elif REWARD_TYPE == "continuous":
+            R = np.random.rand(NUM_STATES, NUM_ACTIONS, NUM_STATES)
+            env = MDPEnv(NUM_STATES, NUM_ACTIONS, P, R)
+            #model = DiscreteRewardDynamicsModel(NUM_STATES, NUM_ACTIONS, NUM_REWARDS)
+            model = ContinuousRewardDynamicsModel(NUM_STATES, NUM_ACTIONS)
+        
+        pi_star_probs = np.random.dirichlet(np.ones(NUM_ACTIONS), size=(NUM_STATES))
+        pi_star_pre = TableBasedPolicy(pi_star_probs)
+        
+        #Train behaviour policy using Q-learning
+        agent = QlearningAgent(NUM_STATES, NUM_ACTIONS, DISCOUNT_FACTOR, ALPHA)
+
+        q_table = train_behaviour_policy(env, agent, NUM_STEPS)
+        behaviour_policy = EpsilonGreedyPolicy(q_table, EPSILON, NUM_ACTIONS)
+
+    elif ENV_NAME == "inventory":
+        env = Inventory(inventory_size = NUM_STATES, fixed_cost = 1, order_rate = 10, seed = 1)
+        NUM_STATES += 1
+        NUM_ACTIONS += 1
+        NUM_REWARDS = env.max_r - env.min_r + 1
+        model = DiscreteRewardDynamicsModel(NUM_STATES, NUM_ACTIONS, NUM_REWARDS, env.min_r)
+
+        # Compute optimal policy with VI
+        VI_v, VI_pi = value_iteration(env, DISCOUNT_FACTOR)
+        behaviour_policy = EpsilonGreedyPolicy(VI_pi, EPSILON, NUM_ACTIONS)
+
+        greedy_policy = EpsilonGreedyPolicy(VI_pi, 0, NUM_ACTIONS)
+
+        # Uniform policy
+        pi_star_probs = np.ones(shape=(NUM_STATES,NUM_ACTIONS))/NUM_ACTIONS
+        pi_uniform = TableBasedPolicy(pi_star_probs)
+
     for HORIZON in HORIZONS:
         print(f'Starting with horizon: {HORIZON}')
         method = "gradient_based" if GRADIENT_BASED else "model_based"
@@ -53,49 +95,6 @@ if __name__ == "__main__":
 
         for RUN_NUMBER in range(RUNS_NUMBER):
             file_logger = Logger(path+f"run_{RUN_NUMBER}", columns)
-
-            P = np.random.dirichlet(np.ones(NUM_STATES), size=(NUM_STATES, NUM_ACTIONS))        # MDP transition probability functions
-            if ENV_NAME == "random_mdp":
-                if REWARD_TYPE == "bernoulli":
-                    R = np.random.rand(NUM_STATES, NUM_ACTIONS)                                     # MDP reward function Bernoulli
-                    env = MDPEnvBernoulliRew(NUM_STATES, NUM_ACTIONS, P, R)
-                    model = DiscreteRewardDynamicsModel(NUM_STATES, NUM_ACTIONS, NUM_REWARDS)
-                elif REWARD_TYPE == "discrete_multiple":                                 
-                    R = np.random.dirichlet(np.ones(NUM_REWARDS), size=(NUM_STATES, NUM_ACTIONS))   # MDP reward function multiple discrete r values
-                    env = MDPEnvDiscreteRew(NUM_STATES, NUM_ACTIONS, NUM_REWARDS, P, R)
-                    model = DiscreteRewardDynamicsModel(NUM_STATES, NUM_ACTIONS, NUM_REWARDS)
-                elif REWARD_TYPE == "continuous":
-                    R = np.random.rand(NUM_STATES, NUM_ACTIONS, NUM_STATES)
-                    env = MDPEnv(NUM_STATES, NUM_ACTIONS, P, R)
-                    #model = DiscreteRewardDynamicsModel(NUM_STATES, NUM_ACTIONS, NUM_REWARDS)
-                    model = ContinuousRewardDynamicsModel(NUM_STATES, NUM_ACTIONS)
-                
-                pi_star_probs = np.random.dirichlet(np.ones(NUM_ACTIONS), size=(NUM_STATES))
-                pi_star_pre = TableBasedPolicy(pi_star_probs)
-                
-                #Train behaviour policy using Q-learning
-                agent = QlearningAgent(NUM_STATES, NUM_ACTIONS, DISCOUNT_FACTOR, ALPHA)
-
-                q_table = train_behaviour_policy(env, agent, NUM_STEPS)
-                behaviour_policy = EpsilonGreedyPolicy(q_table, EPSILON, NUM_ACTIONS)
-
-            elif ENV_NAME == "inventory":
-                env = Inventory(inventory_size = NUM_STATES, fixed_cost = 1, order_rate = 10, seed = 1)
-                NUM_STATES += 1
-                NUM_ACTIONS += 1
-                NUM_REWARDS = env.max_r - env.min_r + 1
-                model = DiscreteRewardDynamicsModel(NUM_STATES, NUM_ACTIONS, NUM_REWARDS, env.min_r)
-
-                # Compute optimal policy with VI
-                VI_v, VI_pi = value_iteration(env, 0.95)
-                behaviour_policy = EpsilonGreedyPolicy(VI_pi, EPSILON, NUM_ACTIONS)
-
-                greedy_policy = EpsilonGreedyPolicy(VI_pi, 0, NUM_ACTIONS)
-
-                # Uniform policy
-                pi_star_probs = np.ones(shape=(NUM_STATES,NUM_ACTIONS))/NUM_ACTIONS
-                pi_uniform = TableBasedPolicy(pi_star_probs)
-
             #Collect experience data using behaviour policy and train model
             model, dataset = get_data(env, N_TRAJECTORIES, behaviour_policy, model, HORIZON, path)
 
