@@ -43,7 +43,7 @@ if __name__ == "__main__":
     ALPHA = 0.6                                                                         # behaviour agent alpha
     NUM_STEPS = 20000                                                                   # behaviour agent learning steps
     N_TRAJECTORIES = 40000                                                              # number of trajectories collected as dataset
-    HORIZONS = [ 20, 25]                                                      # trajectory horizon
+    HORIZONS = [10]                                                      # trajectory horizon
 
     P = np.random.dirichlet(np.ones(NUM_STATES), size=(NUM_STATES, NUM_ACTIONS))        # MDP transition probability functions
     if ENV_NAME == "random_mdp":
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     for HORIZON in HORIZONS:
         print(f'Starting with horizon: {HORIZON}')
         method = "gradient_based" if GRADIENT_BASED else "model_based"
-        columns = ["epsilon", "Coverage", "Avg_length", "Original_interval_bottom", "Original_interval_upper", "quantile", "horizon", "epsilon_pi_b"]
+        columns = ["epsilon", "Coverage", "Avg_length", "Original_interval_bottom", "Original_interval_upper", "quantile", "horizon", "epsilon_pi_b", "avg_ratio_weights"]
         path = f"results/{ENV_NAME}/{method}/horizon_{HORIZON}/"
 
         for RUN_NUMBER in range(RUNS_NUMBER):
@@ -159,5 +159,5 @@ if __name__ == "__main__":
                 mean_length = np.mean(lengths)
                 epsilon_lengths.append(mean_length)
 
-                print("Epsilon: {} | Coverage: {:.2f}% | Average interval length: {} | Original interval: {}-{}| Quantile: {}".format(epsilon_value, included*100, mean_length, lower_quantile, upper_quantile, np.mean(quantiles)))
-                file_logger.write([epsilon_value, included*100, mean_length, lower_quantile, upper_quantile, np.mean(quantiles), HORIZON, EPSILON])
+                print("Epsilon: {} | Coverage: {:.2f}% | Average interval length: {} | Original interval: {}-{}| Quantile: {:.3f} | Avg ratio weights: {}".format(epsilon_value, included*100, mean_length, lower_quantile, upper_quantile, np.mean(quantiles), np.mean(weights)))
+                file_logger.write([epsilon_value, included*100, mean_length, lower_quantile, upper_quantile, np.mean(quantiles), HORIZON, EPSILON, np.mean(weights)])
