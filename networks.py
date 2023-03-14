@@ -114,5 +114,5 @@ class WeightsMLP(nn.Module):
 
             x[...,1] = (x[...,1]-self.y_mean)/self.y_std
             y = self.network(x)
-            return torch.clip(y, min = -4, max = 4).exp()
+            return y.exp()
         
