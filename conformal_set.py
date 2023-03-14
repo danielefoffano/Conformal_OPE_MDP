@@ -3,6 +3,7 @@ import torch
 from networks import MLP,WeightsMLP
 from utils import compute_weight
 import multiprocessing as mp
+from utils import collect_exp
 
 def compute_weight_iterator(idx, test_point, y, behaviour_policy, pi_star, model, horizon, weights, scores, lower_val, upper_val):
     print("Computing weight for test value {}".format(idx))
@@ -37,6 +38,25 @@ class ConformalSet(object):
         self.pi_star = pi_star
         self.model = model
         self.horizon = horizon
+
+    def build_set_monte_carlo(self, test_point, alpha, n_samples, quantile_upper, quantile_lower):
+
+        mc_samples = collect_exp(env = self.model, n_trajectories = n_samples, horizon = self.horizon, policy = self.pi_star, start_state = test_point[0][0].state, model = None)
+
+        rewards_samples = np.array(mc_samples, dtype = 'object')[:,1]
+        rewards_samples = rewards_samples.astype('int64') - self.model.start_reward
+
+        counts = np.zeros((self.horizon * self.model.num_rewards, ))
+        rew_count = np.bincount(rewards_samples)
+        counts[:len(rew_count)] = rew_count
+        counts = (counts + alpha)/(n_samples + self.horizon*self.model.num_rewards)
+
+        cumsum = np.cumsum(counts, 0)
+        
+        quantile_val_up = np.argwhere(cumsum >= quantile_upper)[0]
+        quantile_val_low = np.argwhere(cumsum >= quantile_lower)[0]
+
+        return quantile_val_up[0], quantile_val_low[0]
     
     def build_set(self, test_points, weights, scores, n_cpu: int = 2, weight_network: WeightsMLP = None, gradient_based: bool = False):
         intervals = []
