@@ -96,6 +96,8 @@ if __name__ == "__main__":
         columns = ["epsilon", "Coverage", "Avg_length", "Original_interval_bottom", "Original_interval_upper", "quantile", "horizon", "epsilon_pi_b", "avg_weights", "w_hat/w", "avg_delta_w"]
         path = f"results/{ENV_NAME}/{method}/horizon_{HORIZON}/"
 
+        exact_weights_estimator = ExactWeightsEstimator(behaviour_policy, HORIZON, env, NUM_STATES, 30000)
+
         for RUN_NUMBER in range(RUNS_NUMBER):
             file_logger = Logger(path+f"run_{RUN_NUMBER}.csv", columns)
             #Collect experience data using behaviour policy and train model
@@ -134,7 +136,8 @@ if __name__ == "__main__":
 
                 print(f'> Estimate weights for calibration data')
                 weights_estimator = WeightsEstimator(behaviour_policy, pi_target, lower_quantile_net, upper_quantile_net)
-                exact_weights_estimator = ExactWeightsEstimator(behaviour_policy, pi_target, HORIZON, env, NUM_STATES, 30000)
+                exact_weights_estimator.init_pi_target(pi_target)
+                
                 if GRADIENT_BASED:
                     if TRANSFORMER: 
                         scores, weights, weight_network = weights_estimator.gradient_method(data_tr, data_cal, LR, EPOCHS, lambda:WeightsTransformerMLP(2 + 2*NUM_STATES*NUM_ACTIONS, 64, 1, upper_quantile_net.mean, upper_quantile_net.std, behaviour_policy, pi_target))

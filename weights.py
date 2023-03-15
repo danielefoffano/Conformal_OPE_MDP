@@ -21,13 +21,15 @@ def model_based_iterator(id_traj, traj, cumul_rew, behaviour_policy, pi_star, mo
     return weight, score
 
 class ExactWeightsEstimator(object):
-    def __init__(self, pi_b, pi_target, horizon, env, num_s, n_samples):
+    def __init__(self, pi_b, horizon, env, num_s, n_samples):
         
         plt.ioff()
         self.pi_b = pi_b
-        self.pi_target = pi_target
         self.horizon = horizon
         self.env = env
+        self.num_s = num_s
+        self.n_samples = n_samples
+        self.horizon = horizon
         self.state_x_b = []
         self.state_y_b = []
         self.state_x_target = []
@@ -36,18 +38,23 @@ class ExactWeightsEstimator(object):
         for s in range(num_s):
             
             mc_samples_b = collect_exp(env = env, n_trajectories = n_samples, horizon = horizon, policy = pi_b, start_state = s, model = None)
-            mc_samples_target = collect_exp(env = env, n_trajectories = n_samples, horizon = horizon, policy = pi_target, start_state = s, model = None)
 
             rew_cumul_b = [cumul_rew for (_, cumul_rew) in mc_samples_b]
-            rew_cumul_target = [cumul_rew for (_, cumul_rew) in mc_samples_target]
             data_x_b, data_y_b = sns.distplot(rew_cumul_b).get_lines()[0].get_data()
             self.state_x_b.append(data_x_b)
             self.state_y_b.append(data_y_b)
-            plt.clf()
+
+    def init_pi_target(self, pi_target):
+
+        self.pi_target = pi_target
+        for s in range(self.num_s):
+            
+            mc_samples_target = collect_exp(env = self.env, n_trajectories = self.n_samples, horizon = self.horizon, policy = pi_target, start_state = s, model = None)
+
+            rew_cumul_target = [cumul_rew for (_, cumul_rew) in mc_samples_target]
             data_x_target, data_y_target = sns.distplot(rew_cumul_target).get_lines()[0].get_data()
             self.state_x_target.append(data_x_target)
             self.state_y_target.append(data_y_target)
-
 
     
     def compute_true_ratio(self, point):
