@@ -120,9 +120,9 @@ class WeightsEstimator(object):
             score = max(self.lower_quantile_network(state).item() - cumul_rew, cumul_rew - self.upper_quantile_network(state).item())
             scores.append(score)
 
-        weights = calibration_weights
+        #weights = calibration_weights
         
-        weights = np.array(weights)
+        weights = np.array(calibration_weights)
         scores.append(np.inf)
         scores = np.array(scores)
         
