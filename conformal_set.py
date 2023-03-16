@@ -42,43 +42,60 @@ class ConformalSet(object):
         intervals = []
         quantiles = []
         for test_point in test_points:
-            #scores = torch.tensor(scores)
             x = torch.tensor([test_point[0][0].state], dtype = torch.float32)
             lower_val = int(self.lower_quantile_nework(x).item())
             upper_val = int(self.upper_quantile_network(x).item())
 
             y_vals_test = np.linspace(lower_val, upper_val, upper_val-lower_val).astype(int)
 
-            #conf_range = []
-            
             # Use scores and weights to find the scores quantile to conformalize the predictors
             if n_cpu  == 1 or gradient_based == True:
                 for y in y_vals_test:
                     if gradient_based:
                         x = torch.tensor([test_point[0][0].state, y], dtype = torch.float32)
-                        test_point_weight = weight_network(x).item()
+                        test_point_weight = weight_network(x[None,:])[0].item()
                     else:
                         test_point_weight = compute_weight(test_point[0][0].state, y, self.behaviour_policy, self.pi_star, self.model, self.horizon)
                     norm_weights = weights/(weights.sum() + test_point_weight)
                     norm_weights = np.concatenate((norm_weights, [test_point_weight/(weights.sum() + test_point_weight)]))
                     norm_weights = torch.tensor(norm_weights)
 
-                    ordered_indexes = scores.argsort()
-                    ordered_scores = scores[ordered_indexes]
-                    ordered_weights = norm_weights[ordered_indexes]
+                    # import pdb
+                    # pdb.set_trace()
+                    scores_low, scores_high = zip(*scores)
+                    scores_low = np.array(scores_low)
+                    scores_high = np.array(scores_high)
+                    
+                    # Scores low
+                    ordered_indexes_low = scores_low.argsort()
+                    ordered_scores_low = scores_low[ordered_indexes_low]
+                    ordered_weights_low = norm_weights[ordered_indexes_low]
+                    
+                    # Scores low
+                    ordered_indexes_high= scores_high.argsort()
+                    ordered_scores_high = scores_high[ordered_indexes_high]
+                    ordered_weights_high = norm_weights[ordered_indexes_high]
 
                     quantile = 0.90
 
-                    cumsum = torch.cumsum(ordered_weights, 0)
+                    cumsum_low = torch.cumsum(ordered_weights_low, 0)
+                    cumsum_high = torch.cumsum(ordered_weights_high, 0)
 
-                    quantile_val = ordered_scores[cumsum>quantile][0].item()
-
+                    quantile_val_low = ordered_scores_low[cumsum_low>=quantile][0].item()
+                    quantile_val_high = ordered_scores_high[cumsum_high>=quantile][0].item()
+                    
+                    prob_val_low = ordered_scores_low[cumsum_low>=quantile][0].item()
+                    
                     #score_test = max(lower_val - y, y - upper_val)
+                    # print(f'{test_point[1]} - {lower_val - quantile_val_low} - {upper_val + quantile_val_high}')
+                    # if test_point[1]> upper_val + quantile_val_high or test_point[1]<lower_val - quantile_val_low:
+                    #     import pdb
+                    #     pdb.set_trace()
 
                     #if score_test <= quantile_val:
                     #    conf_range.append(y)
-                    quantiles.append(quantile_val)
-                    intervals.append([test_point[0][0].state, y, lower_val - quantile_val, upper_val + quantile_val, test_point[1]])
+                    quantiles.append((quantile_val_low, quantile_val_high))
+                    intervals.append([test_point[0][0].state, y, lower_val - quantile_val_low, upper_val + quantile_val_high, test_point[1]])
             else:
                 with mp.Pool(n_cpu) as pool:
                     intervals, quantiles = zip(*list(pool.starmap(compute_weight_iterator, [
