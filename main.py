@@ -25,7 +25,7 @@ if __name__ == "__main__":
     #freeze_support()
     set_seed(1)
 
-    RUNS_NUMBER = 5
+    RUNS_NUMBER = 1
     N_CPU = 8
     ENV_NAME = "inventory"
     REWARD_TYPE = "discrete_multiple"
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     ALPHA = 0.6                                                                         # behaviour agent alpha
     NUM_STEPS = 20000                                                                   # behaviour agent learning steps
     N_TRAJECTORIES = 40000                                                              # number of trajectories collected as dataset
-    HORIZONS = [5,10,15]                                                      # trajectory horizon
+    HORIZONS = [5]                                                      # trajectory horizon
     NUM_TEST_POINTS = 100
 
     P = np.random.dirichlet(np.ones(NUM_STATES), size=(NUM_STATES, NUM_ACTIONS))        # MDP transition probability functions
@@ -93,7 +93,24 @@ if __name__ == "__main__":
     for HORIZON in HORIZONS:
         print(f'Starting with horizon: {HORIZON}')
         method = "gradient_based" if GRADIENT_BASED else "model_based"
-        columns = ["epsilon", "Coverage", "Avg_length", "Original_interval_bottom", "Original_interval_upper", "quantile", "horizon", "epsilon_pi_b", "avg_weights", "w_hat/w", "avg_delta_w"]
+        columns = ["epsilon", 
+                    "Coverage", 
+                    "Avg_length",
+                    "Std_length", 
+                    "Original_interval_bottom", 
+                    "Original_interval_upper", 
+                    "quantile",
+                    "std_quantile", 
+                    "horizon", 
+                    "epsilon_pi_b", 
+                    "avg_weights",
+                    "std_weights", 
+                    "w_hat/w",
+                    "std_w_hat/w", 
+                    "avg_delta_w",
+                    "std_delta_w",
+                    "median_delta_w"]
+        
         path = f"results/{ENV_NAME}/{method}/horizon_{HORIZON}/"
 
         exact_weights_estimator = ExactWeightsEstimator(behaviour_policy, HORIZON, env, NUM_STATES, 30000)
@@ -137,7 +154,7 @@ if __name__ == "__main__":
                 print(f'> Estimate weights for calibration data')
                 weights_estimator = WeightsEstimator(behaviour_policy, pi_target, lower_quantile_net, upper_quantile_net)
                 exact_weights_estimator.init_pi_target(pi_target)
-                
+
                 if GRADIENT_BASED:
                     if TRANSFORMER: 
                         scores, weights, weight_network = weights_estimator.gradient_method(data_tr, data_cal, LR, EPOCHS, lambda:WeightsTransformerMLP(2 + 2*NUM_STATES*NUM_ACTIONS, 64, 1, upper_quantile_net.mean, upper_quantile_net.std, behaviour_policy, pi_target))
@@ -174,12 +191,19 @@ if __name__ == "__main__":
                 file_logger.write([
                     epsilon_value, 
                     included*100, 
-                    mean_length, 
+                    mean_length,
+                    np.std(lengths), 
                     lower_quantile, 
                     upper_quantile, 
-                    np.mean(quantiles), 
+                    np.mean(quantiles),
+                    np.std(quantiles), 
                     HORIZON, 
                     EPSILON, 
-                    np.mean(weights), 
-                    np.mean(weights/true_weights), 
-                    0.5*np.mean(np.abs(true_weights-weights))])
+                    np.mean(weights),
+                    np.std(weights), 
+                    np.mean(weights/true_weights),
+                    np.std(weights/true_weights), 
+                    0.5*np.mean(np.abs(true_weights-weights)),
+                    np.std(np.abs(true_weights-weights)),
+                    0.5*np.median(np.abs(true_weights-weights))
+                    ])
