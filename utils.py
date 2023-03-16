@@ -6,7 +6,7 @@ from random_mdp import MDPEnv
 from collections import defaultdict
 import pickle
 from tqdm import tqdm
-from typing import Tuple
+from typing import Tuple, Optional
 import random
 import os
 
@@ -34,19 +34,31 @@ class PinballLoss():
         return loss
     
 class EarlyStopping(object):
-    def __init__(self, tolerance=5, min_delta=0):
+    def __init__(
+        self,
+        patience: int,
+        min_delta: float = 0.0,
+        cumulative_delta: bool = False):
 
-        self.tolerance = tolerance
+        self.patience = patience
         self.min_delta = min_delta
+        self.cumulative_delta = cumulative_delta
         self.counter = 0
-        self.early_stop = False
+        self.best_score: Optional[float] = None
+        self.early_stopping = False
 
-    def __call__(self, train_loss, validation_loss):
-        if (validation_loss - train_loss) > self.min_delta:
-            self.counter +=1
-            if self.counter >= self.tolerance:  
-                self.early_stop = True
-                
+    def __call__(self, validation_loss: float) -> None:
+        score = validation_loss
+
+        if self.best_score is None:
+            self.best_score = score
+        elif score > self.best_score + self.min_delta:
+            self.counter += 1
+            if self.counter >= self.patience:
+                self.early_stopping = True
+        else:
+            self.best_score = score
+            self.counter = 0      
                 
 def get_data(env, n_trajectories: int, behaviour_policy, model, horizon: int, path: str):
     print('> Loading/collecting data')
@@ -92,7 +104,7 @@ def collect_exp(env, n_trajectories, horizon, policy, model, start_state):
     return dataset
 
 def train_predictor(quantile_net, data_tr, epochs, quantile, lr, momentum):
-
+    random.shuffle(data_tr)
     split_idx = len(data_tr) // 10
     data_val = data_tr[len(data_tr) - split_idx:len(data_tr)]
     data_tr = data_tr[:len(data_tr) - split_idx]
@@ -100,7 +112,7 @@ def train_predictor(quantile_net, data_tr, epochs, quantile, lr, momentum):
     criterion = PinballLoss(quantile)
     optimizer = torch.optim.Adam(quantile_net.parameters(), lr = lr)#SGD(quantile_net.parameters(), lr = lr, momentum = momentum)
 
-    early_stopping = EarlyStopping(5, min_delta = 0.1)
+    early_stopping = EarlyStopping(50, 0)
 
     xy = [[traj[0].state, cumul_r] for traj, cumul_r in data_tr]
     xy_val = [[traj[0].state, cumul_r] for traj, cumul_r in data_val]
@@ -141,13 +153,13 @@ def train_predictor(quantile_net, data_tr, epochs, quantile, lr, momentum):
                 output_val = quantile_net(x_val)
                 loss_val = criterion(output_val, y_val)
 
-                early_stopping(loss.item(), loss_val.item())
+                early_stopping(loss_val.item())
 
                 desc = "Epoch {} - Training quantile {} - Loss: {} - Loss val: {}".format(epoch, quantile, loss.item(), loss_val.item())
                 tqdm_epochs.set_description(desc)
-            #if early_stopping.early_stop:
-                #print("Early stopping at epoch {}".format(epoch))
-                #break
+            if early_stopping.early_stopping:
+                print("Early stopping at epoch {}".format(epoch))
+                break
         else:
             desc = "Epoch {} - Training quantile {} - Loss: {}".format(epoch, quantile, loss.item())
             tqdm_epochs.set_description(desc)
@@ -155,7 +167,7 @@ def train_predictor(quantile_net, data_tr, epochs, quantile, lr, momentum):
     return y_avg, y_std
             
 def train_weight_function(training_dataset, weights_labels, weight_network, lr, epochs, pi_b, pi_target):
-    
+    random.shuffle(training_dataset)
 
     split_idx = len(training_dataset) // 10
     data_val = training_dataset[len(training_dataset) - split_idx:len(training_dataset)]
@@ -170,10 +182,11 @@ def train_weight_function(training_dataset, weights_labels, weight_network, lr, 
     x_val = xy_val[:,:-1]
     y_val = xy_val[:,-1].unsqueeze(1)
 
-    criterion = torch.nn.MSELoss()
+    criterion = torch.nn.HuberLoss()
     optimizer = torch.optim.Adam(weight_network.parameters(), lr = lr)
     rand_idxs = torch.randperm(xy.size()[0])
     data_batches = torch.utils.data.BatchSampler(xy[rand_idxs], 64, False)
+    early_stopping = EarlyStopping(10, min_delta = 0.)
 
     tqdm_epochs = tqdm(range(epochs))
     for epoch in tqdm_epochs:
@@ -201,6 +214,10 @@ def train_weight_function(training_dataset, weights_labels, weight_network, lr, 
 
                 desc = "Epoch {} - Training weights network - Loss: {} - Loss val: {}".format(epoch, np.mean(losses), loss_val.item())
                 tqdm_epochs.set_description(desc)
+                
+                early_stopping(loss_val.item())
+                if early_stopping.early_stopping:
+                    return
         else:
             desc = "Epoch {} - Training weights network - Avg Loss: {}".format(epoch, np.mean(losses))
             tqdm_epochs.set_description(desc)

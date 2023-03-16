@@ -25,7 +25,7 @@ if __name__ == "__main__":
     #freeze_support()
     set_seed(1)
 
-    RUNS_NUMBER = 1
+    RUNS_NUMBER = 5
     N_CPU = 8
     ENV_NAME = "inventory"
     REWARD_TYPE = "discrete_multiple"
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     ALPHA = 0.6                                                                         # behaviour agent alpha
     NUM_STEPS = 20000                                                                   # behaviour agent learning steps
     N_TRAJECTORIES = 40000                                                              # number of trajectories collected as dataset
-    HORIZONS = [5]                                                      # trajectory horizon
+    HORIZONS = [5, 10, 15, 20, 25]                                                      # trajectory horizon
     NUM_TEST_POINTS = 100
 
     P = np.random.dirichlet(np.ones(NUM_STATES), size=(NUM_STATES, NUM_ACTIONS))        # MDP transition probability functions
