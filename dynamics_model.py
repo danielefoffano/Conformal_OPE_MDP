@@ -113,6 +113,9 @@ class DiscreteRewardDynamicsModel(object):
         # return same shape of gym: s', r, done
         return self.cur_state, r, False
     
+    def set_state(self, state):
+        self.cur_state = state
+    
     def save_functions(self, path):
         os.makedirs(os.path.dirname(path + "data/"), exist_ok=True)
         with open(path + "data/transition_model.pkl", "wb") as f2:

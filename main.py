@@ -1,20 +1,25 @@
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+
 import numpy as np
 from random_mdp import MDPEnv, MDPEnvDiscreteRew, MDPEnvBernoulliRew
 from agent import QlearningAgent
 from greedy_policy import EpsilonGreedyPolicy, TableBasedPolicy, MixedPolicy
-from utils import get_data, collect_exp, train_predictor, train_behaviour_policy, value_iteration
+from utils import get_data, collect_exp, train_predictor, train_behaviour_policy, value_iteration, save_important_dictionary
 from networks import MLP, WeightsMLP, WeightsTransformerMLP
 from dynamics_model import DynamicsModel, DiscreteRewardDynamicsModel, ContinuousRewardDynamicsModel
 import torch
 from collections import defaultdict
 import pickle
 import random
-from weights import WeightsEstimator
+from weights import WeightsEstimator, ExactWeightsEstimator
 from conformal_set import ConformalSet
 from custom_environments.inventory import Inventory
 from multiprocessing import freeze_support
 from logger import Logger
 import os
+import argparse
 
 def set_seed(seed: int):
     random.seed(seed)
@@ -22,10 +27,14 @@ def set_seed(seed: int):
     np.random.seed(seed)
 
 if __name__ == "__main__":
-    #freeze_support()
-    set_seed(1)
+    parser = argparse.ArgumentParser(description='Specify horizon')
+    parser.add_argument('--horizon', type=int)
 
-    RUNS_NUMBER = 5
+    args = parser.parse_args()
+    print(f'Horizon chosen {args.horizon}')
+    set_seed(int(args.horizon))
+
+    RUNS_NUMBER = 30
     N_CPU = 8
     ENV_NAME = "inventory"
     REWARD_TYPE = "discrete_multiple"
@@ -43,7 +52,8 @@ if __name__ == "__main__":
     ALPHA = 0.6                                                                         # behaviour agent alpha
     NUM_STEPS = 20000                                                                   # behaviour agent learning steps
     N_TRAJECTORIES = 40000                                                              # number of trajectories collected as dataset
-    HORIZONS = [ 20, 25]                                                      # trajectory horizon
+    HORIZONS = [int(args.horizon)]                                                           # trajectory horizon
+    NUM_TEST_POINTS = 100
 
     P = np.random.dirichlet(np.ones(NUM_STATES), size=(NUM_STATES, NUM_ACTIONS))        # MDP transition probability functions
     if ENV_NAME == "random_mdp":
@@ -86,15 +96,37 @@ if __name__ == "__main__":
         # Uniform policy
         pi_star_probs = np.ones(shape=(NUM_STATES,NUM_ACTIONS))/NUM_ACTIONS
         pi_uniform = TableBasedPolicy(pi_star_probs)
+    
+    test_state = np.random.randint(env.ns)
 
     for HORIZON in HORIZONS:
         print(f'Starting with horizon: {HORIZON}')
         method = "gradient_based" if GRADIENT_BASED else "model_based"
-        columns = ["epsilon", "Coverage", "Avg_length", "Original_interval_bottom", "Original_interval_upper", "quantile", "horizon", "epsilon_pi_b"]
+        columns = ["epsilon", 
+                    "Coverage", 
+                    "Avg_length",
+                    "Std_length", 
+                    "Original_interval_bottom", 
+                    "Original_interval_upper", 
+                    "quantile",
+                    "std_quantile", 
+                    "horizon", 
+                    "epsilon_pi_b", 
+                    "avg_weights",
+                    "std_weights", 
+                    "w_hat/w",
+                    "std_w_hat/w", 
+                    "median_w_hat/w",
+                    "avg_delta_w",
+                    "std_delta_w",
+                    "median_delta_w"]
+        
         path = f"results/{ENV_NAME}/{method}/horizon_{HORIZON}/"
 
+        exact_weights_estimator = ExactWeightsEstimator(behaviour_policy, HORIZON, env, NUM_STATES, 30000)
+
         for RUN_NUMBER in range(RUNS_NUMBER):
-            file_logger = Logger(path+f"run_{RUN_NUMBER}", columns)
+            file_logger = Logger(path+f"run_{RUN_NUMBER}.csv", columns)
             #Collect experience data using behaviour policy and train model
             model, dataset = get_data(env, N_TRAJECTORIES, behaviour_policy, model, HORIZON, path)
 
@@ -102,7 +134,6 @@ if __name__ == "__main__":
             calibration_trajectories = N_TRAJECTORIES // 10
             data_tr = dataset[:N_TRAJECTORIES - calibration_trajectories]
             data_cal = dataset[N_TRAJECTORIES - calibration_trajectories:N_TRAJECTORIES]
-            test_state = np.random.randint(env.ns)
 
             #Train quantile predictors using training dataset
             print('> Training/loading quantile networks')
@@ -122,16 +153,18 @@ if __name__ == "__main__":
                 upper_quantile_net.save(path + 'data/networks/upper_quantile_net.pth')
 
 
-            epsilons = np.linspace(0, 1, 10)
+            epsilons = np.linspace(0, 1, 21)
             epsilon_lengths = []
             for epsilon_value in epsilons:
 
-                pi_target = MixedPolicy(pi_uniform, greedy_policy, epsilon_value)
+                pi_target = MixedPolicy(pi_uniform, greedy_policy, epsilon_value)                
 
-                test_points = collect_exp(env, 100, HORIZON, pi_target, None, test_state)
+                test_points = collect_exp(env, NUM_TEST_POINTS, HORIZON, pi_target, None, test_state)
 
                 print(f'> Estimate weights for calibration data')
                 weights_estimator = WeightsEstimator(behaviour_policy, pi_target, lower_quantile_net, upper_quantile_net)
+                exact_weights_estimator.init_pi_target(pi_target)
+
                 if GRADIENT_BASED:
                     if TRANSFORMER: 
                         scores, weights, weight_network = weights_estimator.gradient_method(data_tr, data_cal, LR, EPOCHS, lambda:WeightsTransformerMLP(2 + 2*NUM_STATES*NUM_ACTIONS, 64, 1, upper_quantile_net.mean, upper_quantile_net.std, behaviour_policy, pi_target))
@@ -141,9 +174,14 @@ if __name__ == "__main__":
                     scores, weights = weights_estimator.model_based(data_tr, data_cal, HORIZON, model, N_CPU)
                     weight_network = None
 
+                true_weights = exact_weights_estimator.compute_true_ratio_dataset(data_cal)
+                
                 # Generate y values for test point
                 print(f'> Computing conformal set')
                 conformal_set = ConformalSet(lower_quantile_net, upper_quantile_net, behaviour_policy, pi_target, model, HORIZON)
+
+                save_important_dictionary(env, weights_estimator, exact_weights_estimator, conformal_set, weights, scores, weight_network, path, RUN_NUMBER, epsilon_value)
+
                 intervals, lower_quantile, upper_quantile, quantiles = conformal_set.build_set(test_points, weights, scores, N_CPU, weight_network, GRADIENT_BASED)
 
                 included = 0
@@ -159,5 +197,24 @@ if __name__ == "__main__":
                 mean_length = np.mean(lengths)
                 epsilon_lengths.append(mean_length)
 
-                print("Epsilon: {} | Coverage: {:.2f}% | Average interval length: {} | Original interval: {}-{}| Quantile: {}".format(epsilon_value, included*100, mean_length, lower_quantile, upper_quantile, np.mean(quantiles)))
-                file_logger.write([epsilon_value, included*100, mean_length, lower_quantile, upper_quantile, np.mean(quantiles), HORIZON, EPSILON])
+                print("Epsilon: {} | Coverage: {:.2f}% | Average interval length: {} | Original interval: {}-{}| Quantile: {:.3f} | Avg weights: {:.3f}| w_hat/w: {:.3f}| avg_delta_w: {:.3f}".format(epsilon_value, included*100, mean_length, lower_quantile, upper_quantile, np.mean(quantiles), np.mean(weights), np.mean(weights/true_weights), 0.5*np.mean(np.abs(true_weights-weights))))
+                file_logger.write([
+                    epsilon_value, 
+                    included*100, 
+                    mean_length,
+                    np.std(lengths), 
+                    lower_quantile, 
+                    upper_quantile, 
+                    np.mean(quantiles),
+                    np.std(quantiles), 
+                    HORIZON, 
+                    EPSILON, 
+                    np.mean(weights),
+                    np.std(weights),
+                    np.mean(weights/true_weights),
+                    np.std(weights/true_weights), 
+                    np.median(weights/true_weights),
+                    0.5*np.mean(np.abs(true_weights-weights)),
+                    np.std(np.abs(true_weights-weights)),
+                    0.5*np.median(np.abs(true_weights-weights))
+                    ])
