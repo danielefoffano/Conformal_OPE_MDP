@@ -182,7 +182,7 @@ def train_weight_function(training_dataset, weights_labels, weight_network, lr, 
     x_val = xy_val[:,:-1]
     y_val = xy_val[:,-1].unsqueeze(1)
 
-    criterion = torch.nn.HuberLoss()
+    criterion = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(weight_network.parameters(), lr = lr)
     rand_idxs = torch.randperm(xy.size()[0])
     data_batches = torch.utils.data.BatchSampler(xy[rand_idxs], 64, False)
@@ -216,8 +216,8 @@ def train_weight_function(training_dataset, weights_labels, weight_network, lr, 
                 tqdm_epochs.set_description(desc)
                 
                 early_stopping(loss_val.item())
-                if early_stopping.early_stopping:
-                    return
+                # if early_stopping.early_stopping:
+                #     return
         else:
             desc = "Epoch {} - Training weights network - Avg Loss: {}".format(epoch, np.mean(losses))
             tqdm_epochs.set_description(desc)

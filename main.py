@@ -1,3 +1,7 @@
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+
 import numpy as np
 from random_mdp import MDPEnv, MDPEnvDiscreteRew, MDPEnvBernoulliRew
 from agent import QlearningAgent
@@ -15,6 +19,7 @@ from custom_environments.inventory import Inventory
 from multiprocessing import freeze_support
 from logger import Logger
 import os
+import argparse
 
 def set_seed(seed: int):
     random.seed(seed)
@@ -22,10 +27,14 @@ def set_seed(seed: int):
     np.random.seed(seed)
 
 if __name__ == "__main__":
-    #freeze_support()
-    set_seed(1)
+    parser = argparse.ArgumentParser(description='Specify horizon')
+    parser.add_argument('--horizon', type=int)
 
-    RUNS_NUMBER = 5
+    args = parser.parse_args()
+    print(f'Horizon chosen {args.horizon}')
+    set_seed(int(args.horizon))
+
+    RUNS_NUMBER = 30
     N_CPU = 8
     ENV_NAME = "inventory"
     REWARD_TYPE = "discrete_multiple"
@@ -43,7 +52,7 @@ if __name__ == "__main__":
     ALPHA = 0.6                                                                         # behaviour agent alpha
     NUM_STEPS = 20000                                                                   # behaviour agent learning steps
     N_TRAJECTORIES = 40000                                                              # number of trajectories collected as dataset
-    HORIZONS = [5, 10, 15, 20, 25]                                                      # trajectory horizon
+    HORIZONS = [int(args.horizon)]                                                           # trajectory horizon
     NUM_TEST_POINTS = 100
 
     P = np.random.dirichlet(np.ones(NUM_STATES), size=(NUM_STATES, NUM_ACTIONS))        # MDP transition probability functions
@@ -107,6 +116,7 @@ if __name__ == "__main__":
                     "std_weights", 
                     "w_hat/w",
                     "std_w_hat/w", 
+                    "median_w_hat/w",
                     "avg_delta_w",
                     "std_delta_w",
                     "median_delta_w"]
@@ -143,7 +153,7 @@ if __name__ == "__main__":
                 upper_quantile_net.save(path + 'data/networks/upper_quantile_net.pth')
 
 
-            epsilons = np.linspace(0, 1, 10)
+            epsilons = np.linspace(0, 1, 21)
             epsilon_lengths = []
             for epsilon_value in epsilons:
 
@@ -200,9 +210,10 @@ if __name__ == "__main__":
                     HORIZON, 
                     EPSILON, 
                     np.mean(weights),
-                    np.std(weights), 
+                    np.std(weights),
                     np.mean(weights/true_weights),
                     np.std(weights/true_weights), 
+                    np.median(weights/true_weights),
                     0.5*np.mean(np.abs(true_weights-weights)),
                     np.std(np.abs(true_weights-weights)),
                     0.5*np.median(np.abs(true_weights-weights))
