@@ -69,18 +69,19 @@ class WeightsEstimator(object):
         for traj, cumul_rew in data_cal:
             # Compute weight
             x = torch.tensor([traj[0].state, cumul_rew], dtype = torch.float32)
-            w  = weight_network(x).item()
+            w  = weight_network(x[None,...])[0].item()
             calibration_weights.append(w)
 
             # Compute score
             state = torch.tensor([traj[0].state], dtype = torch.float32)
-            score = max(self.lower_quantile_network(state).item() - cumul_rew, cumul_rew - self.upper_quantile_network(state).item())
-            scores.append(score)
+            score1 = self.lower_quantile_network(state).item() - cumul_rew
+            score2 = cumul_rew - self.upper_quantile_network(state).item()
+            scores.append((score1, score2))
 
         weights = calibration_weights
         
         weights = np.array(weights)
-        scores.append(np.inf)
+        scores.append((np.inf, np.inf))
         scores = np.array(scores)
         
         return scores, weights, weight_network
