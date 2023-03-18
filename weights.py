@@ -123,15 +123,12 @@ class WeightsEstimator(object):
 
             # Compute score
             state = torch.tensor([traj.initial_state], dtype = torch.float32)
-            score1 = self.lower_quantile_network(state).item() - traj.cumulative_reward
-            score2 = traj.cumulative_reward - self.upper_quantile_network(state).item()
-            score0 = max(score1, score2)
-            scores.append((score1, score2, score0))
+            score = max(self.lower_quantile_network(state).item() - traj.cumulative_reward, traj.cumulative_reward - self.upper_quantile_network(state).item())
+            scores.append(score)
 
         #weights = calibration_weights
         
         weights = np.array(calibration_weights)
-        scores.append((np.inf, np.inf, np.inf))
         scores = np.array(scores)
         
         return scores, weights, weight_network

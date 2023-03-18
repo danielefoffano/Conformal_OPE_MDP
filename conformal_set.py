@@ -65,9 +65,14 @@ class ConformalSet(object):
     def build_set(self, test_points: Sequence[Trajectory], weights: Sequence[float],
                   scores: Sequence[float], n_cpu: int = 2, weight_network: WeightsMLP = None, gradient_based: bool = False) -> Sequence[Interval]:
         intervals: Sequence[Interval] = []
-        _, _, scores = zip(*scores)
         ordered_scores, ordered_indexes = np.unique(scores, return_index=True)
-        xb, xa = signal.butter(8, 0.25)
+        
+        ordered_scores = np.concatenate((ordered_scores, [np.inf]))
+        xb, xa = signal.butter(4, 0.25)
+
+        ordered_weights = weights[ordered_indexes]
+        ordered_weights_filtered = signal.filtfilt(xb, xa, ordered_weights)
+
         for test_point in test_points:
             point = Point(test_point.initial_state, test_point.cumulative_reward)
             x = torch.tensor([point.initial_state], dtype = torch.float32)
@@ -88,19 +93,13 @@ class ConformalSet(object):
                     else:
                         test_point_weight = compute_weight(point.initial_state, y, self.behaviour_policy, self.pi_star, self.model, self.horizon)
 
-                    # import pdb
-                    # pdb.set_trace()
-                    norm_weights = np.concatenate((weights, [test_point_weight]))[ordered_indexes]
-                    norm_weights_filtered = signal.filtfilt(xb, xa, norm_weights)
-                    norm_weights = norm_weights_filtered / norm_weights_filtered.sum()
-                    
+                    weights_y = np.concatenate((ordered_weights_filtered, [test_point_weight]))
+                    normalized_weights_y = weights_y / weights_y.sum()
+                    cumsum_weights = np.cumsum(normalized_weights_y)
                     
 
-                    quantile = 0.90
-
-                    cumsum_weights = np.cumsum(norm_weights_filtered)
-                    quantile_val = ordered_scores[cumsum_weights >= quantile][0].item()
-
+                    quantile = 0.90                    
+                    quantile_val = ordered_scores[np.argwhere(cumsum_weights >= quantile)][0]
                     score_test = max(lower_val - y, y - upper_val)
 
                     if score_test <= quantile_val or np.isinf(quantile_val):

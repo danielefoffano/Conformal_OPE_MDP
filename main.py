@@ -56,7 +56,7 @@ if __name__ == "__main__":
     N_TRAJECTORIES = 40000                                                              # number of trajectories collected as dataset
     HORIZONS = [int(args.horizon)]                                                           # trajectory horizon
     NUM_TEST_POINTS = 100
-    NUM_POINTS_WEIGHT_ESTIMATOR = 30000
+    NUM_POINTS_WEIGHT_ESTIMATOR = 3000
     NUM_NEURONS_QUANTILE_NETWORKS = 64
     NUM_NEURONS_WEIGHT_ESTIMATOR = 64
     epsilons = np.linspace(0, 1, 11)
