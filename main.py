@@ -35,7 +35,7 @@ if __name__ == "__main__":
     set_seed(int(args.horizon))
 
     RUNS_NUMBER = 30
-    N_CPU = 8
+    N_CPU = 1
     ENV_NAME = "inventory"
     REWARD_TYPE = "discrete_multiple"
     GRADIENT_BASED = True
@@ -188,9 +188,9 @@ if __name__ == "__main__":
                 lengths = []
                 true_values = []
                 for interval in intervals:
-                    if interval[-1] >= interval[2] and interval[-1] <= interval[3]:
+                    if interval[-1] >= interval[1] and interval[-1] <= interval[2]:
                         included += 1
-                    lengths.append(interval[3]-interval[2])
+                    lengths.append(interval[2]-interval[1])
                     true_values.append(interval[-1])
 
                 included = included/len(intervals)

@@ -67,9 +67,9 @@ class ConformalSet(object):
             lower_val = int(self.lower_quantile_nework(x).item())
             upper_val = int(self.upper_quantile_network(x).item())
 
-            y_vals_test = np.linspace(lower_val, upper_val, upper_val-lower_val).astype(int)
+            y_vals_test = np.linspace(lower_val // 2,  2 * upper_val, 2 * upper_val-lower_val // 2).astype(int)
 
-            #conf_range = []
+            conf_range = []
             
             # Use scores and weights to find the scores quantile to conformalize the predictors
             if n_cpu  == 1 or gradient_based == True:
@@ -79,13 +79,16 @@ class ConformalSet(object):
                         test_point_weight = weight_network(x).item()
                     else:
                         test_point_weight = compute_weight(test_point[0][0].state, y, self.behaviour_policy, self.pi_star, self.model, self.horizon)
-                    norm_weights = weights/(weights.sum() + test_point_weight)
-                    norm_weights = np.concatenate((norm_weights, [test_point_weight/(weights.sum() + test_point_weight)]))
-                    norm_weights = torch.tensor(norm_weights)
-
-                    ordered_indexes = scores.argsort()
+                    
+                    ordered_indexes = np.unique(scores, return_index=True)[1]                    
                     ordered_scores = scores[ordered_indexes]
-                    ordered_weights = norm_weights[ordered_indexes]
+                    norm_weights = weights
+                    norm_weights = np.concatenate((norm_weights, [test_point_weight]))
+                    norm_weights = torch.tensor(norm_weights[ordered_indexes])
+                    norm_weights = norm_weights / norm_weights.sum()
+
+                    ordered_weights = norm_weights
+                    
 
                     quantile = 0.90
 
@@ -93,12 +96,12 @@ class ConformalSet(object):
 
                     quantile_val = ordered_scores[cumsum>quantile][0].item()
 
-                    #score_test = max(lower_val - y, y - upper_val)
+                    score_test = max(lower_val - y, y - upper_val)
 
-                    #if score_test <= quantile_val:
-                    #    conf_range.append(y)
+                    if score_test <= quantile_val:
+                        conf_range.append(y)
                     quantiles.append(quantile_val)
-                    intervals.append([test_point[0][0].state, y, lower_val - quantile_val, upper_val + quantile_val, test_point[1]])
+                intervals.append([test_point[0][0].state, np.min(conf_range), np.max(conf_range), test_point[1]])
             else:
                 with mp.Pool(n_cpu) as pool:
                     intervals, quantiles = zip(*list(pool.starmap(compute_weight_iterator, [
