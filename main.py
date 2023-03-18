@@ -1,5 +1,6 @@
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter(action='ignore', category=UserWarning)
 
 
 import numpy as np
@@ -145,7 +146,7 @@ if __name__ == "__main__":
             
             epsilon_lengths = []
             for epsilon_value in epsilons:
-
+                print(f'> Evaluating for epsilon = {epsilon_value}')
                 pi_target = MixedPolicy(pi_uniform, greedy_policy, epsilon_value)                
 
                 test_points = collect_exp(env, NUM_TEST_POINTS, HORIZON, pi_target, None, test_state, discount=DISCOUNT_REWARDS)
@@ -175,7 +176,7 @@ if __name__ == "__main__":
                 intervals = conformal_set.build_set(test_points, weights, scores, N_CPU, weight_network, GRADIENT_BASED)
                 results_intervals = Interval.analyse_intervals(intervals)
                 
-                
+                print('-------- Original method --------')
                 print("Eps: {:.2f} | Coverage: {:.2f}% | Average interval length: {:.2f} "\
                       "| Avg Original interval: {:.2f}-{:.2f} | Avg New interval: {:.2f}-{:.2f} | Quantile: {:.3f} |"\
                        "Avg weights: {:.3f}| w_hat/w: {:.3f}| avg_delta_w: {:.3f}"
@@ -184,19 +185,55 @@ if __name__ == "__main__":
                               results_intervals.lower_vals_target.mean(), results_intervals.upper_vals_target.mean(),
                               results_intervals.avg_quantiles.mean(),
                               np.mean(weights), np.mean(weights/true_weights), 0.5*np.mean(np.abs(true_weights-weights))))
+                print('-------- Double quantile method --------')
+                print("Eps: {:.2f} | Coverage: {:.2f}% | Average interval length: {:.2f} "\
+                      "| Avg Original interval: {:.2f}-{:.2f} | Avg New interval: {:.2f}-{:.2f} | Quantile: {:.3f} - {:.3f} |"\
+                       "Avg weights: {:.3f}| w_hat/w: {:.3f}| avg_delta_w: {:.3f}"
+                      .format(epsilon_value, results_intervals.coverage_double, results_intervals.avg_length_double, 
+                              results_intervals.lower_vals_behavior.mean(), results_intervals.upper_val_behavior.mean(),
+                              results_intervals.lower_vals_target_double.mean(), results_intervals.upper_vals_target_double.mean(),
+                              results_intervals.avg_quantiles_double_low.mean(), results_intervals.avg_quantiles_double_high.mean(),
+                              np.mean(weights), np.mean(weights/true_weights), 0.5*np.mean(np.abs(true_weights-weights))))
+                
+                print('-------- Cumul  method --------')
+                print("Eps: {:.2f} | Coverage: {:.2f}% | Average interval length: {:.2f} "\
+                      "| Avg Original interval: {:.2f}-{:.2f} | Avg New interval: {:.2f}-{:.2f} | Quantile: {:.3f} - {:.3f} |"\
+                       "Avg weights: {:.3f}| w_hat/w: {:.3f}| avg_delta_w: {:.3f}"
+                      .format(epsilon_value, results_intervals.coverage_cumul, results_intervals.avg_length_cumul, 
+                              results_intervals.lower_vals_behavior.mean(), results_intervals.upper_val_behavior.mean(),
+                              results_intervals.lower_vals_target_cumul.mean(), results_intervals.upper_vals_target_cumul.mean(),
+                              results_intervals.avg_quantiles_cumul_low.mean(), results_intervals.avg_quantiles_cumul_high.mean(),
+                              np.mean(weights), np.mean(weights/true_weights), 0.5*np.mean(np.abs(true_weights-weights))))
     
                 
                 logger_results = LoggerResults(
                     epsilon = epsilon_value,
                     coverage = results_intervals.coverage,
+                    coverage_double=results_intervals.coverage_double,
+                    coverage_cumul=results_intervals.coverage_cumul,
                     avg_length = results_intervals.avg_length,
                     std_length = results_intervals.std_length,
-                    
+                    avg_length_double= results_intervals.avg_length_double,
+                    std_length_double=results_intervals.std_length_double,
+                    avg_length_cumul= results_intervals.avg_length_cumul,
+                    std_length_cumul=results_intervals.std_length_cumul,
                     
                     avg_interval_target_lower = results_intervals.lower_vals_target.mean(),
                     avg_interval_target_upper = results_intervals.upper_vals_target.mean(),
                     std_interval_target_lower = results_intervals.lower_vals_target.std(ddof=1),
                     std_interval_target_upper = results_intervals.upper_vals_target.std(ddof=1),
+                    
+                    avg_interval_target_double_lower = results_intervals.lower_vals_target_double.mean(),
+                    avg_interval_target_double_upper = results_intervals.upper_vals_target_double.mean(),
+                    std_interval_target_double_lower = results_intervals.lower_vals_target_double.std(ddof=1),
+                    std_interval_target_double_upper = results_intervals.upper_vals_target_double.std(ddof=1),
+                    
+                    
+                    avg_interval_target_cumul_lower = results_intervals.lower_vals_target_cumul.mean(),
+                    avg_interval_target_cumul_upper = results_intervals.upper_vals_target_cumul.mean(),
+                    std_interval_target_cumul_lower = results_intervals.lower_vals_target_cumul.std(ddof=1),
+                    std_interval_target_cumul_upper = results_intervals.upper_vals_target_cumul.std(ddof=1),
+                    
                     
                     avg_interval_behavior_lower = results_intervals.lower_vals_behavior.mean(),
                     avg_interval_behavior_upper = results_intervals.upper_val_behavior.mean(),
@@ -205,6 +242,24 @@ if __name__ == "__main__":
                     avg_quantile = results_intervals.avg_quantiles.mean(),
                     avg_std_quantile = results_intervals.std_quantiles.mean(),
                     std_avg_quantile = results_intervals.avg_quantiles.std(ddof = 1),
+                    
+                    avg_double_quantile_low = results_intervals.avg_quantiles_double_low.mean(),
+                    avg_std_double_quantile_low = results_intervals.std_quantiles_double_low.mean(),
+                    std_avg_double_quantile_low = results_intervals.avg_quantiles_double_low.std(ddof = 1),
+                    
+                    avg_double_quantile_high = results_intervals.avg_quantiles_double_high.mean(),
+                    avg_std_double_quantile_high = results_intervals.std_quantiles_double_high.mean(),
+                    std_avg_double_quantile_high = results_intervals.avg_quantiles_double_high.std(ddof = 1),
+                    
+                    
+                    avg_cumul_quantile_low = results_intervals.avg_quantiles_cumul_low.mean(),
+                    avg_std_cumul_quantile_low = results_intervals.std_quantiles_cumul_low.mean(),
+                    std_avg_cumul_quantile_low = results_intervals.avg_quantiles_cumul_low.std(ddof = 1),
+                    
+                    avg_cumul_quantile_high = results_intervals.avg_quantiles_cumul_high.mean(),
+                    avg_std_cumul_quantile_high = results_intervals.std_quantiles_cumul_high.mean(),
+                    std_avg_cumul_quantile_high = results_intervals.avg_quantiles_cumul_high.std(ddof = 1),
+                    
                     horizon = HORIZON,
                     epsilon_pi_behavior = EPSILON,
                     avg_weights = np.mean(weights),
