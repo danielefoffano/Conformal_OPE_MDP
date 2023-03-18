@@ -20,6 +20,7 @@ from multiprocessing import freeze_support
 from logger import Logger
 import os
 import argparse
+from types_cp import Interval, LoggerResults
 
 def set_seed(seed: int):
     random.seed(seed)
@@ -34,7 +35,7 @@ if __name__ == "__main__":
     print(f'Horizon chosen {args.horizon}')
     set_seed(int(args.horizon))
 
-    RUNS_NUMBER = 30
+    RUNS_NUMBER = 1
     N_CPU = 1
     ENV_NAME = "inventory"
     REWARD_TYPE = "discrete_multiple"
@@ -49,11 +50,16 @@ if __name__ == "__main__":
     NUM_STATES = 10                                                                     # MDP states space size
     NUM_REWARDS = 10                                                                    # MDP reward space size (for discrete MDP)
     DISCOUNT_FACTOR = 0.99                                                              # behaviour agent discount factor
+    DISCOUNT_REWARDS = 1
     ALPHA = 0.6                                                                         # behaviour agent alpha
     NUM_STEPS = 20000                                                                   # behaviour agent learning steps
     N_TRAJECTORIES = 40000                                                              # number of trajectories collected as dataset
     HORIZONS = [int(args.horizon)]                                                           # trajectory horizon
     NUM_TEST_POINTS = 100
+    NUM_POINTS_WEIGHT_ESTIMATOR = 3000
+    NUM_NEURONS_QUANTILE_NETWORKS = 64
+    NUM_NEURONS_WEIGHT_ESTIMATOR = 64
+    epsilons = np.linspace(0, 1, 11)
 
     P = np.random.dirichlet(np.ones(NUM_STATES), size=(NUM_STATES, NUM_ACTIONS))        # MDP transition probability functions
     if ENV_NAME == "random_mdp":
@@ -102,33 +108,16 @@ if __name__ == "__main__":
     for HORIZON in HORIZONS:
         print(f'Starting with horizon: {HORIZON}')
         method = "gradient_based" if GRADIENT_BASED else "model_based"
-        columns = ["epsilon", 
-                    "Coverage", 
-                    "Avg_length",
-                    "Std_length", 
-                    "Original_interval_bottom", 
-                    "Original_interval_upper", 
-                    "quantile",
-                    "std_quantile", 
-                    "horizon", 
-                    "epsilon_pi_b", 
-                    "avg_weights",
-                    "std_weights", 
-                    "w_hat/w",
-                    "std_w_hat/w", 
-                    "median_w_hat/w",
-                    "avg_delta_w",
-                    "std_delta_w",
-                    "median_delta_w"]
+        columns = LoggerResults._fields
         
         path = f"results/{ENV_NAME}/{method}/horizon_{HORIZON}/"
 
-        exact_weights_estimator = ExactWeightsEstimator(behaviour_policy, HORIZON, env, NUM_STATES, 30000)
+        exact_weights_estimator = ExactWeightsEstimator(behaviour_policy, HORIZON, env, NUM_STATES, NUM_POINTS_WEIGHT_ESTIMATOR, DISCOUNT_REWARDS)
 
         for RUN_NUMBER in range(RUNS_NUMBER):
             file_logger = Logger(path+f"run_{RUN_NUMBER}.csv", columns)
             #Collect experience data using behaviour policy and train model
-            model, dataset = get_data(env, N_TRAJECTORIES, behaviour_policy, model, HORIZON, path)
+            model, dataset = get_data(env, N_TRAJECTORIES, behaviour_policy, model, HORIZON, path, DISCOUNT_REWARDS)
 
             #Split dataset into training (90%) and calibration data (10%)
             calibration_trajectories = N_TRAJECTORIES // 10
@@ -137,8 +126,8 @@ if __name__ == "__main__":
 
             #Train quantile predictors using training dataset
             print('> Training/loading quantile networks')
-            upper_quantile_net = MLP(1, 64, 1, False)
-            lower_quantile_net = MLP(1, 64, 1, False)
+            upper_quantile_net = MLP(1, NUM_NEURONS_QUANTILE_NETWORKS, 1, False)
+            lower_quantile_net = MLP(1, NUM_NEURONS_QUANTILE_NETWORKS, 1, False)
 
             if not lower_quantile_net.load(path + 'data/networks/lower_quantile_net.pth'):
                 y_avg, y_std = train_predictor(lower_quantile_net, data_tr, epochs=EPOCHS, quantile=QUANTILE/2, lr=LR, momentum=MOMENTUM)
@@ -153,13 +142,13 @@ if __name__ == "__main__":
                 upper_quantile_net.save(path + 'data/networks/upper_quantile_net.pth')
 
 
-            epsilons = np.linspace(0, 1, 21)
+            
             epsilon_lengths = []
             for epsilon_value in epsilons:
 
                 pi_target = MixedPolicy(pi_uniform, greedy_policy, epsilon_value)                
 
-                test_points = collect_exp(env, NUM_TEST_POINTS, HORIZON, pi_target, None, test_state)
+                test_points = collect_exp(env, NUM_TEST_POINTS, HORIZON, pi_target, None, test_state, discount=DISCOUNT_REWARDS)
 
                 print(f'> Estimate weights for calibration data')
                 weights_estimator = WeightsEstimator(behaviour_policy, pi_target, lower_quantile_net, upper_quantile_net)
@@ -167,9 +156,9 @@ if __name__ == "__main__":
 
                 if GRADIENT_BASED:
                     if TRANSFORMER: 
-                        scores, weights, weight_network = weights_estimator.gradient_method(data_tr, data_cal, LR, EPOCHS, lambda:WeightsTransformerMLP(2 + 2*NUM_STATES*NUM_ACTIONS, 64, 1, upper_quantile_net.mean, upper_quantile_net.std, behaviour_policy, pi_target))
+                        scores, weights, weight_network = weights_estimator.gradient_method(data_tr, data_cal, LR, EPOCHS, lambda:WeightsTransformerMLP(2 + 2*NUM_STATES*NUM_ACTIONS, NUM_NEURONS_WEIGHT_ESTIMATOR, 1, upper_quantile_net.mean, upper_quantile_net.std, behaviour_policy, pi_target))
                     else: 
-                        scores, weights, weight_network = weights_estimator.gradient_method(data_tr, data_cal, LR, EPOCHS, lambda:WeightsMLP(2, 64, 1, upper_quantile_net.mean, upper_quantile_net.std))
+                        scores, weights, weight_network = weights_estimator.gradient_method(data_tr, data_cal, LR, EPOCHS, lambda:WeightsMLP(2, NUM_NEURONS_WEIGHT_ESTIMATOR, 1, upper_quantile_net.mean, upper_quantile_net.std))
                 else:
                     scores, weights = weights_estimator.model_based(data_tr, data_cal, HORIZON, model, N_CPU)
                     weight_network = None
@@ -178,43 +167,56 @@ if __name__ == "__main__":
                 
                 # Generate y values for test point
                 print(f'> Computing conformal set')
-                conformal_set = ConformalSet(lower_quantile_net, upper_quantile_net, behaviour_policy, pi_target, model, HORIZON)
+                conformal_set = ConformalSet(lower_quantile_net, upper_quantile_net, behaviour_policy, pi_target, model, HORIZON, DISCOUNT_REWARDS)
 
                 save_important_dictionary(env, weights_estimator, exact_weights_estimator, conformal_set, weights, scores, weight_network, path, RUN_NUMBER, epsilon_value)
 
-                intervals, lower_quantile, upper_quantile, quantiles = conformal_set.build_set(test_points, weights, scores, N_CPU, weight_network, GRADIENT_BASED)
 
-                included = 0
-                lengths = []
-                true_values = []
-                for interval in intervals:
-                    if interval[-1] >= interval[1] and interval[-1] <= interval[2]:
-                        included += 1
-                    lengths.append(interval[2]-interval[1])
-                    true_values.append(interval[-1])
+                intervals = conformal_set.build_set(test_points, weights, scores, N_CPU, weight_network, GRADIENT_BASED)
+                results_intervals = Interval.analyse_intervals(intervals)
+                
+                
+                print("Eps: {:.2f} | Coverage: {:.2f}% | Average interval length: {:.2f} "\
+                      "| Avg Original interval: {:.2f}-{:.2f} | Avg New interval: {:.2f}-{:.2f} | Quantile: {:.3f} |"\
+                       "Avg weights: {:.3f}| w_hat/w: {:.3f}| avg_delta_w: {:.3f}"
+                      .format(epsilon_value, results_intervals.coverage, results_intervals.avg_length, 
+                              results_intervals.lower_vals_behavior.mean(), results_intervals.upper_val_behavior.mean(),
+                              results_intervals.lower_vals_target.mean(), results_intervals.upper_vals_target.mean(),
+                              results_intervals.avg_quantiles.mean(),
+                              np.mean(weights), np.mean(weights/true_weights), 0.5*np.mean(np.abs(true_weights-weights))))
+    
+                
+                logger_results = LoggerResults(
+                    epsilon = epsilon_value,
+                    coverage = results_intervals.coverage,
+                    avg_length = results_intervals.avg_length,
+                    std_length = results_intervals.std_length,
+                    
+                    
+                    avg_interval_target_lower = results_intervals.lower_vals_target.mean(),
+                    avg_interval_target_upper = results_intervals.upper_vals_target.mean(),
+                    std_interval_target_lower = results_intervals.lower_vals_target.std(ddof=1),
+                    std_interval_target_upper = results_intervals.upper_vals_target.std(ddof=1),
+                    
+                    avg_interval_behavior_lower = results_intervals.lower_vals_behavior.mean(),
+                    avg_interval_behavior_upper = results_intervals.upper_val_behavior.mean(),
+                    std_interval_behavior_lower = results_intervals.lower_vals_behavior.std(ddof=1),
+                    std_interval_behavior_upper = results_intervals.upper_val_behavior.std(ddof=1),
+                    avg_quantile = results_intervals.avg_quantiles.mean(),
+                    avg_std_quantile = results_intervals.std_quantiles.mean(),
+                    std_avg_quantile = results_intervals.avg_quantiles.std(ddof = 1),
+                    horizon = HORIZON,
+                    epsilon_pi_behavior = EPSILON,
+                    avg_weights = np.mean(weights),
+                    std_weights = np.std(weights, ddof=1),
+                    avg_ratio_what_w = np.mean(weights / true_weights),
+                    std_ratio_what_w = np.std(weights / true_weights, ddof=1),
+                    median_ratio_what_w = np.median(weights / true_weights),
+                    avg_delta_w = 0.5*np.mean(np.abs(true_weights-weights)),
+                    std_delta_w =  np.std(np.abs(true_weights-weights), ddof=1),
+                    median_delta_w= 0.5*np.median(np.abs(true_weights-weights))
+                    
+                )
+                
 
-                included = included/len(intervals)
-                mean_length = np.mean(lengths)
-                epsilon_lengths.append(mean_length)
-
-                print("Epsilon: {} | Coverage: {:.2f}% | Average interval length: {} | Original interval: {}-{}| Quantile: {:.3f} | Avg weights: {:.3f}| w_hat/w: {:.3f}| avg_delta_w: {:.3f}".format(epsilon_value, included*100, mean_length, lower_quantile, upper_quantile, np.mean(quantiles), np.mean(weights), np.mean(weights/true_weights), 0.5*np.mean(np.abs(true_weights-weights))))
-                file_logger.write([
-                    epsilon_value, 
-                    included*100, 
-                    mean_length,
-                    np.std(lengths), 
-                    lower_quantile, 
-                    upper_quantile, 
-                    np.mean(quantiles),
-                    np.std(quantiles), 
-                    HORIZON, 
-                    EPSILON, 
-                    np.mean(weights),
-                    np.std(weights),
-                    np.mean(weights/true_weights),
-                    np.std(weights/true_weights), 
-                    np.median(weights/true_weights),
-                    0.5*np.mean(np.abs(true_weights-weights)),
-                    np.std(np.abs(true_weights-weights)),
-                    0.5*np.median(np.abs(true_weights-weights))
-                    ])
+                file_logger.write(logger_results._asdict().values())

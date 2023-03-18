@@ -1,6 +1,7 @@
 from fileinput import filename
 import os
 from typing import List, Union
+from types_cp import LoggerResults
 
 class Logger(object):
     def __init__(self, file_name: str, columns: List[str], delimiter: str=','):
@@ -17,11 +18,12 @@ class Logger(object):
         self.file = open(self.file_name, "w+")
         self.write(columns)
 
-    def write(self, values: List[Union[str, int, float]]) -> None:
+    def write(self, values) -> None:
         """
         :param values: list of values. The length of this list needs to be equal to the number
                        of columns
         """
+        
         assert len(values) == self.num_columns, f'Not enough values to log! Expected {self.num_columns} values, and got {len(values)}'
         values: List[str] = map(lambda x: x if isinstance(x, str) else f'{x:.4f}', values)
         self.file.write(self.delimiter.join(values) + "\n")

@@ -6,9 +6,10 @@ from random_mdp import MDPEnv
 from collections import defaultdict
 import pickle
 from tqdm import tqdm
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Sequence
 import random
 import os
+from types_cp import Trajectory, Interval
 
 MC_SAMPLES = 500
 
@@ -60,23 +61,23 @@ class EarlyStopping(object):
             self.best_score = score
             self.counter = 0      
                 
-def get_data(env, n_trajectories: int, behaviour_policy, model, horizon: int, path: str):
+def get_data(env, n_trajectories: int, behaviour_policy, model, horizon: int, path: str, discount: float) -> Tuple[any, Sequence[Trajectory]]:
     print('> Loading/collecting data')
     try:
         with open(path + "data/saved_dataset.pkl", "rb") as f1:
             dataset = pickle.load(f1)
         model.load_functions(path)
     except:
-        dataset = collect_exp(env, n_trajectories, horizon, behaviour_policy, model, None)
+        dataset = collect_exp(env, n_trajectories, horizon, behaviour_policy, model, None, discount=discount)
         os.makedirs(os.path.dirname(path + "data/"), exist_ok=True)
         with open(path + "data/saved_dataset.pkl", "wb") as f1:
             pickle.dump(dataset, f1)
         model.save_functions(path)
     return model, dataset
 
-def collect_exp(env, n_trajectories, horizon, policy, model, start_state):
+def collect_exp(env, n_trajectories: int, horizon: int, policy, model, start_state: int, discount: float = 1) -> Sequence[Trajectory]:
 
-    dataset = []
+    dataset: Sequence[Trajectory] = []
 
     for _ in range(n_trajectories):
         if start_state is None:
@@ -84,38 +85,37 @@ def collect_exp(env, n_trajectories, horizon, policy, model, start_state):
         else:
             env.set_state(start_state)
             s = start_state
-        trajectory = []
+        trajectory: Sequence[Experience] = []
         c_reward = 0
-        for _ in range(horizon):
+        for k in range(horizon):
 
             a = policy.get_action(s)
             s_next, r, done = env.step(a)
-
-            c_reward += r
+            c_reward += r * (discount ** k)
             trajectory.append(Experience(s, a, r, s_next, done))
 
             if model is not None:
                 model.update_visits(s, a, s_next, r)
 
             s = s_next
-
-        dataset.append((trajectory, c_reward))
+        
+        dataset.append(Trajectory(trajectory[0].state, c_reward, trajectory))
 
     return dataset
 
-def train_predictor(quantile_net, data_tr, epochs, quantile, lr, momentum):
+def train_predictor(quantile_net: torch.nn.Module, data_tr: Sequence[Trajectory], epochs: int, quantile: float, lr: float, momentum: float) -> Tuple[float, float]:
     random.shuffle(data_tr)
     split_idx = len(data_tr) // 10
     data_val = data_tr[len(data_tr) - split_idx:len(data_tr)]
     data_tr = data_tr[:len(data_tr) - split_idx]
     
     criterion = PinballLoss(quantile)
-    optimizer = torch.optim.Adam(quantile_net.parameters(), lr = lr)#SGD(quantile_net.parameters(), lr = lr, momentum = momentum)
+    optimizer = torch.optim.Adam(quantile_net.parameters(), lr = lr)
 
     early_stopping = EarlyStopping(50, 0)
 
-    xy = [[traj[0].state, cumul_r] for traj, cumul_r in data_tr]
-    xy_val = [[traj[0].state, cumul_r] for traj, cumul_r in data_val]
+    xy = [[traj.initial_state, traj.cumulative_reward] for traj in data_tr]
+    xy_val = [[traj.initial_state, traj.cumulative_reward] for traj in data_val]
 
     xy = torch.tensor(xy, dtype = torch.float32)
     xy_val = torch.tensor(xy_val, dtype = torch.float32)
@@ -128,7 +128,6 @@ def train_predictor(quantile_net, data_tr, epochs, quantile, lr, momentum):
     y_std = torch.std(y).item()
 
     x_val = xy_val[:,0].unsqueeze(1)
-    #y_val = xy_val[:,1].unsqueeze(1)
     y_val = ((xy_val[:,1]-y_avg)/y_std).unsqueeze(1)
 
     tqdm_epochs = tqdm(range(epochs))
@@ -138,7 +137,6 @@ def train_predictor(quantile_net, data_tr, epochs, quantile, lr, momentum):
         for batch in random_batches:
             batch = torch.stack(batch, 0)
             x_batch = batch[:,0].unsqueeze(1)
-            #y_batch = batch[:,1].unsqueeze(1)
             y_batch = ((batch[:,1]-y_avg)/y_std).unsqueeze(1)
 
             optimizer.zero_grad()
@@ -166,17 +164,17 @@ def train_predictor(quantile_net, data_tr, epochs, quantile, lr, momentum):
         
     return y_avg, y_std
             
-def train_weight_function(training_dataset, weights_labels, weight_network, lr, epochs, pi_b, pi_target):
+def train_weight_function(training_dataset: Sequence[Trajectory], weights_labels: Sequence[float], weight_network: torch.nn.Module, lr: float, epochs: int, pi_b, pi_target):
     random.shuffle(training_dataset)
 
     split_idx = len(training_dataset) // 10
     data_val = training_dataset[len(training_dataset) - split_idx:len(training_dataset)]
     training_dataset = training_dataset[:len(training_dataset) - split_idx]
 
-    xy = [[trajectory[0].state, cumul_rew, weights_labels[idx]] for idx, (trajectory, cumul_rew) in enumerate(training_dataset)]
+    xy = [[traj.initial_state, traj.cumulative_reward, weights_labels[idx]] for idx, traj in enumerate(training_dataset)]
     xy = torch.tensor(xy, dtype = torch.float32)
 
-    xy_val = [[trajectory[0].state, cumul_rew, weights_labels[idx]] for idx, (trajectory, cumul_rew) in enumerate(data_val)]
+    xy_val = [[traj.initial_state, traj.cumulative_reward, weights_labels[idx]] for idx, traj in enumerate(data_val)]
     xy_val = torch.tensor(xy_val, dtype = torch.float32)
 
     x_val = xy_val[:,:-1]
@@ -316,17 +314,11 @@ def compute_weight(s0, y, pi_b, pi_star, model, horizon):
     return min((tot_sum_pi_star / (m+1)) / (tot_sum_pi_b / (n+1)), 5)
 
 
-def compute_weights_gradient(traj, pi_b, pi_star):
+def compute_weights_gradient(traj: Trajectory, pi_b, pi_star) -> float:
+    prod_pi_b = np.prod([pi_b.get_action_prob(step.state, step.action) for step in traj.trajectory])
+    prod_pi_star = np.prod([pi_star.get_action_prob(step.state, step.action) for step in traj.trajectory])
 
-    prod_pi_b = 1
-    prod_pi_star = 1
-    
-    for step in traj:
-
-        prod_pi_b *= pi_b.get_action_prob(step.state, step.action)
-        prod_pi_star *= pi_star.get_action_prob(step.state, step.action)
-
-    return prod_pi_star/prod_pi_b
+    return prod_pi_star / prod_pi_b
 
 def value_iteration(env, gamma: float, eps: float = 1e-9) -> Tuple[np.ndarray, np.ndarray]:
     """
