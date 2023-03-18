@@ -10,7 +10,8 @@ from typing import Tuple, Optional, Sequence
 import random
 import os
 from types_cp import Trajectory, Interval
-
+import multiprocessing as mp
+from copy import deepcopy
 MC_SAMPLES = 500
 
 class PinballLoss():
@@ -75,32 +76,34 @@ def get_data(env, n_trajectories: int, behaviour_policy, model, horizon: int, pa
         model.save_functions(path)
     return model, dataset
 
+def _collect_trajectory(seed: int, env, horizon: int, policy, start_state: int, discount: float = 1):
+    np.random.seed(seed)
+    random.seed(seed)
+    if start_state is None:
+        s = env.reset()
+    else:
+        env.set_state(start_state)
+        s = start_state
+    trajectory: Sequence[Experience] = []
+    c_reward = 0
+    for k in range(horizon):
+        a = policy.get_action(s)
+        s_next, r, done = env.step(a)
+        c_reward += r * (discount ** k)
+        trajectory.append(Experience(s, a, r, s_next, done))
+
+        s = s_next
+    return Trajectory(trajectory[0].state, c_reward, trajectory)
+    
 def collect_exp(env, n_trajectories: int, horizon: int, policy, model, start_state: int, discount: float = 1) -> Sequence[Trajectory]:
 
     dataset: Sequence[Trajectory] = []
-
-    for _ in range(n_trajectories):
-        if start_state is None:
-            s = env.reset()
-        else:
-            env.set_state(start_state)
-            s = start_state
-        trajectory: Sequence[Experience] = []
-        c_reward = 0
-        for k in range(horizon):
-
-            a = policy.get_action(s)
-            s_next, r, done = env.step(a)
-            c_reward += r * (discount ** k)
-            trajectory.append(Experience(s, a, r, s_next, done))
-
-            if model is not None:
-                model.update_visits(s, a, s_next, r)
-
-            s = s_next
-        
-        dataset.append(Trajectory(trajectory[0].state, c_reward, trajectory))
-
+    with mp.Pool(4) as p:
+        dataset = list(p.starmap(_collect_trajectory, [(x, deepcopy(env), horizon, policy, start_state, discount) for x in range(n_trajectories)]))
+    if model is not None:
+        for traj in dataset:
+            for step in traj.trajectory:
+                model.update_visits(step.state, step.action, step.next_state, step.reward)
     return dataset
 
 def train_predictor(quantile_net: torch.nn.Module, data_tr: Sequence[Trajectory], epochs: int, quantile: float, lr: float, momentum: float) -> Tuple[float, float]:
