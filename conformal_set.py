@@ -4,6 +4,9 @@ from networks import MLP,WeightsMLP
 from utils import compute_weight
 import multiprocessing as mp
 from utils import collect_exp
+from types_cp import Point, Trajectory, Interval
+from typing import Sequence
+from scipy import signal
 
 def compute_weight_iterator(idx, test_point, y, behaviour_policy, pi_star, model, horizon, weights, scores, lower_val, upper_val):
     print("Computing weight for test value {}".format(idx))
@@ -31,17 +34,18 @@ def compute_weight_iterator(idx, test_point, y, behaviour_policy, pi_star, model
     return ([test_point[0][0].state, y, lower_val - quantile_val, upper_val + quantile_val, test_point[1]], quantile_val)
 
 class ConformalSet(object):
-    def __init__(self, lower_quantile_network: MLP, upper_quantile_network: MLP,  behaviour_policy, pi_star, model, horizon):
+    def __init__(self, lower_quantile_network: MLP, upper_quantile_network: MLP,  behaviour_policy, pi_star, model, horizon: int, discount: float):
         self.lower_quantile_nework = lower_quantile_network
         self.upper_quantile_network = upper_quantile_network
         self.behaviour_policy = behaviour_policy
         self.pi_star = pi_star
         self.model = model
         self.horizon = horizon
+        self.discount = discount
 
     def build_set_monte_carlo(self, test_point, alpha, n_samples, quantile_upper, quantile_lower):
 
-        mc_samples = collect_exp(env = self.model, n_trajectories = n_samples, horizon = self.horizon, policy = self.pi_star, start_state = test_point[0][0].state, model = None)
+        mc_samples = collect_exp(env = self.model, n_trajectories = n_samples, horizon = self.horizon, policy = self.pi_star, start_state = test_point[0][0].state, model = None, discount=self.discount)
 
         rewards_samples = np.array(mc_samples, dtype = 'object')[:,1]
         rewards_samples = rewards_samples.astype('int64') - self.model.start_reward
@@ -58,68 +62,57 @@ class ConformalSet(object):
 
         return quantile_val_up[0], quantile_val_low[0]
     
-    def build_set(self, test_points, weights, scores, n_cpu: int = 2, weight_network: WeightsMLP = None, gradient_based: bool = False):
-        intervals = []
-        quantiles = []
+    def build_set(self, test_points: Sequence[Trajectory], weights: Sequence[float],
+                  scores: Sequence[float], n_cpu: int = 2, weight_network: WeightsMLP = None, gradient_based: bool = False) -> Sequence[Interval]:
+        intervals: Sequence[Interval] = []
+        _, _, scores = zip(*scores)
+        ordered_scores, ordered_indexes = np.unique(scores, return_index=True)
+        xb, xa = signal.butter(8, 0.25)
         for test_point in test_points:
-            x = torch.tensor([test_point[0][0].state], dtype = torch.float32)
+            point = Point(test_point.initial_state, test_point.cumulative_reward)
+            x = torch.tensor([point.initial_state], dtype = torch.float32)
             lower_val = int(self.lower_quantile_nework(x).item())
             upper_val = int(self.upper_quantile_network(x).item())
 
-            y_vals_test = np.linspace(lower_val, upper_val, upper_val-lower_val).astype(int)
+            y_vals_test = np.linspace(lower_val // 2,  2 * upper_val, 2 * upper_val-lower_val // 2).astype(int)
+            conf_range = []
+            quantile_range = []
+            
 
             # Use scores and weights to find the scores quantile to conformalize the predictors
             if n_cpu  == 1 or gradient_based == True:
                 for y in y_vals_test:
                     if gradient_based:
-                        x = torch.tensor([test_point[0][0].state, y], dtype = torch.float32)
+                        x = torch.tensor([point.initial_state, y], dtype = torch.float32)
                         test_point_weight = weight_network(x[None,:])[0].item()
                     else:
-                        test_point_weight = compute_weight(test_point[0][0].state, y, self.behaviour_policy, self.pi_star, self.model, self.horizon)
-                    norm_weights = weights/(weights.sum() + test_point_weight)
-                    norm_weights = np.concatenate((norm_weights, [test_point_weight/(weights.sum() + test_point_weight)]))
-                    norm_weights = torch.tensor(norm_weights)
+                        test_point_weight = compute_weight(point.initial_state, y, self.behaviour_policy, self.pi_star, self.model, self.horizon)
 
                     # import pdb
                     # pdb.set_trace()
-                    scores_low, scores_high = zip(*scores)
-                    scores_low = np.array(scores_low)
-                    scores_high = np.array(scores_high)
+                    norm_weights = np.concatenate((weights, [test_point_weight]))[ordered_indexes]
+                    norm_weights_filtered = signal.filtfilt(xb, xa, norm_weights)
+                    norm_weights = norm_weights_filtered / norm_weights_filtered.sum()
                     
-                    # Scores low
-                    ordered_indexes_low = scores_low.argsort()
-                    ordered_scores_low = scores_low[ordered_indexes_low]
-                    ordered_weights_low = norm_weights[ordered_indexes_low]
                     
-                    # Scores low
-                    ordered_indexes_high= scores_high.argsort()
-                    ordered_scores_high = scores_high[ordered_indexes_high]
-                    ordered_weights_high = norm_weights[ordered_indexes_high]
 
                     quantile = 0.90
 
-                    cumsum_low = torch.cumsum(ordered_weights_low, 0)
-                    cumsum_high = torch.cumsum(ordered_weights_high, 0)
+                    cumsum_weights = np.cumsum(norm_weights_filtered)
+                    quantile_val = ordered_scores[cumsum_weights >= quantile][0].item()
 
-                    quantile_val_low = ordered_scores_low[cumsum_low>=quantile][0].item()
-                    quantile_val_high = ordered_scores_high[cumsum_high>=quantile][0].item()
-                    
-                    prob_val_low = ordered_scores_low[cumsum_low>=quantile][0].item()
-                    
-                    #score_test = max(lower_val - y, y - upper_val)
-                    # print(f'{test_point[1]} - {lower_val - quantile_val_low} - {upper_val + quantile_val_high}')
-                    # if test_point[1]> upper_val + quantile_val_high or test_point[1]<lower_val - quantile_val_low:
-                    #     import pdb
-                    #     pdb.set_trace()
+                    score_test = max(lower_val - y, y - upper_val)
 
-                    #if score_test <= quantile_val:
-                    #    conf_range.append(y)
-                    quantiles.append((quantile_val_low, quantile_val_high))
-                    intervals.append([test_point[0][0].state, y, lower_val - quantile_val_low, upper_val + quantile_val_high, test_point[1]])
+                    if score_test <= quantile_val or np.isinf(quantile_val):
+                        conf_range.append(y)
+                    quantile_range.append(quantile_val)
             else:
                 with mp.Pool(n_cpu) as pool:
                     intervals, quantiles = zip(*list(pool.starmap(compute_weight_iterator, [
                     (idx, test_point, y, self.behaviour_policy, self.pi_star, self.model, self.horizon, weights, scores, lower_val, upper_val)
                     for idx, y in enumerate(y_vals_test)])))
-
-        return np.array(intervals), lower_val, upper_val, quantiles
+            
+            
+            intervals.append(Interval(point, np.min(conf_range), np.max(conf_range), lower_val, upper_val, quantile_range))
+  
+        return intervals

@@ -1,14 +1,9 @@
 import numpy as np
 from abc import ABC
 from typing import NamedTuple
+from types_cp import Experience
 
 
-class Experience(NamedTuple):
-    state: int
-    action: int
-    reward: float
-    next_state: int
-    done: bool
 
 class Agent(ABC):
     ns: int # Number of states
