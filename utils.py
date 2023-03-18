@@ -103,6 +103,12 @@ def collect_exp(env, n_trajectories, horizon, policy, model, start_state):
 
     return dataset
 
+def gradient_clipping(netD, clip_val=0.01):
+
+  for p in netD.parameters():
+    p.data.clamp(-clip_val, clip_val)
+
+
 def train_predictor(quantile_net, data_tr, epochs, quantile, lr, momentum):
     random.shuffle(data_tr)
     split_idx = len(data_tr) // 10
@@ -203,6 +209,7 @@ def train_weight_function(training_dataset, weights_labels, weight_network, lr, 
             output = weight_network(x_batch)
             loss = criterion(output, y_batch)
             loss.backward()
+            
             optimizer.step()
             losses.append(loss.item())
 

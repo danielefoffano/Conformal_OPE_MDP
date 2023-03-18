@@ -34,8 +34,8 @@ if __name__ == "__main__":
     print(f'Horizon chosen {args.horizon}')
     set_seed(int(args.horizon))
 
-    RUNS_NUMBER = 30
-    N_CPU = 8
+    RUNS_NUMBER = 1
+    N_CPU = 1
     ENV_NAME = "inventory"
     REWARD_TYPE = "discrete_multiple"
     GRADIENT_BASED = True
@@ -108,8 +108,14 @@ if __name__ == "__main__":
                     "Std_length", 
                     "Original_interval_bottom", 
                     "Original_interval_upper", 
-                    "quantile",
-                    "std_quantile", 
+                    "gain_quantile",
+                    "lower_quantile",
+                    "upper_quantile",
+                    "orig_quantile",
+                    "gain_std_quantile",
+                    "lower_std_quantile", 
+                    "upper_std_quantile", 
+                    "orig_std_quantile", 
                     "horizon", 
                     "epsilon_pi_b", 
                     "avg_weights",
@@ -123,7 +129,7 @@ if __name__ == "__main__":
         
         path = f"results/{ENV_NAME}/{method}/horizon_{HORIZON}/"
 
-        exact_weights_estimator = ExactWeightsEstimator(behaviour_policy, HORIZON, env, NUM_STATES, 30000)
+        exact_weights_estimator = ExactWeightsEstimator(behaviour_policy, HORIZON, env, NUM_STATES, 3000)
 
         for RUN_NUMBER in range(RUNS_NUMBER):
             file_logger = Logger(path+f"run_{RUN_NUMBER}.csv", columns)
@@ -153,7 +159,7 @@ if __name__ == "__main__":
                 upper_quantile_net.save(path + 'data/networks/upper_quantile_net.pth')
 
 
-            epsilons = np.linspace(0, 1, 21)
+            epsilons = np.linspace(0, 1, 11)
             epsilon_lengths = []
             for epsilon_value in epsilons:
 
@@ -188,25 +194,33 @@ if __name__ == "__main__":
                 lengths = []
                 true_values = []
                 for interval in intervals:
-                    if interval[-1] >= interval[2] and interval[-1] <= interval[3]:
+                    if interval[-1] >= interval[1] and interval[-1] <= interval[2]:
                         included += 1
-                    lengths.append(interval[3]-interval[2])
+                    lengths.append(interval[2]-interval[1])
                     true_values.append(interval[-1])
 
                 included = included/len(intervals)
                 mean_length = np.mean(lengths)
                 epsilon_lengths.append(mean_length)
 
-                print("Epsilon: {} | Coverage: {:.2f}% | Average interval length: {} | Original interval: {}-{}| Quantile: {:.3f} | Avg weights: {:.3f}| w_hat/w: {:.3f}| avg_delta_w: {:.3f}".format(epsilon_value, included*100, mean_length, lower_quantile, upper_quantile, np.mean(quantiles), np.mean(weights), np.mean(weights/true_weights), 0.5*np.mean(np.abs(true_weights-weights))))
+                quantiles = np.array(quantiles)
+                gain_q = quantiles[:,0] + quantiles[:, 1] - 2 *quantiles[:,-1]
+                print("Epsilon: {} | Coverage: {:.2f}% | Average interval length: {} | Original interval: {}-{} | Gain: {:.3f} | Quantile: {:.3f} - {:.3f} - {:.3f} | Avg weights: {:.3f}| w_hat/w: {:.3f}| avg_delta_w: {:.3f}".format(epsilon_value, included*100, mean_length, lower_quantile, upper_quantile,np.mean(gain_q), np.mean(quantiles, axis=0)[0], np.mean(quantiles,axis=0)[1],np.mean(quantiles,axis=0)[2], np.mean(weights), np.mean(weights/true_weights), 0.5*np.mean(np.abs(true_weights-weights))))
                 file_logger.write([
                     epsilon_value, 
                     included*100, 
                     mean_length,
                     np.std(lengths), 
                     lower_quantile, 
-                    upper_quantile, 
-                    np.mean(quantiles),
-                    np.std(quantiles), 
+                    upper_quantile,
+                    np.mean(gain_q),
+                    np.mean(quantiles,axis=0)[0],
+                    np.mean(quantiles,axis=0)[1],
+                    np.mean(quantiles,axis=0)[2],
+                    np.std(gain_q),
+                    np.std(quantiles,axis=0)[0], 
+                    np.std(quantiles,axis=0)[1], 
+                    np.std(quantiles,axis=0)[2], 
                     HORIZON, 
                     EPSILON, 
                     np.mean(weights),
