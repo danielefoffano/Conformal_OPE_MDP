@@ -76,6 +76,7 @@ class ConformalSet(object):
         for test_point in test_points:
             point = Point(test_point.initial_state, test_point.cumulative_reward)
             x = torch.tensor([point.initial_state], dtype = torch.float32)
+
             lower_val = int(self.lower_quantile_nework(x).item())
             upper_val = int(self.upper_quantile_network(x).item())
 
@@ -83,7 +84,6 @@ class ConformalSet(object):
             conf_range = []
             quantile_range = []
             
-
             # Use scores and weights to find the scores quantile to conformalize the predictors
             if n_cpu  == 1 or gradient_based == True:
                 for y in y_vals_test:
@@ -93,10 +93,10 @@ class ConformalSet(object):
                     else:
                         test_point_weight = compute_weight(point.initial_state, y, self.behaviour_policy, self.pi_star, self.model, self.horizon)
 
+
                     weights_y = np.concatenate((ordered_weights_filtered, [test_point_weight]))
                     normalized_weights_y = weights_y / weights_y.sum()
                     cumsum_weights = np.cumsum(normalized_weights_y)
-                    
 
                     quantile = 0.90                    
                     quantile_val = ordered_scores[np.argwhere(cumsum_weights >= quantile)][0]
@@ -105,6 +105,7 @@ class ConformalSet(object):
                     if score_test <= quantile_val or np.isinf(quantile_val):
                         conf_range.append(y)
                     quantile_range.append(quantile_val)
+
             else:
                 with mp.Pool(n_cpu) as pool:
                     intervals, quantiles = zip(*list(pool.starmap(compute_weight_iterator, [

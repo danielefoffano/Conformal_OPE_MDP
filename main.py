@@ -171,6 +171,7 @@ if __name__ == "__main__":
 
                 save_important_dictionary(env, weights_estimator, exact_weights_estimator, conformal_set, weights, scores, weight_network, path, RUN_NUMBER, epsilon_value)
 
+
                 intervals = conformal_set.build_set(test_points, weights, scores, N_CPU, weight_network, GRADIENT_BASED)
                 results_intervals = Interval.analyse_intervals(intervals)
                 
