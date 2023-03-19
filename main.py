@@ -17,6 +17,7 @@ import random
 from weights import WeightsEstimator, ExactWeightsEstimator
 from conformal_set import ConformalSet
 from custom_environments.inventory import Inventory
+from custom_environments.linear_system import LinearSystem
 from multiprocessing import freeze_support
 from logger import Logger
 import os
@@ -103,6 +104,22 @@ if __name__ == "__main__":
         # Uniform policy
         pi_star_probs = np.ones(shape=(NUM_STATES,NUM_ACTIONS))/NUM_ACTIONS
         pi_uniform = TableBasedPolicy(pi_star_probs)
+        
+    elif ENV_NAME == "linear_system":
+        env = LinearSystem()
+        raise Exception('not implemented')
+        # NUM_REWARDS = env.max_r - env.min_r + 1
+        # model = DiscreteRewardDynamicsModel(NUM_STATES, NUM_ACTIONS, NUM_REWARDS, env.min_r)
+
+        # # Compute optimal policy with VI
+        # VI_v, VI_pi = value_iteration(env, DISCOUNT_FACTOR)
+        # behaviour_policy = EpsilonGreedyPolicy(VI_pi, EPSILON, NUM_ACTIONS)
+
+        # greedy_policy = EpsilonGreedyPolicy(VI_pi, 0, NUM_ACTIONS)
+
+        # # Uniform policy
+        # pi_star_probs = np.ones(shape=(NUM_STATES,NUM_ACTIONS))/NUM_ACTIONS
+        # pi_uniform = TableBasedPolicy(pi_star_probs)
     
     test_state = np.random.randint(env.ns)
 
