@@ -6,7 +6,7 @@ warnings.simplefilter(action='ignore', category=UserWarning)
 import numpy as np
 from random_mdp import MDPEnv, MDPEnvDiscreteRew, MDPEnvBernoulliRew
 from agent import QlearningAgent
-from greedy_policy import EpsilonGreedyPolicy, TableBasedPolicy, MixedPolicy
+from policy import EpsilonGreedyPolicy, TableBasedPolicy, MixedPolicy
 from utils import get_data, collect_exp, train_predictor, train_behaviour_policy, value_iteration, save_important_dictionary
 from networks import MLP, WeightsMLP, WeightsTransformerMLP
 from dynamics_model import DiscreteRewardDynamicsModel, ContinuousRewardDynamicsModel
@@ -56,12 +56,11 @@ if __name__ == "__main__":
     NUM_STEPS = 20000                                                                   # behaviour agent learning steps
     N_TRAJECTORIES = 40000                                                              # number of trajectories collected as dataset
     HORIZONS = [int(args.horizon)]                                                           # trajectory horizon
-    NUM_TEST_POINTS = 100
-    NUM_POINTS_WEIGHT_ESTIMATOR = 3000
+    NUM_TEST_POINTS = 1000
+    NUM_POINTS_WEIGHT_ESTIMATOR = 30000
     NUM_NEURONS_QUANTILE_NETWORKS = 64
     NUM_NEURONS_WEIGHT_ESTIMATOR = 128
-    epsilons = np.linspace(0, 1, 11)
-
+    epsilons = [0.3, 0.4, 0.5]
     P = np.random.dirichlet(np.ones(NUM_STATES), size=(NUM_STATES, NUM_ACTIONS))        # MDP transition probability functions
     if ENV_NAME == "random_mdp":
         if REWARD_TYPE == "bernoulli":
@@ -146,24 +145,29 @@ if __name__ == "__main__":
             
             epsilon_lengths = []
             for epsilon_value in epsilons:
-                print(f'> Evaluating for epsilon = {epsilon_value}')
+                print(f'---------- Evaluating for epsilon = {epsilon_value} ----------')
                 pi_target = MixedPolicy(pi_uniform, greedy_policy, epsilon_value)                
 
+                print(f'> Collecting test points')
                 test_points = collect_exp(env, NUM_TEST_POINTS, HORIZON, pi_target, None, test_state, discount=DISCOUNT_REWARDS)
+
+                print(f'> Estimating exact weights')
+                exact_weights_estimator.init_pi_target(pi_target)
+                true_weights = exact_weights_estimator.compute_true_ratio_dataset(data_cal)
+               
 
                 print(f'> Estimate weights for calibration data')
                 weights_estimator = WeightsEstimator(behaviour_policy, pi_target, lower_quantile_net, upper_quantile_net)
-                exact_weights_estimator.init_pi_target(pi_target)
-
                 if GRADIENT_BASED:
                     if TRANSFORMER: 
                         scores, weights, weight_network = weights_estimator.gradient_method(data_tr, data_cal, LR, EPOCHS_WEIGHTS, lambda:WeightsTransformerMLP(2 + 2*NUM_STATES*NUM_ACTIONS, NUM_NEURONS_WEIGHT_ESTIMATOR, 1, upper_quantile_net.mean, upper_quantile_net.std, behaviour_policy, pi_target))
                     else: 
                         scores, weights, weight_network = weights_estimator.gradient_method(data_tr, data_cal, LR, EPOCHS_WEIGHTS, lambda:WeightsMLP(2, NUM_NEURONS_WEIGHT_ESTIMATOR, 1, upper_quantile_net.mean, upper_quantile_net.std))
                 else:
+                    raise Exception('To be updated')
                     scores, weights = weights_estimator.model_based(data_tr, data_cal, HORIZON, model, N_CPU)
                     weight_network = None
-                true_weights = exact_weights_estimator.compute_true_ratio_dataset(data_cal)
+                
                 
                 # Generate y values for test point
                 print(f'> Computing conformal set')
@@ -172,7 +176,8 @@ if __name__ == "__main__":
                 save_important_dictionary(env, weights_estimator, exact_weights_estimator, conformal_set, weights, scores, weight_network, path, RUN_NUMBER, epsilon_value)
 
 
-                intervals = conformal_set.build_set(test_points, weights, scores, N_CPU, weight_network, GRADIENT_BASED)
+                intervals = conformal_set.build_set(test_points, weights.copy(), scores.copy(), N_CPU, weight_network, GRADIENT_BASED)
+
                 results_intervals = Interval.analyse_intervals(intervals)
                 
                 print('-------- Original method --------')

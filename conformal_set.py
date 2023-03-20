@@ -9,13 +9,14 @@ from typing import Sequence
 import torch.nn as nn
 from numpy.typing import NDArray
 from copy import deepcopy
+from policy import Policy
 
-def compute_cdf(_weights: NDArray[np.float64], _test_point: float):
+def compute_cdf(_weights: NDArray[np.float64], _test_point: float) -> NDArray[np.float64]:
     new_weights = np.concatenate((_weights, [_test_point]))
     weighted_density = new_weights / np.sum(new_weights)
     return np.cumsum(weighted_density)
     
-def compute_weight_iterator(idx, test_point, y, behaviour_policy, pi_star, model, horizon, weights, scores, lower_val, upper_val):
+def compute_weight_iterator(idx, test_point, y, behaviour_policy: Policy, pi_star: Policy, model, horizon, weights, scores, lower_val, upper_val):
     print("Computing weight for test value {}".format(idx))
     
     test_point_weight = compute_weight(test_point[0][0].state, y, behaviour_policy, pi_star, model, horizon)
@@ -117,7 +118,7 @@ def evaluate_trajectory(test_point: Point, lower_quantile_network: nn.Module, up
 
 
 class ConformalSet(object):
-    def __init__(self, lower_quantile_network: MLP, upper_quantile_network: MLP,  behaviour_policy, pi_star, model, horizon: int, discount: float):
+    def __init__(self, lower_quantile_network: MLP, upper_quantile_network: MLP,  behaviour_policy: Policy, pi_star: Policy, model, horizon: int, discount: float):
         self.lower_quantile_nework = lower_quantile_network
         self.upper_quantile_network = upper_quantile_network
         self.behaviour_policy = behaviour_policy

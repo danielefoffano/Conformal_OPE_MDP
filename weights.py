@@ -9,6 +9,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from numpy.typing import NDArray
 from scipy.stats import gaussian_kde
+import multiprocessing as mp
+from policy import Policy
+
 def model_based_iterator(id_traj: int, traj: Trajectory, cumul_rew: float, behaviour_policy, pi_star, model, horizon, lower_quantile_network, upper_quantile_network):
     state = torch.tensor([traj.trajectory[0].state], dtype = torch.float32)
     # Compute weight generating Monte-Carlo trajectories using learned model
@@ -22,8 +25,9 @@ def model_based_iterator(id_traj: int, traj: Trajectory, cumul_rew: float, behav
         cumul_rew - upper_quantile_network(state).item())
     return weight, score
 
+
 class ExactWeightsEstimator(object):
-    def __init__(self, pi_b, horizon, env, num_s, n_samples, discount: float):
+    def __init__(self, pi_b: Policy, horizon: int, env, num_s: int, n_samples: int , discount: float):
         
         plt.ioff()
         self.pi_b = pi_b
@@ -32,12 +36,12 @@ class ExactWeightsEstimator(object):
         self.num_s = num_s
         self.n_samples = n_samples
         self.horizon = horizon
-        # self.state_x_b = []
-        # self.state_y_b = []
-        # self.state_x_target = []
-        # self.state_y_target = []
-        self.state_pdf_estimator_behav: Sequence[gaussian_kde] = []
-        self.state_pdf_estimator_target: Sequence[gaussian_kde] = []
+        self.state_x_b = []
+        self.state_y_b = []
+        self.state_x_target = []
+        self.state_y_target = []
+        self.state_pdf_estimator_behav: List[gaussian_kde] = []
+        self.state_pdf_estimator_target: List[gaussian_kde] = []
         self.discount = discount
 
         for s in range(num_s):
@@ -45,13 +49,9 @@ class ExactWeightsEstimator(object):
             mc_samples_b = collect_exp(env = env, n_trajectories = n_samples, horizon = horizon, policy = pi_b, start_state = s, model = None, discount=discount)
 
             rew_cumul_b = [traj.cumulative_reward for traj in mc_samples_b]
-            #data_x_b, data_y_b = sns.distplot(rew_cumul_b).get_lines()[0].get_data()
-            
             self.state_pdf_estimator_behav.append(gaussian_kde(rew_cumul_b))
-            # self.state_x_b.append(data_x_b)
-            # self.state_y_b.append(data_y_b)
 
-    def init_pi_target(self, pi_target):
+    def init_pi_target(self, pi_target: Policy):
 
         self.pi_target = pi_target
         for s in range(self.num_s):
@@ -60,25 +60,24 @@ class ExactWeightsEstimator(object):
 
             rew_cumul_target = [traj.cumulative_reward for traj in mc_samples_target]
             self.state_pdf_estimator_target.append(gaussian_kde(rew_cumul_target))
-            # data_x_target, data_y_target = sns.distplot(rew_cumul_target).get_lines()[0].get_data()
-            # self.state_x_target.append(data_x_target)
-            # self.state_y_target.append(data_y_target)
 
     
-    def compute_true_ratio(self, traj: Trajectory) -> float:
-        s = traj.initial_state
-        cumul_rew = traj.cumulative_reward
+    def compute_true_ratio(self, point: Point) -> float:
+        s = point.initial_state
+        cumul_rew = point.cumulative_reward
 
-        p_rew_cum_b = self.state_pdf_estimator_behav[s].evaluate(cumul_rew)# np.interp(cumul_rew, self.state_x_b[s], self.state_y_b[s])
-        p_rew_cum_target = self.state_pdf_estimator_target[s].evaluate(cumul_rew)#np.interp(cumul_rew, self.state_x_target[s], self.state_y_target[s])
-        return p_rew_cum_target / (1e-16 + p_rew_cum_b)
+        p_rew_cum_b = self.state_pdf_estimator_behav[s].evaluate(cumul_rew).item()
+        p_rew_cum_target = self.state_pdf_estimator_target[s].evaluate(cumul_rew).item()
+        
+        ratio = p_rew_cum_target / p_rew_cum_b
+        return ratio
     
     def compute_true_ratio_dataset(self, dataset: Sequence[Trajectory]) -> NDArray[np.float64]:
-        return np.array([self.compute_true_ratio(data_point) for data_point in dataset])
+        return np.array([self.compute_true_ratio(Point(data_point.initial_state, data_point.cumulative_reward)) for data_point in dataset])
 
 
 class WeightsEstimator(object):
-    def __init__(self, behaviour_policy, pi_star, lower_quantile_network: MLP, upper_quantile_network: MLP):
+    def __init__(self, behaviour_policy: Policy, pi_star: Policy, lower_quantile_network: MLP, upper_quantile_network: MLP):
         self.behaviour_policy = behaviour_policy
         self.pi_star = pi_star
         self.lower_quantile_network = lower_quantile_network
@@ -106,7 +105,8 @@ class WeightsEstimator(object):
         scores = np.array(scores)
         return scores, weights
 
-    def gradient_method(self, data_tr: Sequence[Trajectory], data_cal: Sequence[Trajectory], lr: float, epochs: int, make_network: Callable[[], WeightsMLP]) -> Tuple[List[float], List[float]]:
+    def gradient_method(self, data_tr: Sequence[Trajectory], data_cal: Sequence[Trajectory], lr: float,
+                        epochs: int, make_network: Callable[[], WeightsMLP]) -> Tuple[NDArray[np.float64], NDArray[np.float64], WeightsMLP]:
         scores = []
         weights = []
 

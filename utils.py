@@ -13,6 +13,7 @@ from types_cp import Trajectory, Interval
 from numpy.typing import NDArray
 import scipy.interpolate as interpolate
 from scipy import signal
+from policy import Policy
 
 MC_SAMPLES = 500
 
@@ -94,7 +95,7 @@ class EarlyStopping(object):
             self.best_score = score
             self.counter = 0      
                 
-def get_data(env, n_trajectories: int, behaviour_policy, model, horizon: int, path: str, discount: float) -> Tuple[any, Sequence[Trajectory]]:
+def get_data(env, n_trajectories: int, behaviour_policy: Policy, model, horizon: int, path: str, discount: float) -> Tuple[any, Sequence[Trajectory]]:
     print('> Loading/collecting data')
     try:
         with open(path + "data/saved_dataset.pkl", "rb") as f1:
@@ -108,7 +109,7 @@ def get_data(env, n_trajectories: int, behaviour_policy, model, horizon: int, pa
         model.save_functions(path)
     return model, dataset
 
-def collect_exp(env, n_trajectories: int, horizon: int, policy, model, start_state: int, discount: float = 1) -> Sequence[Trajectory]:
+def collect_exp(env, n_trajectories: int, horizon: int, policy: Policy, model, start_state: int, discount: float = 1) -> Sequence[Trajectory]:
 
     dataset: Sequence[Trajectory] = []
 
@@ -197,7 +198,8 @@ def train_predictor(quantile_net: torch.nn.Module, data_tr: Sequence[Trajectory]
         
     return y_avg, y_std
             
-def train_weight_function(training_dataset: Sequence[Trajectory], weights_labels: Sequence[float], weight_network: torch.nn.Module, lr: float, epochs: int, pi_b, pi_target):
+def train_weight_function(training_dataset: Sequence[Trajectory], weights_labels: Sequence[float],
+                          weight_network: torch.nn.Module, lr: float, epochs: int, pi_b: Policy, pi_target: Policy):
     random.shuffle(training_dataset)
 
     split_idx = len(training_dataset) // 10
@@ -347,7 +349,7 @@ def compute_weight(s0, y, pi_b, pi_star, model, horizon):
     return min((tot_sum_pi_star / (m+1)) / (tot_sum_pi_b / (n+1)), 5)
 
 
-def compute_weights_gradient(traj: Trajectory, pi_b, pi_star) -> float:
+def compute_weights_gradient(traj: Trajectory, pi_b: Policy, pi_star: Policy) -> float:
     prod_pi_b = np.prod([pi_b.get_action_prob(step.state, step.action) for step in traj.trajectory])
     prod_pi_star = np.prod([pi_star.get_action_prob(step.state, step.action) for step in traj.trajectory])
 
