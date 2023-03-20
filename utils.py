@@ -222,6 +222,7 @@ def train_weight_function(training_dataset: Sequence[Trajectory], weights_labels
     early_stopping = EarlyStopping(10, min_delta = 0.)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', verbose=True, cooldown=5, patience=30, factor=0.7)
     tqdm_epochs = tqdm(range(epochs))
+    
     for epoch in tqdm_epochs:
         random_batches = list(data_batches)
         random.shuffle(random_batches)
@@ -230,11 +231,12 @@ def train_weight_function(training_dataset: Sequence[Trajectory], weights_labels
             batch = torch.stack(batch, 0)
             x_batch = batch[:,:-1]
             y_batch = batch[:,-1].unsqueeze(1)
-
+  
             optimizer.zero_grad()
 
-            output = weight_network(x_batch)
-            loss = criterion(output.log(), torch.clamp(y_batch, 1e-16).log())
+            output = weight_network(x_batch).log()
+            loss = criterion(output, torch.clamp(y_batch.log(), -7))
+
             loss.backward()
             torch.nn.utils.clip_grad.clip_grad_norm_(weight_network.parameters(), 0.2)
             optimizer.step()
@@ -243,8 +245,8 @@ def train_weight_function(training_dataset: Sequence[Trajectory], weights_labels
             weight_network
         if epoch > 19:
             with torch.no_grad():
-                output_val = weight_network(x_val)
-                loss_val = criterion(output_val.log(), torch.clamp(y_val, 1e-16).log())
+                output_val = weight_network(x_val).log()
+                loss_val = criterion(output_val, torch.clamp(y_val.log(), -7))
                 desc = "Epoch {} - Training weights network - Loss: {} - Loss val: {}".format(epoch, np.mean(losses), loss_val.item())
                 tqdm_epochs.set_description(desc)
                 #scheduler.step(loss_val)
@@ -387,7 +389,7 @@ def value_iteration(env, gamma: float, eps: float = 1e-9) -> Tuple[np.ndarray, n
     pi[np.arange(x.size), x] = 1
     return V, pi
 
-def save_important_dictionary(env, weights_estimator, exact_weights_estimator, conformal_set, weights, scores, weight_network, path, RUN_NUMBER, epsilon_value):
+def save_important_dictionary(env, weights_estimator, exact_weights_estimator, conformal_set, weights, scores, path, RUN_NUMBER, epsilon_value):
 
     save_dictionary = {
         "Weights_estimator": weights_estimator,
@@ -395,7 +397,6 @@ def save_important_dictionary(env, weights_estimator, exact_weights_estimator, c
         "Conformal_set": conformal_set,
         "weights": weights,
         "scores": scores,
-        "weight_network": weight_network,
         "env": env
     }
 

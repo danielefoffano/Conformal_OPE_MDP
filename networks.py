@@ -93,7 +93,7 @@ class WeightsTransformerMLP(nn.Module):
             return torch.clip(y, min = -4, max = 4).exp()
         
 class WeightsMLP(nn.Module):
-        def __init__(self, input_size:int, hidden_size: int, output_size: int, y_mean: float, y_std: float, max_value: float = 5.):
+        def __init__(self, input_size:int, hidden_size: int, output_size: int, y_mean: float, y_std: float, max_value: float = 5., state_norm_val: float =10):
             super(WeightsMLP, self).__init__()
             self.max_value = max_value
             self.input_size = input_size
@@ -101,9 +101,9 @@ class WeightsMLP(nn.Module):
             self.output_size = output_size
             self.y_mean = y_mean
             self.y_std = y_std
-
+            self.state_norm_val = state_norm_val
             self.network = nn.Sequential(*[
-                nn.Linear(self.input_size, self.hidden_size),
+               nn.Linear(self.input_size, self.hidden_size),
                 nn.ReLU(),
                 nn.Linear(self.hidden_size, self.hidden_size),
                 nn.ReLU(),
@@ -111,8 +111,8 @@ class WeightsMLP(nn.Module):
             ])
     
         def forward(self, x: torch.Tensor) -> torch.Tensor:
-
-            x[...,1] = (x[...,1]-self.y_mean)/self.y_std
+            x[:,0] = x[:, 0] / self.state_norm_val
+            x[:,1] = (x[:, 1] - self.y_mean)/self.y_std
             y = self.network(x)
             return y.exp()
         

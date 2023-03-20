@@ -9,6 +9,12 @@ class Experience(NamedTuple):
     reward: float
     next_state: int
     done: bool
+    
+class Scores(NamedTuple):
+    score_low: float
+    score_high: float
+    score_orig: float
+    score_cumul: float
 
 class ScoresWeightsData(NamedTuple):
     scores: NDArray[np.float64]
@@ -225,9 +231,9 @@ class LoggerResults(NamedTuple):
     epsilon_pi_behavior: float
     avg_weights: float
     std_weights: float
-    avg_ratio_what_w: float
-    std_ratio_what_w: float
-    median_ratio_what_w: float
+    avg_log_ratio_what_w: float
+    std_log_ratio_what_w: float
+    median_log_ratio_what_w: float
     avg_delta_w: float
     std_delta_w: float
     median_delta_w: float

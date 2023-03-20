@@ -10,6 +10,7 @@ import torch.nn as nn
 from numpy.typing import NDArray
 from copy import deepcopy
 from policy import Policy
+from weights import WeightsEstimator
 
 def compute_cdf(_weights: NDArray[np.float64], _test_point: float) -> NDArray[np.float64]:
     new_weights = np.concatenate((_weights, [_test_point]))
@@ -43,7 +44,7 @@ def compute_weight_iterator(idx, test_point, y, behaviour_policy: Policy, pi_sta
 
 
 def evaluate_trajectory(test_point: Point, lower_quantile_network: nn.Module, upper_quantile_network: nn.Module,
-                        weight_network: nn.Module,
+                        weights_estimator: WeightsEstimator,
                         data_low: ScoresWeightsData,
                         data_high: ScoresWeightsData,
                         data_orig: ScoresWeightsData,
@@ -66,8 +67,7 @@ def evaluate_trajectory(test_point: Point, lower_quantile_network: nn.Module, up
     quantile_range_cumul_high = []
     
     def evaluate_point(s, y):
-        x = torch.tensor([s, y], dtype = torch.float32)
-        test_point_weight = weight_network(x[None,:])[0].item()
+        test_point_weight = weights_estimator.evaluate_point(Point(s, y))
         
         s_low = lower_val - y
         s_high = y - upper_val
@@ -108,7 +108,11 @@ def evaluate_trajectory(test_point: Point, lower_quantile_network: nn.Module, up
 
     for y in y_vals_test:
         evaluate_point(point.initial_state,y)
-        
+    
+    conf_range = [0] if len(conf_range) == 0 else conf_range
+    conf_range_cumul = [0] if len(conf_range_cumul) == 0 else conf_range_cumul
+    conf_range_double = [0] if len(conf_range_double) == 0 else conf_range_double
+    
     return Interval(
         point, np.min(conf_range), np.max(conf_range), np.min(conf_range_double), np.max(conf_range_double),
         np.min(conf_range_cumul), np.max(conf_range_cumul),
@@ -147,7 +151,7 @@ class ConformalSet(object):
         return quantile_val_up[0], quantile_val_low[0]
     
     def build_set(self, test_points: Sequence[Trajectory], weights: Sequence[float],
-                  scores: Sequence[float], n_cpu: int = 2, weight_network: WeightsMLP = None, gradient_based: bool = False) -> Sequence[Interval]:
+                  scores: Sequence[float],  weights_estimator: WeightsEstimator, n_cpu: int = 2) -> Sequence[Interval]:
         intervals: Sequence[Interval] = []
         
         ordered_scores_low, ordered_weights_low = filter_scores_weights(scores[:, 0], weights)
@@ -164,11 +168,11 @@ class ConformalSet(object):
         data_high = ScoresWeightsData(ordered_scores_high, ordered_weights_high)
         data_orig = ScoresWeightsData(ordered_scores_orig, ordered_weights_orig)
         data_cumul = ScoresWeightsData(ordered_scores_cumul, ordered_weights_cumul)
-        
+
         with mp.Pool(n_cpu) as p:
             intervals = list(p.starmap(evaluate_trajectory, [
                 (test_point, deepcopy(self.lower_quantile_nework), deepcopy(self.upper_quantile_network),
-                 deepcopy(weight_network),
+                 deepcopy(weights_estimator),
                  deepcopy(data_low), deepcopy(data_high), deepcopy(data_orig), deepcopy(data_cumul)) for test_point in test_points]))
         
  
