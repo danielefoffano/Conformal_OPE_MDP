@@ -9,10 +9,8 @@ from agent import QlearningAgent
 from greedy_policy import EpsilonGreedyPolicy, TableBasedPolicy, MixedPolicy
 from utils import get_data, collect_exp, train_predictor, train_behaviour_policy, value_iteration, save_important_dictionary
 from networks import MLP, WeightsMLP, WeightsTransformerMLP
-from dynamics_model import DynamicsModel, DiscreteRewardDynamicsModel, ContinuousRewardDynamicsModel
+from dynamics_model import DiscreteRewardDynamicsModel, ContinuousRewardDynamicsModel
 import torch
-from collections import defaultdict
-import pickle
 import random
 from weights import WeightsEstimator, ExactWeightsEstimator
 from conformal_set import ConformalSet
@@ -44,9 +42,11 @@ if __name__ == "__main__":
     TRANSFORMER = False
     EPSILON = 0.4
     QUANTILE = 0.1
-    LR = 1e-4
+    LR = 6e-5
+    LR_QUANTILES = 1e-4
     MOMENTUM = 0.9
-    EPOCHS = 300
+    EPOCHS_QUANTILES = 300
+    EPOCHS_WEIGHTS = 300
     NUM_ACTIONS = 10                                                                    # MDP action space size
     NUM_STATES = 10                                                                     # MDP states space size
     NUM_REWARDS = 10                                                                    # MDP reward space size (for discrete MDP)
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     NUM_TEST_POINTS = 100
     NUM_POINTS_WEIGHT_ESTIMATOR = 3000
     NUM_NEURONS_QUANTILE_NETWORKS = 64
-    NUM_NEURONS_WEIGHT_ESTIMATOR = 64
+    NUM_NEURONS_WEIGHT_ESTIMATOR = 128
     epsilons = np.linspace(0, 1, 11)
 
     P = np.random.dirichlet(np.ones(NUM_STATES), size=(NUM_STATES, NUM_ACTIONS))        # MDP transition probability functions
@@ -131,13 +131,13 @@ if __name__ == "__main__":
             lower_quantile_net = MLP(1, NUM_NEURONS_QUANTILE_NETWORKS, 1, False)
 
             if not lower_quantile_net.load(path + 'data/networks/lower_quantile_net.pth'):
-                y_avg, y_std = train_predictor(lower_quantile_net, data_tr, epochs=EPOCHS, quantile=QUANTILE/2, lr=LR, momentum=MOMENTUM)
+                y_avg, y_std = train_predictor(lower_quantile_net, data_tr, epochs=EPOCHS_QUANTILES, quantile=QUANTILE/2, lr=LR_QUANTILES, momentum=MOMENTUM)
                 lower_quantile_net.set_normalization(y_avg, y_std)
                 os.makedirs(os.path.dirname(path + 'data/networks/lower_quantile_net.pth'), exist_ok=True)
                 lower_quantile_net.save(path + 'data/networks/lower_quantile_net.pth')
 
             if not upper_quantile_net.load(path + 'data/networks/upper_quantile_net.pth'):
-                y_avg, y_std = train_predictor(upper_quantile_net, data_tr, epochs=EPOCHS, quantile=1-(QUANTILE/2), lr=LR, momentum=MOMENTUM)
+                y_avg, y_std = train_predictor(upper_quantile_net, data_tr, epochs=EPOCHS_QUANTILES, quantile=1-(QUANTILE/2), lr=LR_QUANTILES, momentum=MOMENTUM)
                 upper_quantile_net.set_normalization(y_avg, y_std)
                 os.makedirs(os.path.dirname(path + 'data/networks/upper_quantile_net.pth'), exist_ok=True)
                 upper_quantile_net.save(path + 'data/networks/upper_quantile_net.pth')
@@ -157,13 +157,12 @@ if __name__ == "__main__":
 
                 if GRADIENT_BASED:
                     if TRANSFORMER: 
-                        scores, weights, weight_network = weights_estimator.gradient_method(data_tr, data_cal, LR, EPOCHS, lambda:WeightsTransformerMLP(2 + 2*NUM_STATES*NUM_ACTIONS, NUM_NEURONS_WEIGHT_ESTIMATOR, 1, upper_quantile_net.mean, upper_quantile_net.std, behaviour_policy, pi_target))
+                        scores, weights, weight_network = weights_estimator.gradient_method(data_tr, data_cal, LR, EPOCHS_WEIGHTS, lambda:WeightsTransformerMLP(2 + 2*NUM_STATES*NUM_ACTIONS, NUM_NEURONS_WEIGHT_ESTIMATOR, 1, upper_quantile_net.mean, upper_quantile_net.std, behaviour_policy, pi_target))
                     else: 
-                        scores, weights, weight_network = weights_estimator.gradient_method(data_tr, data_cal, LR, EPOCHS, lambda:WeightsMLP(2, NUM_NEURONS_WEIGHT_ESTIMATOR, 1, upper_quantile_net.mean, upper_quantile_net.std))
+                        scores, weights, weight_network = weights_estimator.gradient_method(data_tr, data_cal, LR, EPOCHS_WEIGHTS, lambda:WeightsMLP(2, NUM_NEURONS_WEIGHT_ESTIMATOR, 1, upper_quantile_net.mean, upper_quantile_net.std))
                 else:
                     scores, weights = weights_estimator.model_based(data_tr, data_cal, HORIZON, model, N_CPU)
                     weight_network = None
-
                 true_weights = exact_weights_estimator.compute_true_ratio_dataset(data_cal)
                 
                 # Generate y values for test point

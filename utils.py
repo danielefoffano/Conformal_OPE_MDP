@@ -10,8 +10,41 @@ from typing import Tuple, Optional, Sequence
 import random
 import os
 from types_cp import Trajectory, Interval
+from numpy.typing import NDArray
+import scipy.interpolate as interpolate
+from scipy import signal
 
 MC_SAMPLES = 500
+
+def unique_scores_weights(scores: NDArray[np.float64], weights: NDArray[np.float64]) -> Tuple[NDArray[np.float64], NDArray[np.float64]]:
+    # argsort = np.argsort(scores)
+    # return scores[argsort], weights[argsort]
+    ordered_scores, ordered_indexes, counts = np.unique(scores, return_index=True, return_counts=True)
+    ordered_weights = weights[ordered_indexes] * counts
+    return ordered_scores, ordered_weights
+
+def filter_scores_weights(scores: NDArray[np.float64], weights: NDArray[np.float64], enable_fft: bool = False) -> Tuple[NDArray[np.float64], NDArray[np.float64]]:
+    x,y = unique_scores_weights(scores, weights)  
+
+    if enable_fft is False:
+        return x, y
+    f_interp = interpolate.interp1d(x, y, kind='linear')
+    new_x = np.linspace(x.min(), x.max(), 100 * len(x))
+    fy = f_interp(new_x)
+    spectrum = 2 *abs(np.fft.fft(fy)[:len(fy) // 2]) / len(fy)
+    freq = np.fft.fftfreq(len(spectrum))[:len(fy) // 2]
+
+    # Find 90% of the energy
+    mask = (np.cumsum(spectrum) / np.sum(spectrum)) >= 0.95
+    peak = freq[mask][0]
+
+    # Non causal filter
+    xb, xa = signal.butter(4, peak)
+    filtered_signal = signal.filtfilt(xb, xa, fy)
+
+    return new_x, filtered_signal
+
+
 
 class PinballLoss():
     def __init__(self, quantile=0.10, reduction='mean'):
@@ -180,12 +213,12 @@ def train_weight_function(training_dataset: Sequence[Trajectory], weights_labels
     x_val = xy_val[:,:-1]
     y_val = xy_val[:,-1].unsqueeze(1)
 
-    criterion = torch.nn.MSELoss()
+    criterion = torch.nn.HuberLoss()
     optimizer = torch.optim.Adam(weight_network.parameters(), lr = lr)
     rand_idxs = torch.randperm(xy.size()[0])
     data_batches = torch.utils.data.BatchSampler(xy[rand_idxs], 64, False)
     early_stopping = EarlyStopping(10, min_delta = 0.)
-
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', verbose=True, cooldown=5, patience=30, factor=0.7)
     tqdm_epochs = tqdm(range(epochs))
     for epoch in tqdm_epochs:
         random_batches = list(data_batches)
@@ -199,8 +232,9 @@ def train_weight_function(training_dataset: Sequence[Trajectory], weights_labels
             optimizer.zero_grad()
 
             output = weight_network(x_batch)
-            loss = criterion(output, y_batch)
+            loss = criterion(output.log(), torch.clamp(y_batch, 1e-16).log())
             loss.backward()
+            torch.nn.utils.clip_grad.clip_grad_norm_(weight_network.parameters(), 0.2)
             optimizer.step()
             losses.append(loss.item())
 
@@ -208,12 +242,11 @@ def train_weight_function(training_dataset: Sequence[Trajectory], weights_labels
         if epoch > 19:
             with torch.no_grad():
                 output_val = weight_network(x_val)
-                loss_val = criterion(output_val, y_val)
-
+                loss_val = criterion(output_val.log(), torch.clamp(y_val, 1e-16).log())
                 desc = "Epoch {} - Training weights network - Loss: {} - Loss val: {}".format(epoch, np.mean(losses), loss_val.item())
                 tqdm_epochs.set_description(desc)
-                
-                early_stopping(loss_val.item())
+                #scheduler.step(loss_val)
+                early_stopping(loss_val.item()) 
                 # if early_stopping.early_stopping:
                 #     return
         else:

@@ -9,7 +9,10 @@ class Experience(NamedTuple):
     reward: float
     next_state: int
     done: bool
-    
+
+class ScoresWeightsData(NamedTuple):
+    scores: NDArray[np.float64]
+    weights: NDArray[np.float64]
     
 class Trajectory(NamedTuple):
     initial_state: int

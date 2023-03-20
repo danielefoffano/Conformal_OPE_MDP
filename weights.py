@@ -8,7 +8,7 @@ import multiprocessing as mp
 import seaborn as sns
 import matplotlib.pyplot as plt
 from numpy.typing import NDArray
-
+from scipy.stats import gaussian_kde
 def model_based_iterator(id_traj: int, traj: Trajectory, cumul_rew: float, behaviour_policy, pi_star, model, horizon, lower_quantile_network, upper_quantile_network):
     state = torch.tensor([traj.trajectory[0].state], dtype = torch.float32)
     # Compute weight generating Monte-Carlo trajectories using learned model
@@ -32,10 +32,12 @@ class ExactWeightsEstimator(object):
         self.num_s = num_s
         self.n_samples = n_samples
         self.horizon = horizon
-        self.state_x_b = []
-        self.state_y_b = []
-        self.state_x_target = []
-        self.state_y_target = []
+        # self.state_x_b = []
+        # self.state_y_b = []
+        # self.state_x_target = []
+        # self.state_y_target = []
+        self.state_pdf_estimator_behav: Sequence[gaussian_kde] = []
+        self.state_pdf_estimator_target: Sequence[gaussian_kde] = []
         self.discount = discount
 
         for s in range(num_s):
@@ -43,9 +45,11 @@ class ExactWeightsEstimator(object):
             mc_samples_b = collect_exp(env = env, n_trajectories = n_samples, horizon = horizon, policy = pi_b, start_state = s, model = None, discount=discount)
 
             rew_cumul_b = [traj.cumulative_reward for traj in mc_samples_b]
-            data_x_b, data_y_b = sns.distplot(rew_cumul_b).get_lines()[0].get_data()
-            self.state_x_b.append(data_x_b)
-            self.state_y_b.append(data_y_b)
+            #data_x_b, data_y_b = sns.distplot(rew_cumul_b).get_lines()[0].get_data()
+            
+            self.state_pdf_estimator_behav.append(gaussian_kde(rew_cumul_b))
+            # self.state_x_b.append(data_x_b)
+            # self.state_y_b.append(data_y_b)
 
     def init_pi_target(self, pi_target):
 
@@ -55,17 +59,19 @@ class ExactWeightsEstimator(object):
             mc_samples_target = collect_exp(env = self.env, n_trajectories = self.n_samples, horizon = self.horizon, policy = pi_target, start_state = s, model = None, discount=self.discount)
 
             rew_cumul_target = [traj.cumulative_reward for traj in mc_samples_target]
-            data_x_target, data_y_target = sns.distplot(rew_cumul_target).get_lines()[0].get_data()
-            self.state_x_target.append(data_x_target)
-            self.state_y_target.append(data_y_target)
+            self.state_pdf_estimator_target.append(gaussian_kde(rew_cumul_target))
+            # data_x_target, data_y_target = sns.distplot(rew_cumul_target).get_lines()[0].get_data()
+            # self.state_x_target.append(data_x_target)
+            # self.state_y_target.append(data_y_target)
 
     
     def compute_true_ratio(self, traj: Trajectory) -> float:
         s = traj.initial_state
         cumul_rew = traj.cumulative_reward
-        p_rew_cum_b = np.interp(cumul_rew, self.state_x_b[s], self.state_y_b[s])
-        p_rew_cum_target = np.interp(cumul_rew, self.state_x_target[s], self.state_y_target[s])
-        return p_rew_cum_target/p_rew_cum_b
+
+        p_rew_cum_b = self.state_pdf_estimator_behav[s].evaluate(cumul_rew)# np.interp(cumul_rew, self.state_x_b[s], self.state_y_b[s])
+        p_rew_cum_target = self.state_pdf_estimator_target[s].evaluate(cumul_rew)#np.interp(cumul_rew, self.state_x_target[s], self.state_y_target[s])
+        return p_rew_cum_target / (1e-16 + p_rew_cum_b)
     
     def compute_true_ratio_dataset(self, dataset: Sequence[Trajectory]) -> NDArray[np.float64]:
         return np.array([self.compute_true_ratio(data_point) for data_point in dataset])
@@ -123,9 +129,11 @@ class WeightsEstimator(object):
 
             # Compute score
             state = torch.tensor([traj.initial_state], dtype = torch.float32)
+            lower_quantile = self.lower_quantile_network(state).item()
+            upper_quantile = self.upper_quantile_network(state).item()
             
-            score_low = self.lower_quantile_network(state).item() - traj.cumulative_reward
-            score_high = traj.cumulative_reward - self.upper_quantile_network(state).item()
+            score_low = lower_quantile - traj.cumulative_reward
+            score_high = traj.cumulative_reward - upper_quantile
             score = max(score_low, score_high)
             score_cumul = traj.cumulative_reward
             scores.append((score_low, score_high, score, score_cumul))
