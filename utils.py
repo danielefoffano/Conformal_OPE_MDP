@@ -235,7 +235,7 @@ def train_weight_function(training_dataset: Sequence[Trajectory], weights_labels
             optimizer.zero_grad()
 
             output = weight_network(x_batch).log()
-            loss = criterion(output, torch.clamp(y_batch.log(), -7))
+            loss = criterion(output, torch.clamp(y_batch, 1e-8).log())
 
             loss.backward()
             torch.nn.utils.clip_grad.clip_grad_norm_(weight_network.parameters(), 0.2)
@@ -246,7 +246,7 @@ def train_weight_function(training_dataset: Sequence[Trajectory], weights_labels
         if epoch > 19:
             with torch.no_grad():
                 output_val = weight_network(x_val).log()
-                loss_val = criterion(output_val, torch.clamp(y_val.log(), -7))
+                loss_val = criterion(output_val, torch.clamp(y_val, 1e-8).log())
                 desc = "Epoch {} - Training weights network - Loss: {} - Loss val: {}".format(epoch, np.mean(losses), loss_val.item())
                 tqdm_epochs.set_description(desc)
                 #scheduler.step(loss_val)
