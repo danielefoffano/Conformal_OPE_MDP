@@ -193,7 +193,11 @@ if __name__ == "__main__":
                 intervals = conformal_set.build_set(test_points, weights.copy(), scores.copy(), weights_estimator, N_CPU)
 
                 results_intervals = Interval.analyse_intervals(intervals)
-                log_w_ratio = np.log(weights/(1e-6+true_weights))
+                
+                try:
+                    log_w_ratio = np.log(weights/(1e-6+true_weights))
+                except Exception:
+                    log_w_ratio = np.nan
                 
                 print('-------- Original method --------')
                 print("Eps: {:.2f} | Coverage: {:.2f}% | Average interval length: {:.2f} "\
