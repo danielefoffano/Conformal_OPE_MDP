@@ -14,7 +14,7 @@ from numpy.typing import NDArray
 import scipy.interpolate as interpolate
 from scipy import signal
 from policy import Policy
-
+import lzma
 MC_SAMPLES = 500
 
 def unique_scores_weights(scores: NDArray[np.float64], weights: NDArray[np.float64]) -> Tuple[NDArray[np.float64], NDArray[np.float64]]:
@@ -401,5 +401,5 @@ def save_important_dictionary(env, weights_estimator, exact_weights_estimator, c
     }
 
     os.makedirs(os.path.dirname(path + "data/"), exist_ok=True)
-    with open(path + f"data/useful_saves_run_{RUN_NUMBER}_{epsilon_value}.pkl", "wb") as f:
+    with lzma.open(path + f"data/useful_saves_run_{RUN_NUMBER}_{epsilon_value}.pkl", "wb") as f:
         pickle.dump(save_dictionary, f)

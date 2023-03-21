@@ -1,0 +1,1270 @@
+Horizon chosen 10
+Starting with horizon: 10
+> Loading/collecting data
+> Training/loading quantile networks
+Could not find file results/inventory/gradient/horizon_10/data/networks/lower_quantile_net.pth
+Early stopping at epoch 73
+Could not find file results/inventory/gradient/horizon_10/data/networks/upper_quantile_net.pth
+Early stopping at epoch 154
+---------- Evaluating for epsilon = 0.0 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.00 | Coverage: 70.60% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.652 |Avg weights: 0.000| log w_hat/w: -17.726| avg_delta_w: 0.505
+-------- Double quantile method --------
+Eps: 0.00 | Coverage: 59.00% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.751 |Avg weights: 0.000| log w_hat/w: -17.726| avg_delta_w: 0.505
+-------- Cumul  method --------
+Eps: 0.00 | Coverage: 70.60% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.000| log w_hat/w: -17.726| avg_delta_w: 0.505
+---------- Evaluating for epsilon = 0.05 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.05 | Coverage: 74.60% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.856 |Avg weights: 0.006| log w_hat/w: -4.444| avg_delta_w: 0.502
+-------- Double quantile method --------
+Eps: 0.05 | Coverage: 64.90% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.859 - 0.275 |Avg weights: 0.006| log w_hat/w: -4.444| avg_delta_w: 0.502
+-------- Cumul  method --------
+Eps: 0.05 | Coverage: 74.60% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.006| log w_hat/w: -4.444| avg_delta_w: 0.502
+---------- Evaluating for epsilon = 0.1 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.10 | Coverage: 78.20% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.729 |Avg weights: 0.072| log w_hat/w: -1.952| avg_delta_w: 0.469
+-------- Double quantile method --------
+Eps: 0.10 | Coverage: 71.30% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.809 - 0.276 |Avg weights: 0.072| log w_hat/w: -1.952| avg_delta_w: 0.469
+-------- Cumul  method --------
+Eps: 0.10 | Coverage: 78.30% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.072| log w_hat/w: -1.952| avg_delta_w: 0.469
+---------- Evaluating for epsilon = 0.15000000000000002 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.15 | Coverage: 80.90% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.673 |Avg weights: 0.213| log w_hat/w: -0.863| avg_delta_w: 0.416
+-------- Double quantile method --------
+Eps: 0.15 | Coverage: 73.50% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.775 - 0.830 |Avg weights: 0.213| log w_hat/w: -0.863| avg_delta_w: 0.416
+-------- Cumul  method --------
+Eps: 0.15 | Coverage: 81.20% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.046 |Avg weights: 0.213| log w_hat/w: -0.863| avg_delta_w: 0.416
+---------- Evaluating for epsilon = 0.2 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.20 | Coverage: 83.90% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.252 |Avg weights: 0.408| log w_hat/w: -0.211| avg_delta_w: 0.388
+-------- Double quantile method --------
+Eps: 0.20 | Coverage: 79.70% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.830 - 1.079 |Avg weights: 0.408| log w_hat/w: -0.211| avg_delta_w: 0.388
+-------- Cumul  method --------
+Eps: 0.20 | Coverage: 83.70% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.408| log w_hat/w: -0.211| avg_delta_w: 0.388
+---------- Evaluating for epsilon = 0.25 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.25 | Coverage: 86.10% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.725 |Avg weights: 0.642| log w_hat/w: 0.242| avg_delta_w: 0.408
+-------- Double quantile method --------
+Eps: 0.25 | Coverage: 83.60% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.719 |Avg weights: 0.642| log w_hat/w: 0.242| avg_delta_w: 0.408
+-------- Cumul  method --------
+Eps: 0.25 | Coverage: 86.40% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.642| log w_hat/w: 0.242| avg_delta_w: 0.408
+---------- Evaluating for epsilon = 0.30000000000000004 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.30 | Coverage: 88.90% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.652 |Avg weights: 0.822| log w_hat/w: 0.489| avg_delta_w: 0.415
+-------- Double quantile method --------
+Eps: 0.30 | Coverage: 86.60% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.857 - 0.842 |Avg weights: 0.822| log w_hat/w: 0.489| avg_delta_w: 0.415
+-------- Cumul  method --------
+Eps: 0.30 | Coverage: 89.10% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.822| log w_hat/w: 0.489| avg_delta_w: 0.415
+---------- Evaluating for epsilon = 0.35000000000000003 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.35 | Coverage: 90.20% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.597 |Avg weights: 0.953| log w_hat/w: 0.637| avg_delta_w: 0.444
+-------- Double quantile method --------
+Eps: 0.35 | Coverage: 88.10% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 0.953| log w_hat/w: 0.637| avg_delta_w: 0.444
+-------- Cumul  method --------
+Eps: 0.35 | Coverage: 90.40% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.953| log w_hat/w: 0.637| avg_delta_w: 0.444
+---------- Evaluating for epsilon = 0.4 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.40 | Coverage: 90.20% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.652 |Avg weights: 1.000| log w_hat/w: 0.686| avg_delta_w: 0.456
+-------- Double quantile method --------
+Eps: 0.40 | Coverage: 88.70% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 1.000| log w_hat/w: 0.686| avg_delta_w: 0.456
+-------- Cumul  method --------
+Eps: 0.40 | Coverage: 90.10% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 1.000| log w_hat/w: 0.686| avg_delta_w: 0.456
+---------- Evaluating for epsilon = 0.45 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.45 | Coverage: 90.50% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.649 |Avg weights: 0.957| log w_hat/w: 0.642| avg_delta_w: 0.444
+-------- Double quantile method --------
+Eps: 0.45 | Coverage: 88.70% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.837 - 0.773 |Avg weights: 0.957| log w_hat/w: 0.642| avg_delta_w: 0.444
+-------- Cumul  method --------
+Eps: 0.45 | Coverage: 89.90% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.957| log w_hat/w: 0.642| avg_delta_w: 0.444
+---------- Evaluating for epsilon = 0.5 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.50 | Coverage: 92.30% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.564 |Avg weights: 0.837| log w_hat/w: 0.507| avg_delta_w: 0.428
+-------- Double quantile method --------
+Eps: 0.50 | Coverage: 90.40% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.615 - 0.754 |Avg weights: 0.837| log w_hat/w: 0.507| avg_delta_w: 0.428
+-------- Cumul  method --------
+Eps: 0.50 | Coverage: 91.20% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.837| log w_hat/w: 0.507| avg_delta_w: 0.428
+---------- Evaluating for epsilon = 0.55 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.55 | Coverage: 89.10% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.650 |Avg weights: 0.671| log w_hat/w: 0.287| avg_delta_w: 0.402
+-------- Double quantile method --------
+Eps: 0.55 | Coverage: 87.70% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.751 |Avg weights: 0.671| log w_hat/w: 0.287| avg_delta_w: 0.402
+-------- Cumul  method --------
+Eps: 0.55 | Coverage: 88.00% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.671| log w_hat/w: 0.287| avg_delta_w: 0.402
+---------- Evaluating for epsilon = 0.6000000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.60 | Coverage: 88.80% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.491 |Avg weights: 0.505| log w_hat/w: 0.002| avg_delta_w: 0.391
+-------- Double quantile method --------
+Eps: 0.60 | Coverage: 88.30% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.652 - 0.763 |Avg weights: 0.505| log w_hat/w: 0.002| avg_delta_w: 0.391
+-------- Cumul  method --------
+Eps: 0.60 | Coverage: 88.90% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-140.00 | Quantile: 85.000 - 140.000 |Avg weights: 0.505| log w_hat/w: 0.002| avg_delta_w: 0.391
+---------- Evaluating for epsilon = 0.65 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.65 | Coverage: 86.80% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.396 |Avg weights: 0.352| log w_hat/w: -0.360| avg_delta_w: 0.397
+-------- Double quantile method --------
+Eps: 0.65 | Coverage: 85.40% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.255 - 0.751 |Avg weights: 0.352| log w_hat/w: -0.360| avg_delta_w: 0.397
+-------- Cumul  method --------
+Eps: 0.65 | Coverage: 86.20% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-140.00 | Quantile: 85.000 - 140.000 |Avg weights: 0.352| log w_hat/w: -0.360| avg_delta_w: 0.397
+---------- Evaluating for epsilon = 0.7000000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.70 | Coverage: 86.30% | Average interval length: 57.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 83.00-140.00 | Quantile: 0.127 |Avg weights: 0.217| log w_hat/w: -0.844| avg_delta_w: 0.419
+-------- Double quantile method --------
+Eps: 0.70 | Coverage: 82.50% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.652 - 1.079 |Avg weights: 0.217| log w_hat/w: -0.844| avg_delta_w: 0.419
+-------- Cumul  method --------
+Eps: 0.70 | Coverage: 82.00% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.217| log w_hat/w: -0.844| avg_delta_w: 0.419
+---------- Evaluating for epsilon = 0.75 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.75 | Coverage: 83.90% | Average interval length: 196.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-280.00 | Quantile: inf |Avg weights: 0.115| log w_hat/w: -1.476| avg_delta_w: 0.450
+-------- Double quantile method --------
+Eps: 0.75 | Coverage: 82.60% | Average interval length: 195.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-280.00 | Quantile: inf - inf |Avg weights: 0.115| log w_hat/w: -1.476| avg_delta_w: 0.450
+-------- Cumul  method --------
+Eps: 0.75 | Coverage: 82.60% | Average interval length: 195.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-280.00 | Quantile: 85.481 - inf |Avg weights: 0.115| log w_hat/w: -1.476| avg_delta_w: 0.450
+---------- Evaluating for epsilon = 0.8 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.80 | Coverage: 80.70% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.725 |Avg weights: 0.050| log w_hat/w: -2.304| avg_delta_w: 0.479
+-------- Double quantile method --------
+Eps: 0.80 | Coverage: 79.50% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 0.050| log w_hat/w: -2.304| avg_delta_w: 0.479
+-------- Cumul  method --------
+Eps: 0.80 | Coverage: 79.00% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.050| log w_hat/w: -2.304| avg_delta_w: 0.479
+---------- Evaluating for epsilon = 0.8500000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.85 | Coverage: 77.90% | Average interval length: 57.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 83.00-140.00 | Quantile: 0.137 |Avg weights: 0.020| log w_hat/w: -3.216| avg_delta_w: 0.494
+-------- Double quantile method --------
+Eps: 0.85 | Coverage: 74.40% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.198 - 0.891 |Avg weights: 0.020| log w_hat/w: -3.216| avg_delta_w: 0.494
+-------- Cumul  method --------
+Eps: 0.85 | Coverage: 74.60% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-140.00 | Quantile: 85.000 - 140.000 |Avg weights: 0.020| log w_hat/w: -3.216| avg_delta_w: 0.494
+---------- Evaluating for epsilon = 0.9 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.90 | Coverage: 70.80% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.145 |Avg weights: 0.007| log w_hat/w: -4.307| avg_delta_w: 0.501
+-------- Double quantile method --------
+Eps: 0.90 | Coverage: 70.80% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.830 - -0.725 |Avg weights: 0.007| log w_hat/w: -4.307| avg_delta_w: 0.501
+-------- Cumul  method --------
+Eps: 0.90 | Coverage: 69.40% | Average interval length: 52.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-138.00 | Quantile: 86.000 - 138.000 |Avg weights: 0.007| log w_hat/w: -4.307| avg_delta_w: 0.501
+---------- Evaluating for epsilon = 0.9500000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.95 | Coverage: 72.10% | Average interval length: 57.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 83.00-140.00 | Quantile: 0.303 |Avg weights: 0.001| log w_hat/w: -5.952| avg_delta_w: 0.504
+-------- Double quantile method --------
+Eps: 0.95 | Coverage: 68.00% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.786 - 2.319 |Avg weights: 0.001| log w_hat/w: -5.952| avg_delta_w: 0.504
+-------- Cumul  method --------
+Eps: 0.95 | Coverage: 66.90% | Average interval length: 56.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-142.00 | Quantile: 86.000 - 142.000 |Avg weights: 0.001| log w_hat/w: -5.952| avg_delta_w: 0.504
+---------- Evaluating for epsilon = 1.0 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 1.00 | Coverage: 66.20% | Average interval length: 197.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 83.00-280.00 | Quantile: inf |Avg weights: 0.000| log w_hat/w: -8.098| avg_delta_w: 0.504
+-------- Double quantile method --------
+Eps: 1.00 | Coverage: 63.60% | Average interval length: 195.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-280.00 | Quantile: inf - inf |Avg weights: 0.000| log w_hat/w: -8.098| avg_delta_w: 0.504
+-------- Cumul  method --------
+Eps: 1.00 | Coverage: 63.60% | Average interval length: 195.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-280.00 | Quantile: 85.343 - inf |Avg weights: 0.000| log w_hat/w: -8.098| avg_delta_w: 0.504
+> Loading/collecting data
+> Training/loading quantile networks
+---------- Evaluating for epsilon = 0.0 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.00 | Coverage: 70.10% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.527 |Avg weights: 0.000| log w_hat/w: -17.710| avg_delta_w: 0.505
+-------- Double quantile method --------
+Eps: 0.00 | Coverage: 56.90% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.661 - 0.752 |Avg weights: 0.000| log w_hat/w: -17.710| avg_delta_w: 0.505
+-------- Cumul  method --------
+Eps: 0.00 | Coverage: 70.10% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.000| log w_hat/w: -17.710| avg_delta_w: 0.505
+---------- Evaluating for epsilon = 0.05 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.05 | Coverage: 74.20% | Average interval length: 59.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 82.00-141.00 | Quantile: 1.090 |Avg weights: 0.006| log w_hat/w: -4.398| avg_delta_w: 0.501
+-------- Double quantile method --------
+Eps: 0.05 | Coverage: 73.60% | Average interval length: 57.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 83.00-140.00 | Quantile: 1.427 - 0.919 |Avg weights: 0.006| log w_hat/w: -4.398| avg_delta_w: 0.501
+-------- Cumul  method --------
+Eps: 0.05 | Coverage: 73.60% | Average interval length: 57.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 83.00-140.00 | Quantile: 83.000 - 140.017 |Avg weights: 0.006| log w_hat/w: -4.398| avg_delta_w: 0.501
+---------- Evaluating for epsilon = 0.1 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.10 | Coverage: 77.70% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.282 |Avg weights: 0.069| log w_hat/w: -1.993| avg_delta_w: 0.471
+-------- Double quantile method --------
+Eps: 0.10 | Coverage: 71.10% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.783 - 0.891 |Avg weights: 0.069| log w_hat/w: -1.993| avg_delta_w: 0.471
+-------- Cumul  method --------
+Eps: 0.10 | Coverage: 78.40% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.069| log w_hat/w: -1.993| avg_delta_w: 0.471
+---------- Evaluating for epsilon = 0.15000000000000002 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.15 | Coverage: 81.50% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.652 |Avg weights: 0.217| log w_hat/w: -0.845| avg_delta_w: 0.417
+-------- Double quantile method --------
+Eps: 0.15 | Coverage: 76.60% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.841 - 0.773 |Avg weights: 0.217| log w_hat/w: -0.845| avg_delta_w: 0.417
+-------- Cumul  method --------
+Eps: 0.15 | Coverage: 82.00% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.217| log w_hat/w: -0.845| avg_delta_w: 0.417
+---------- Evaluating for epsilon = 0.2 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.20 | Coverage: 85.30% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.275 |Avg weights: 0.406| log w_hat/w: -0.216| avg_delta_w: 0.393
+-------- Double quantile method --------
+Eps: 0.20 | Coverage: 80.80% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -0.613 - 1.352 |Avg weights: 0.406| log w_hat/w: -0.216| avg_delta_w: 0.393
+-------- Cumul  method --------
+Eps: 0.20 | Coverage: 85.70% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.665 |Avg weights: 0.406| log w_hat/w: -0.216| avg_delta_w: 0.393
+---------- Evaluating for epsilon = 0.25 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.25 | Coverage: 86.50% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.597 |Avg weights: 0.640| log w_hat/w: 0.239| avg_delta_w: 0.396
+-------- Double quantile method --------
+Eps: 0.25 | Coverage: 83.60% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 0.640| log w_hat/w: 0.239| avg_delta_w: 0.396
+-------- Cumul  method --------
+Eps: 0.25 | Coverage: 86.50% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.640| log w_hat/w: 0.239| avg_delta_w: 0.396
+---------- Evaluating for epsilon = 0.30000000000000004 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.30 | Coverage: 87.40% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.652 |Avg weights: 0.819| log w_hat/w: 0.485| avg_delta_w: 0.423
+-------- Double quantile method --------
+Eps: 0.30 | Coverage: 85.20% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 0.819| log w_hat/w: 0.485| avg_delta_w: 0.423
+-------- Cumul  method --------
+Eps: 0.30 | Coverage: 87.80% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.819| log w_hat/w: 0.485| avg_delta_w: 0.423
+---------- Evaluating for epsilon = 0.35000000000000003 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.35 | Coverage: 90.50% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.491 |Avg weights: 0.957| log w_hat/w: 0.642| avg_delta_w: 0.446
+-------- Double quantile method --------
+Eps: 0.35 | Coverage: 87.70% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.778 - 0.773 |Avg weights: 0.957| log w_hat/w: 0.642| avg_delta_w: 0.446
+-------- Cumul  method --------
+Eps: 0.35 | Coverage: 90.70% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.957| log w_hat/w: 0.642| avg_delta_w: 0.446
+---------- Evaluating for epsilon = 0.4 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.40 | Coverage: 90.40% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.652 |Avg weights: 1.000| log w_hat/w: 0.686| avg_delta_w: 0.456
+-------- Double quantile method --------
+Eps: 0.40 | Coverage: 88.80% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 1.000| log w_hat/w: 0.686| avg_delta_w: 0.456
+-------- Cumul  method --------
+Eps: 0.40 | Coverage: 90.30% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 1.000| log w_hat/w: 0.686| avg_delta_w: 0.456
+---------- Evaluating for epsilon = 0.45 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.45 | Coverage: 91.20% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.597 |Avg weights: 0.959| log w_hat/w: 0.644| avg_delta_w: 0.448
+-------- Double quantile method --------
+Eps: 0.45 | Coverage: 89.50% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 0.959| log w_hat/w: 0.644| avg_delta_w: 0.448
+-------- Cumul  method --------
+Eps: 0.45 | Coverage: 90.80% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.959| log w_hat/w: 0.644| avg_delta_w: 0.448
+---------- Evaluating for epsilon = 0.5 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.50 | Coverage: 90.40% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.623 |Avg weights: 0.840| log w_hat/w: 0.512| avg_delta_w: 0.425
+-------- Double quantile method --------
+Eps: 0.50 | Coverage: 89.40% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.791 - 0.781 |Avg weights: 0.840| log w_hat/w: 0.512| avg_delta_w: 0.425
+-------- Cumul  method --------
+Eps: 0.50 | Coverage: 89.40% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.840| log w_hat/w: 0.512| avg_delta_w: 0.425
+---------- Evaluating for epsilon = 0.55 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.55 | Coverage: 92.50% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.477 |Avg weights: 0.673| log w_hat/w: 0.289| avg_delta_w: 0.399
+-------- Double quantile method --------
+Eps: 0.55 | Coverage: 90.70% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.829 - 0.902 |Avg weights: 0.673| log w_hat/w: 0.289| avg_delta_w: 0.399
+-------- Cumul  method --------
+Eps: 0.55 | Coverage: 90.40% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.673| log w_hat/w: 0.289| avg_delta_w: 0.399
+---------- Evaluating for epsilon = 0.6000000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.60 | Coverage: 88.80% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.453 |Avg weights: 0.523| log w_hat/w: 0.036| avg_delta_w: 0.390
+-------- Double quantile method --------
+Eps: 0.60 | Coverage: 87.20% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.891 |Avg weights: 0.523| log w_hat/w: 0.036| avg_delta_w: 0.390
+-------- Cumul  method --------
+Eps: 0.60 | Coverage: 87.10% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.523| log w_hat/w: 0.036| avg_delta_w: 0.390
+---------- Evaluating for epsilon = 0.65 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.65 | Coverage: 83.80% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.696 |Avg weights: 0.338| log w_hat/w: -0.400| avg_delta_w: 0.395
+-------- Double quantile method --------
+Eps: 0.65 | Coverage: 82.00% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.840 - 0.773 |Avg weights: 0.338| log w_hat/w: -0.400| avg_delta_w: 0.395
+-------- Cumul  method --------
+Eps: 0.65 | Coverage: 81.80% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.338| log w_hat/w: -0.400| avg_delta_w: 0.395
+---------- Evaluating for epsilon = 0.7000000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.70 | Coverage: 86.00% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.815 |Avg weights: 0.214| log w_hat/w: -0.859| avg_delta_w: 0.417
+-------- Double quantile method --------
+Eps: 0.70 | Coverage: 84.40% | Average interval length: 52.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-138.00 | Quantile: -1.942 - 0.751 |Avg weights: 0.214| log w_hat/w: -0.859| avg_delta_w: 0.417
+-------- Cumul  method --------
+Eps: 0.70 | Coverage: 84.90% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.214| log w_hat/w: -0.859| avg_delta_w: 0.417
+---------- Evaluating for epsilon = 0.75 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.75 | Coverage: 82.90% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.725 |Avg weights: 0.111| log w_hat/w: -1.515| avg_delta_w: 0.451
+-------- Double quantile method --------
+Eps: 0.75 | Coverage: 79.60% | Average interval length: 51.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-137.00 | Quantile: -2.830 - 1.079 |Avg weights: 0.111| log w_hat/w: -1.515| avg_delta_w: 0.451
+-------- Cumul  method --------
+Eps: 0.75 | Coverage: 79.30% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 87.00-141.00 | Quantile: 87.000 - 141.000 |Avg weights: 0.111| log w_hat/w: -1.515| avg_delta_w: 0.451
+---------- Evaluating for epsilon = 0.8 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.80 | Coverage: 79.90% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.381 |Avg weights: 0.050| log w_hat/w: -2.316| avg_delta_w: 0.480
+-------- Double quantile method --------
+Eps: 0.80 | Coverage: 79.90% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.870 - 0.727 |Avg weights: 0.050| log w_hat/w: -2.316| avg_delta_w: 0.480
+-------- Cumul  method --------
+Eps: 0.80 | Coverage: 79.30% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-140.00 | Quantile: 85.000 - 140.000 |Avg weights: 0.050| log w_hat/w: -2.316| avg_delta_w: 0.480
+---------- Evaluating for epsilon = 0.8500000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.85 | Coverage: 74.10% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.856 |Avg weights: 0.019| log w_hat/w: -3.263| avg_delta_w: 0.495
+-------- Double quantile method --------
+Eps: 0.85 | Coverage: 72.30% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.830 - 0.403 |Avg weights: 0.019| log w_hat/w: -3.263| avg_delta_w: 0.495
+-------- Cumul  method --------
+Eps: 0.85 | Coverage: 70.70% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.019| log w_hat/w: -3.263| avg_delta_w: 0.495
+---------- Evaluating for epsilon = 0.9 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.90 | Coverage: 72.70% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.227 |Avg weights: 0.007| log w_hat/w: -4.335| avg_delta_w: 0.501
+-------- Double quantile method --------
+Eps: 0.90 | Coverage: 70.60% | Average interval length: 51.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-137.00 | Quantile: -2.661 - -0.663 |Avg weights: 0.007| log w_hat/w: -4.335| avg_delta_w: 0.501
+-------- Cumul  method --------
+Eps: 0.90 | Coverage: 68.40% | Average interval length: 52.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 87.00-139.00 | Quantile: 87.000 - 139.000 |Avg weights: 0.007| log w_hat/w: -4.335| avg_delta_w: 0.501
+---------- Evaluating for epsilon = 0.9500000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.95 | Coverage: 70.10% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.396 |Avg weights: 0.001| log w_hat/w: -5.857| avg_delta_w: 0.504
+-------- Double quantile method --------
+Eps: 0.95 | Coverage: 67.10% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.875 - 1.271 |Avg weights: 0.001| log w_hat/w: -5.857| avg_delta_w: 0.504
+-------- Cumul  method --------
+Eps: 0.95 | Coverage: 65.80% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-141.00 | Quantile: 86.000 - 141.000 |Avg weights: 0.001| log w_hat/w: -5.857| avg_delta_w: 0.504
+---------- Evaluating for epsilon = 1.0 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 1.00 | Coverage: 65.30% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.876 |Avg weights: 0.000| log w_hat/w: -8.234| avg_delta_w: 0.504
+-------- Double quantile method --------
+Eps: 1.00 | Coverage: 62.50% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.868 - -0.396 |Avg weights: 0.000| log w_hat/w: -8.234| avg_delta_w: 0.504
+-------- Cumul  method --------
+Eps: 1.00 | Coverage: 60.50% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-139.00 | Quantile: 86.000 - 139.000 |Avg weights: 0.000| log w_hat/w: -8.234| avg_delta_w: 0.504
+> Loading/collecting data
+> Training/loading quantile networks
+---------- Evaluating for epsilon = 0.0 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.00 | Coverage: 71.50% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.542 |Avg weights: 0.000| log w_hat/w: -17.726| avg_delta_w: 0.505
+-------- Double quantile method --------
+Eps: 0.00 | Coverage: 59.90% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 0.000| log w_hat/w: -17.726| avg_delta_w: 0.505
+-------- Cumul  method --------
+Eps: 0.00 | Coverage: 71.50% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.000| log w_hat/w: -17.726| avg_delta_w: 0.505
+---------- Evaluating for epsilon = 0.05 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.05 | Coverage: 76.00% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.875 |Avg weights: 0.005| log w_hat/w: -4.540| avg_delta_w: 0.502
+-------- Double quantile method --------
+Eps: 0.05 | Coverage: 66.00% | Average interval length: 51.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-137.00 | Quantile: -2.850 - 0.719 |Avg weights: 0.005| log w_hat/w: -4.540| avg_delta_w: 0.502
+-------- Cumul  method --------
+Eps: 0.05 | Coverage: 76.10% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 87.00-140.00 | Quantile: 87.000 - 140.000 |Avg weights: 0.005| log w_hat/w: -4.540| avg_delta_w: 0.502
+---------- Evaluating for epsilon = 0.1 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.10 | Coverage: 78.30% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.396 |Avg weights: 0.070| log w_hat/w: -1.974| avg_delta_w: 0.470
+-------- Double quantile method --------
+Eps: 0.10 | Coverage: 70.20% | Average interval length: 51.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-137.00 | Quantile: -2.008 - 1.233 |Avg weights: 0.070| log w_hat/w: -1.974| avg_delta_w: 0.470
+-------- Cumul  method --------
+Eps: 0.10 | Coverage: 80.20% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-141.00 | Quantile: 86.000 - 140.812 |Avg weights: 0.070| log w_hat/w: -1.974| avg_delta_w: 0.470
+---------- Evaluating for epsilon = 0.15000000000000002 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.15 | Coverage: 99.30% | Average interval length: 196.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-280.00 | Quantile: inf |Avg weights: 0.216| log w_hat/w: -0.850| avg_delta_w: 0.417
+-------- Double quantile method --------
+Eps: 0.15 | Coverage: 99.30% | Average interval length: 195.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-280.00 | Quantile: inf - inf |Avg weights: 0.216| log w_hat/w: -0.850| avg_delta_w: 0.417
+-------- Cumul  method --------
+Eps: 0.15 | Coverage: 99.10% | Average interval length: 194.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-280.00 | Quantile: 86.046 - inf |Avg weights: 0.216| log w_hat/w: -0.850| avg_delta_w: 0.417
+---------- Evaluating for epsilon = 0.2 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.20 | Coverage: 84.70% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.765 |Avg weights: 0.418| log w_hat/w: -0.188| avg_delta_w: 0.388
+-------- Double quantile method --------
+Eps: 0.20 | Coverage: 78.50% | Average interval length: 51.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-137.00 | Quantile: -2.402 - 1.142 |Avg weights: 0.418| log w_hat/w: -0.188| avg_delta_w: 0.388
+-------- Cumul  method --------
+Eps: 0.20 | Coverage: 85.20% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.218 - 140.427 |Avg weights: 0.418| log w_hat/w: -0.188| avg_delta_w: 0.388
+---------- Evaluating for epsilon = 0.25 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.25 | Coverage: 85.80% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.198 |Avg weights: 0.640| log w_hat/w: 0.239| avg_delta_w: 0.395
+-------- Double quantile method --------
+Eps: 0.25 | Coverage: 83.00% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.677 - 1.079 |Avg weights: 0.640| log w_hat/w: 0.239| avg_delta_w: 0.395
+-------- Cumul  method --------
+Eps: 0.25 | Coverage: 88.50% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-141.00 | Quantile: 86.000 - 141.000 |Avg weights: 0.640| log w_hat/w: 0.239| avg_delta_w: 0.395
+---------- Evaluating for epsilon = 0.30000000000000004 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.30 | Coverage: 89.20% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.491 |Avg weights: 0.835| log w_hat/w: 0.505| avg_delta_w: 0.419
+-------- Double quantile method --------
+Eps: 0.30 | Coverage: 86.90% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 0.835| log w_hat/w: 0.505| avg_delta_w: 0.419
+-------- Cumul  method --------
+Eps: 0.30 | Coverage: 88.40% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.835| log w_hat/w: 0.505| avg_delta_w: 0.419
+---------- Evaluating for epsilon = 0.35000000000000003 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.35 | Coverage: 91.40% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.491 |Avg weights: 0.950| log w_hat/w: 0.635| avg_delta_w: 0.447
+-------- Double quantile method --------
+Eps: 0.35 | Coverage: 88.90% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 0.950| log w_hat/w: 0.635| avg_delta_w: 0.447
+-------- Cumul  method --------
+Eps: 0.35 | Coverage: 91.70% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.950| log w_hat/w: 0.635| avg_delta_w: 0.447
+---------- Evaluating for epsilon = 0.4 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.40 | Coverage: 90.50% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.652 |Avg weights: 1.000| log w_hat/w: 0.686| avg_delta_w: 0.456
+-------- Double quantile method --------
+Eps: 0.40 | Coverage: 88.70% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 1.000| log w_hat/w: 0.686| avg_delta_w: 0.456
+-------- Cumul  method --------
+Eps: 0.40 | Coverage: 90.30% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 1.000| log w_hat/w: 0.686| avg_delta_w: 0.456
+---------- Evaluating for epsilon = 0.45 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.45 | Coverage: 91.50% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.468 |Avg weights: 0.957| log w_hat/w: 0.642| avg_delta_w: 0.447
+-------- Double quantile method --------
+Eps: 0.45 | Coverage: 90.20% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.773 - 0.805 |Avg weights: 0.957| log w_hat/w: 0.642| avg_delta_w: 0.447
+-------- Cumul  method --------
+Eps: 0.45 | Coverage: 91.40% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.957| log w_hat/w: 0.642| avg_delta_w: 0.447
+---------- Evaluating for epsilon = 0.5 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.50 | Coverage: 90.60% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.533 |Avg weights: 0.839| log w_hat/w: 0.510| avg_delta_w: 0.421
+-------- Double quantile method --------
+Eps: 0.50 | Coverage: 89.10% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.830 - 0.863 |Avg weights: 0.839| log w_hat/w: 0.510| avg_delta_w: 0.421
+-------- Cumul  method --------
+Eps: 0.50 | Coverage: 89.80% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.839| log w_hat/w: 0.510| avg_delta_w: 0.421
+---------- Evaluating for epsilon = 0.55 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.55 | Coverage: 89.30% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.716 |Avg weights: 0.690| log w_hat/w: 0.314| avg_delta_w: 0.400
+-------- Double quantile method --------
+Eps: 0.55 | Coverage: 88.70% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.843 - 0.770 |Avg weights: 0.690| log w_hat/w: 0.314| avg_delta_w: 0.400
+-------- Cumul  method --------
+Eps: 0.55 | Coverage: 88.60% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.690| log w_hat/w: 0.314| avg_delta_w: 0.400
+---------- Evaluating for epsilon = 0.6000000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.60 | Coverage: 88.60% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.725 |Avg weights: 0.503| log w_hat/w: -0.003| avg_delta_w: 0.392
+-------- Double quantile method --------
+Eps: 0.60 | Coverage: 86.90% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.875 - 0.773 |Avg weights: 0.503| log w_hat/w: -0.003| avg_delta_w: 0.392
+-------- Cumul  method --------
+Eps: 0.60 | Coverage: 86.60% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.503| log w_hat/w: -0.003| avg_delta_w: 0.392
+---------- Evaluating for epsilon = 0.65 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.65 | Coverage: 88.40% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.725 |Avg weights: 0.340| log w_hat/w: -0.396| avg_delta_w: 0.391
+-------- Double quantile method --------
+Eps: 0.65 | Coverage: 85.40% | Average interval length: 51.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-137.00 | Quantile: -2.857 - 1.079 |Avg weights: 0.340| log w_hat/w: -0.396| avg_delta_w: 0.391
+-------- Cumul  method --------
+Eps: 0.65 | Coverage: 85.20% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 87.00-140.00 | Quantile: 87.000 - 140.000 |Avg weights: 0.340| log w_hat/w: -0.396| avg_delta_w: 0.391
+---------- Evaluating for epsilon = 0.7000000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.70 | Coverage: 86.30% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.595 |Avg weights: 0.204| log w_hat/w: -0.906| avg_delta_w: 0.422
+-------- Double quantile method --------
+Eps: 0.70 | Coverage: 85.00% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.652 - 0.751 |Avg weights: 0.204| log w_hat/w: -0.906| avg_delta_w: 0.422
+-------- Cumul  method --------
+Eps: 0.70 | Coverage: 83.90% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.204| log w_hat/w: -0.906| avg_delta_w: 0.422
+---------- Evaluating for epsilon = 0.75 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.75 | Coverage: 82.50% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.856 |Avg weights: 0.112| log w_hat/w: -1.509| avg_delta_w: 0.452
+-------- Double quantile method --------
+Eps: 0.75 | Coverage: 79.60% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.275 |Avg weights: 0.112| log w_hat/w: -1.509| avg_delta_w: 0.452
+-------- Cumul  method --------
+Eps: 0.75 | Coverage: 78.30% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.112| log w_hat/w: -1.509| avg_delta_w: 0.452
+---------- Evaluating for epsilon = 0.8 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.80 | Coverage: 80.70% | Average interval length: 197.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 83.00-280.00 | Quantile: inf |Avg weights: 0.054| log w_hat/w: -2.230| avg_delta_w: 0.478
+-------- Double quantile method --------
+Eps: 0.80 | Coverage: 79.60% | Average interval length: 196.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-280.00 | Quantile: inf - inf |Avg weights: 0.054| log w_hat/w: -2.230| avg_delta_w: 0.478
+-------- Cumul  method --------
+Eps: 0.80 | Coverage: 79.60% | Average interval length: 196.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-280.00 | Quantile: 84.841 - inf |Avg weights: 0.054| log w_hat/w: -2.230| avg_delta_w: 0.478
+---------- Evaluating for epsilon = 0.8500000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.85 | Coverage: 77.50% | Average interval length: 57.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 83.00-140.00 | Quantile: 0.131 |Avg weights: 0.022| log w_hat/w: -3.130| avg_delta_w: 0.493
+-------- Double quantile method --------
+Eps: 0.85 | Coverage: 74.10% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.264 - 0.891 |Avg weights: 0.022| log w_hat/w: -3.130| avg_delta_w: 0.493
+-------- Cumul  method --------
+Eps: 0.85 | Coverage: 74.30% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-140.00 | Quantile: 85.000 - 140.000 |Avg weights: 0.022| log w_hat/w: -3.130| avg_delta_w: 0.493
+---------- Evaluating for epsilon = 0.9 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.90 | Coverage: 69.50% | Average interval length: 195.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-280.00 | Quantile: inf |Avg weights: 0.006| log w_hat/w: -4.415| avg_delta_w: 0.501
+-------- Double quantile method --------
+Eps: 0.90 | Coverage: 69.50% | Average interval length: 195.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-280.00 | Quantile: inf - inf |Avg weights: 0.006| log w_hat/w: -4.415| avg_delta_w: 0.501
+-------- Cumul  method --------
+Eps: 0.90 | Coverage: 69.50% | Average interval length: 195.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-280.00 | Quantile: 85.414 - inf |Avg weights: 0.006| log w_hat/w: -4.415| avg_delta_w: 0.501
+---------- Evaluating for epsilon = 0.9500000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.95 | Coverage: 70.80% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.857 |Avg weights: 0.001| log w_hat/w: -5.858| avg_delta_w: 0.504
+-------- Double quantile method --------
+Eps: 0.95 | Coverage: 65.70% | Average interval length: 49.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 87.00-136.00 | Quantile: -3.792 - 1.259 |Avg weights: 0.001| log w_hat/w: -5.858| avg_delta_w: 0.504
+-------- Cumul  method --------
+Eps: 0.95 | Coverage: 63.50% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 88.00-141.00 | Quantile: 88.000 - 140.808 |Avg weights: 0.001| log w_hat/w: -5.858| avg_delta_w: 0.504
+---------- Evaluating for epsilon = 1.0 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 1.00 | Coverage: 64.50% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.856 |Avg weights: 0.000| log w_hat/w: -8.178| avg_delta_w: 0.504
+-------- Double quantile method --------
+Eps: 1.00 | Coverage: 62.80% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -2.004 - 0.719 |Avg weights: 0.000| log w_hat/w: -8.178| avg_delta_w: 0.504
+-------- Cumul  method --------
+Eps: 1.00 | Coverage: 60.90% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.000| log w_hat/w: -8.178| avg_delta_w: 0.504
+> Loading/collecting data
+> Training/loading quantile networks
+---------- Evaluating for epsilon = 0.0 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.00 | Coverage: 68.60% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.690 |Avg weights: 0.000| log w_hat/w: -17.740| avg_delta_w: 0.505
+-------- Double quantile method --------
+Eps: 0.00 | Coverage: 56.00% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.751 |Avg weights: 0.000| log w_hat/w: -17.740| avg_delta_w: 0.505
+-------- Cumul  method --------
+Eps: 0.00 | Coverage: 68.60% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.000| log w_hat/w: -17.740| avg_delta_w: 0.505
+---------- Evaluating for epsilon = 0.05 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.05 | Coverage: 74.20% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.720 |Avg weights: 0.006| log w_hat/w: -4.487| avg_delta_w: 0.502
+-------- Double quantile method --------
+Eps: 0.05 | Coverage: 64.30% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.198 - 0.275 |Avg weights: 0.006| log w_hat/w: -4.487| avg_delta_w: 0.502
+-------- Cumul  method --------
+Eps: 0.05 | Coverage: 74.20% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-140.00 | Quantile: 85.000 - 140.000 |Avg weights: 0.006| log w_hat/w: -4.487| avg_delta_w: 0.502
+---------- Evaluating for epsilon = 0.1 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.10 | Coverage: 78.90% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.441 |Avg weights: 0.067| log w_hat/w: -2.020| avg_delta_w: 0.471
+-------- Double quantile method --------
+Eps: 0.10 | Coverage: 70.80% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.652 - 0.773 |Avg weights: 0.067| log w_hat/w: -2.020| avg_delta_w: 0.471
+-------- Cumul  method --------
+Eps: 0.10 | Coverage: 79.40% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.067| log w_hat/w: -2.020| avg_delta_w: 0.471
+---------- Evaluating for epsilon = 0.15000000000000002 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.15 | Coverage: 82.80% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.198 |Avg weights: 0.219| log w_hat/w: -0.835| avg_delta_w: 0.419
+-------- Double quantile method --------
+Eps: 0.15 | Coverage: 82.80% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.869 - 0.751 |Avg weights: 0.219| log w_hat/w: -0.835| avg_delta_w: 0.419
+-------- Cumul  method --------
+Eps: 0.15 | Coverage: 83.00% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-140.00 | Quantile: 85.000 - 140.000 |Avg weights: 0.219| log w_hat/w: -0.835| avg_delta_w: 0.419
+---------- Evaluating for epsilon = 0.2 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.20 | Coverage: 85.90% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.102 |Avg weights: 0.412| log w_hat/w: -0.203| avg_delta_w: 0.388
+-------- Double quantile method --------
+Eps: 0.20 | Coverage: 81.80% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.176 - 1.280 |Avg weights: 0.412| log w_hat/w: -0.203| avg_delta_w: 0.388
+-------- Cumul  method --------
+Eps: 0.20 | Coverage: 86.20% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.498 |Avg weights: 0.412| log w_hat/w: -0.203| avg_delta_w: 0.388
+---------- Evaluating for epsilon = 0.25 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.25 | Coverage: 86.60% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.836 |Avg weights: 0.620| log w_hat/w: 0.207| avg_delta_w: 0.395
+-------- Double quantile method --------
+Eps: 0.25 | Coverage: 83.70% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.845 - 0.720 |Avg weights: 0.620| log w_hat/w: 0.207| avg_delta_w: 0.395
+-------- Cumul  method --------
+Eps: 0.25 | Coverage: 86.80% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.620| log w_hat/w: 0.207| avg_delta_w: 0.395
+---------- Evaluating for epsilon = 0.30000000000000004 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.30 | Coverage: 88.90% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.652 |Avg weights: 0.825| log w_hat/w: 0.493| avg_delta_w: 0.420
+-------- Double quantile method --------
+Eps: 0.30 | Coverage: 85.60% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 0.825| log w_hat/w: 0.493| avg_delta_w: 0.420
+-------- Cumul  method --------
+Eps: 0.30 | Coverage: 89.10% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.825| log w_hat/w: 0.493| avg_delta_w: 0.420
+---------- Evaluating for epsilon = 0.35000000000000003 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.35 | Coverage: 90.10% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.396 |Avg weights: 0.955| log w_hat/w: 0.640| avg_delta_w: 0.447
+-------- Double quantile method --------
+Eps: 0.35 | Coverage: 88.70% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.677 - 0.773 |Avg weights: 0.955| log w_hat/w: 0.640| avg_delta_w: 0.447
+-------- Cumul  method --------
+Eps: 0.35 | Coverage: 90.70% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.955| log w_hat/w: 0.640| avg_delta_w: 0.447
+---------- Evaluating for epsilon = 0.4 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.40 | Coverage: 90.60% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.652 |Avg weights: 0.999| log w_hat/w: 0.685| avg_delta_w: 0.456
+-------- Double quantile method --------
+Eps: 0.40 | Coverage: 89.70% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 0.999| log w_hat/w: 0.685| avg_delta_w: 0.456
+-------- Cumul  method --------
+Eps: 0.40 | Coverage: 90.50% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.999| log w_hat/w: 0.685| avg_delta_w: 0.456
+---------- Evaluating for epsilon = 0.45 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.45 | Coverage: 91.70% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.725 |Avg weights: 0.953| log w_hat/w: 0.637| avg_delta_w: 0.448
+-------- Double quantile method --------
+Eps: 0.45 | Coverage: 90.30% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.751 |Avg weights: 0.953| log w_hat/w: 0.637| avg_delta_w: 0.448
+-------- Cumul  method --------
+Eps: 0.45 | Coverage: 92.40% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.953| log w_hat/w: 0.637| avg_delta_w: 0.448
+---------- Evaluating for epsilon = 0.5 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.50 | Coverage: 89.30% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.630 |Avg weights: 0.850| log w_hat/w: 0.523| avg_delta_w: 0.423
+-------- Double quantile method --------
+Eps: 0.50 | Coverage: 87.40% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.830 - 0.891 |Avg weights: 0.850| log w_hat/w: 0.523| avg_delta_w: 0.423
+-------- Cumul  method --------
+Eps: 0.50 | Coverage: 88.20% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.850| log w_hat/w: 0.523| avg_delta_w: 0.423
+---------- Evaluating for epsilon = 0.55 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.55 | Coverage: 91.50% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.198 |Avg weights: 0.688| log w_hat/w: 0.311| avg_delta_w: 0.400
+-------- Double quantile method --------
+Eps: 0.55 | Coverage: 90.50% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.677 - 1.079 |Avg weights: 0.688| log w_hat/w: 0.311| avg_delta_w: 0.400
+-------- Cumul  method --------
+Eps: 0.55 | Coverage: 91.00% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.688| log w_hat/w: 0.311| avg_delta_w: 0.400
+---------- Evaluating for epsilon = 0.6000000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.60 | Coverage: 89.50% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.725 |Avg weights: 0.507| log w_hat/w: 0.006| avg_delta_w: 0.392
+-------- Double quantile method --------
+Eps: 0.60 | Coverage: 88.30% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.827 - 0.773 |Avg weights: 0.507| log w_hat/w: 0.006| avg_delta_w: 0.392
+-------- Cumul  method --------
+Eps: 0.60 | Coverage: 88.40% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.507| log w_hat/w: 0.006| avg_delta_w: 0.392
+---------- Evaluating for epsilon = 0.65 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.65 | Coverage: 87.70% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.029 |Avg weights: 0.340| log w_hat/w: -0.393| avg_delta_w: 0.395
+-------- Double quantile method --------
+Eps: 0.65 | Coverage: 88.00% | Average interval length: 195.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-280.00 | Quantile: inf - inf |Avg weights: 0.340| log w_hat/w: -0.393| avg_delta_w: 0.395
+-------- Cumul  method --------
+Eps: 0.65 | Coverage: 87.10% | Average interval length: 194.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-280.00 | Quantile: 86.000 - inf |Avg weights: 0.340| log w_hat/w: -0.393| avg_delta_w: 0.395
+---------- Evaluating for epsilon = 0.7000000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.70 | Coverage: 85.70% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.725 |Avg weights: 0.201| log w_hat/w: -0.918| avg_delta_w: 0.420
+-------- Double quantile method --------
+Eps: 0.70 | Coverage: 82.40% | Average interval length: 51.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-137.00 | Quantile: -2.089 - 0.773 |Avg weights: 0.201| log w_hat/w: -0.918| avg_delta_w: 0.420
+-------- Cumul  method --------
+Eps: 0.70 | Coverage: 83.10% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.201| log w_hat/w: -0.918| avg_delta_w: 0.420
+---------- Evaluating for epsilon = 0.75 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.75 | Coverage: 82.70% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.529 |Avg weights: 0.110| log w_hat/w: -1.522| avg_delta_w: 0.452
+-------- Double quantile method --------
+Eps: 0.75 | Coverage: 79.00% | Average interval length: 51.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-137.00 | Quantile: -2.289 - 1.382 |Avg weights: 0.110| log w_hat/w: -1.522| avg_delta_w: 0.452
+-------- Cumul  method --------
+Eps: 0.75 | Coverage: 79.90% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-141.00 | Quantile: 86.000 - 141.105 |Avg weights: 0.110| log w_hat/w: -1.522| avg_delta_w: 0.452
+---------- Evaluating for epsilon = 0.8 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.80 | Coverage: 81.10% | Average interval length: 57.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 83.00-140.00 | Quantile: 0.392 |Avg weights: 0.051| log w_hat/w: -2.292| avg_delta_w: 0.479
+-------- Double quantile method --------
+Eps: 0.80 | Coverage: 77.70% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.090 - 1.271 |Avg weights: 0.051| log w_hat/w: -2.292| avg_delta_w: 0.479
+-------- Cumul  method --------
+Eps: 0.80 | Coverage: 77.90% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-140.00 | Quantile: 85.000 - 140.272 |Avg weights: 0.051| log w_hat/w: -2.292| avg_delta_w: 0.479
+---------- Evaluating for epsilon = 0.8500000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.85 | Coverage: 80.20% | Average interval length: 57.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 83.00-140.00 | Quantile: 0.275 |Avg weights: 0.021| log w_hat/w: -3.192| avg_delta_w: 0.494
+-------- Double quantile method --------
+Eps: 0.85 | Coverage: 76.80% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.830 - 1.604 |Avg weights: 0.021| log w_hat/w: -3.192| avg_delta_w: 0.494
+-------- Cumul  method --------
+Eps: 0.85 | Coverage: 76.10% | Average interval length: 56.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-142.00 | Quantile: 86.000 - 142.000 |Avg weights: 0.021| log w_hat/w: -3.192| avg_delta_w: 0.494
+---------- Evaluating for epsilon = 0.9 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.90 | Coverage: 75.10% | Average interval length: 57.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 83.00-140.00 | Quantile: 0.144 |Avg weights: 0.006| log w_hat/w: -4.487| avg_delta_w: 0.502
+-------- Double quantile method --------
+Eps: 0.90 | Coverage: 71.90% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 1.271 |Avg weights: 0.006| log w_hat/w: -4.487| avg_delta_w: 0.502
+-------- Cumul  method --------
+Eps: 0.90 | Coverage: 72.00% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-140.00 | Quantile: 85.000 - 140.000 |Avg weights: 0.006| log w_hat/w: -4.487| avg_delta_w: 0.502
+---------- Evaluating for epsilon = 0.9500000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.95 | Coverage: 67.30% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.649 |Avg weights: 0.001| log w_hat/w: -5.868| avg_delta_w: 0.504
+-------- Double quantile method --------
+Eps: 0.95 | Coverage: 65.30% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.852 - 0.773 |Avg weights: 0.001| log w_hat/w: -5.868| avg_delta_w: 0.504
+-------- Cumul  method --------
+Eps: 0.95 | Coverage: 63.20% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.001| log w_hat/w: -5.868| avg_delta_w: 0.504
+---------- Evaluating for epsilon = 1.0 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 1.00 | Coverage: 67.40% | Average interval length: 57.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 83.00-140.00 | Quantile: 0.130 |Avg weights: 0.000| log w_hat/w: -8.088| avg_delta_w: 0.504
+-------- Double quantile method --------
+Eps: 1.00 | Coverage: 65.10% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.870 - 0.816 |Avg weights: 0.000| log w_hat/w: -8.088| avg_delta_w: 0.504
+-------- Cumul  method --------
+Eps: 1.00 | Coverage: 63.20% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-140.00 | Quantile: 85.000 - 140.000 |Avg weights: 0.000| log w_hat/w: -8.088| avg_delta_w: 0.504
+> Loading/collecting data
+> Training/loading quantile networks
+---------- Evaluating for epsilon = 0.0 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.00 | Coverage: 72.30% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.652 |Avg weights: 0.000| log w_hat/w: -17.718| avg_delta_w: 0.505
+-------- Double quantile method --------
+Eps: 0.00 | Coverage: 59.50% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.664 - 0.751 |Avg weights: 0.000| log w_hat/w: -17.718| avg_delta_w: 0.505
+-------- Cumul  method --------
+Eps: 0.00 | Coverage: 72.30% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.000| log w_hat/w: -17.718| avg_delta_w: 0.505
+---------- Evaluating for epsilon = 0.05 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.05 | Coverage: 76.70% | Average interval length: 57.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 83.00-140.00 | Quantile: 0.727 |Avg weights: 0.006| log w_hat/w: -4.418| avg_delta_w: 0.501
+-------- Double quantile method --------
+Eps: 0.05 | Coverage: 76.60% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.138 - 1.081 |Avg weights: 0.006| log w_hat/w: -4.418| avg_delta_w: 0.501
+-------- Cumul  method --------
+Eps: 0.05 | Coverage: 76.70% | Average interval length: 56.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-140.00 | Quantile: 84.000 - 140.000 |Avg weights: 0.006| log w_hat/w: -4.418| avg_delta_w: 0.501
+---------- Evaluating for epsilon = 0.1 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.10 | Coverage: 77.90% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.396 |Avg weights: 0.074| log w_hat/w: -1.925| avg_delta_w: 0.468
+-------- Double quantile method --------
+Eps: 0.10 | Coverage: 70.90% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.198 - 0.751 |Avg weights: 0.074| log w_hat/w: -1.925| avg_delta_w: 0.468
+-------- Cumul  method --------
+Eps: 0.10 | Coverage: 78.30% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-140.00 | Quantile: 85.000 - 140.000 |Avg weights: 0.074| log w_hat/w: -1.925| avg_delta_w: 0.468
+---------- Evaluating for epsilon = 0.15000000000000002 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.15 | Coverage: 79.70% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.751 |Avg weights: 0.199| log w_hat/w: -0.933| avg_delta_w: 0.420
+-------- Double quantile method --------
+Eps: 0.15 | Coverage: 73.60% | Average interval length: 51.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-137.00 | Quantile: -2.262 - 0.859 |Avg weights: 0.199| log w_hat/w: -0.933| avg_delta_w: 0.420
+-------- Cumul  method --------
+Eps: 0.15 | Coverage: 79.50% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.142 |Avg weights: 0.199| log w_hat/w: -0.933| avg_delta_w: 0.420
+---------- Evaluating for epsilon = 0.2 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.20 | Coverage: 83.90% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.500 |Avg weights: 0.399| log w_hat/w: -0.233| avg_delta_w: 0.393
+-------- Double quantile method --------
+Eps: 0.20 | Coverage: 79.40% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.054 - 1.259 |Avg weights: 0.399| log w_hat/w: -0.233| avg_delta_w: 0.393
+-------- Cumul  method --------
+Eps: 0.20 | Coverage: 84.00% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.590 |Avg weights: 0.399| log w_hat/w: -0.233| avg_delta_w: 0.393
+---------- Evaluating for epsilon = 0.25 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.25 | Coverage: 86.70% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.728 |Avg weights: 0.643| log w_hat/w: 0.243| avg_delta_w: 0.397
+-------- Double quantile method --------
+Eps: 0.25 | Coverage: 82.80% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.846 - 0.745 |Avg weights: 0.643| log w_hat/w: 0.243| avg_delta_w: 0.397
+-------- Cumul  method --------
+Eps: 0.25 | Coverage: 87.10% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.643| log w_hat/w: 0.243| avg_delta_w: 0.397
+---------- Evaluating for epsilon = 0.30000000000000004 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.30 | Coverage: 87.80% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.549 |Avg weights: 0.838| log w_hat/w: 0.509| avg_delta_w: 0.425
+-------- Double quantile method --------
+Eps: 0.30 | Coverage: 84.80% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 0.838| log w_hat/w: 0.509| avg_delta_w: 0.425
+-------- Cumul  method --------
+Eps: 0.30 | Coverage: 87.50% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.838| log w_hat/w: 0.509| avg_delta_w: 0.425
+---------- Evaluating for epsilon = 0.35000000000000003 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.35 | Coverage: 88.80% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.652 |Avg weights: 0.949| log w_hat/w: 0.634| avg_delta_w: 0.445
+-------- Double quantile method --------
+Eps: 0.35 | Coverage: 86.60% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 0.949| log w_hat/w: 0.634| avg_delta_w: 0.445
+-------- Cumul  method --------
+Eps: 0.35 | Coverage: 89.70% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.949| log w_hat/w: 0.634| avg_delta_w: 0.445
+---------- Evaluating for epsilon = 0.4 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.40 | Coverage: 90.70% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.652 |Avg weights: 1.000| log w_hat/w: 0.686| avg_delta_w: 0.456
+-------- Double quantile method --------
+Eps: 0.40 | Coverage: 88.30% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 1.000| log w_hat/w: 0.686| avg_delta_w: 0.456
+-------- Cumul  method --------
+Eps: 0.40 | Coverage: 90.50% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 1.000| log w_hat/w: 0.686| avg_delta_w: 0.456
+---------- Evaluating for epsilon = 0.45 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.45 | Coverage: 89.60% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.630 |Avg weights: 0.968| log w_hat/w: 0.654| avg_delta_w: 0.448
+-------- Double quantile method --------
+Eps: 0.45 | Coverage: 88.30% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 0.968| log w_hat/w: 0.654| avg_delta_w: 0.448
+-------- Cumul  method --------
+Eps: 0.45 | Coverage: 89.00% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.968| log w_hat/w: 0.654| avg_delta_w: 0.448
+---------- Evaluating for epsilon = 0.5 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.50 | Coverage: 91.30% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.629 |Avg weights: 0.830| log w_hat/w: 0.500| avg_delta_w: 0.423
+-------- Double quantile method --------
+Eps: 0.50 | Coverage: 90.20% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.813 - 0.773 |Avg weights: 0.830| log w_hat/w: 0.500| avg_delta_w: 0.423
+-------- Cumul  method --------
+Eps: 0.50 | Coverage: 90.40% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.830| log w_hat/w: 0.500| avg_delta_w: 0.423
+---------- Evaluating for epsilon = 0.55 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.55 | Coverage: 91.30% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.729 |Avg weights: 0.680| log w_hat/w: 0.300| avg_delta_w: 0.399
+-------- Double quantile method --------
+Eps: 0.55 | Coverage: 90.20% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.875 - 0.773 |Avg weights: 0.680| log w_hat/w: 0.300| avg_delta_w: 0.399
+-------- Cumul  method --------
+Eps: 0.55 | Coverage: 90.10% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.680| log w_hat/w: 0.300| avg_delta_w: 0.399
+---------- Evaluating for epsilon = 0.6000000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.60 | Coverage: 90.00% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.048 |Avg weights: 0.524| log w_hat/w: 0.038| avg_delta_w: 0.390
+-------- Double quantile method --------
+Eps: 0.60 | Coverage: 89.10% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.326 - 0.938 |Avg weights: 0.524| log w_hat/w: 0.038| avg_delta_w: 0.390
+-------- Cumul  method --------
+Eps: 0.60 | Coverage: 89.80% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-140.00 | Quantile: 85.000 - 140.046 |Avg weights: 0.524| log w_hat/w: 0.038| avg_delta_w: 0.390
+---------- Evaluating for epsilon = 0.65 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.65 | Coverage: 87.20% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.396 |Avg weights: 0.348| log w_hat/w: -0.372| avg_delta_w: 0.394
+-------- Double quantile method --------
+Eps: 0.65 | Coverage: 86.20% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.660 - 0.891 |Avg weights: 0.348| log w_hat/w: -0.372| avg_delta_w: 0.394
+-------- Cumul  method --------
+Eps: 0.65 | Coverage: 85.10% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.348| log w_hat/w: -0.372| avg_delta_w: 0.394
+---------- Evaluating for epsilon = 0.7000000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.70 | Coverage: 85.50% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.597 |Avg weights: 0.210| log w_hat/w: -0.876| avg_delta_w: 0.420
+-------- Double quantile method --------
+Eps: 0.70 | Coverage: 84.60% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.773 |Avg weights: 0.210| log w_hat/w: -0.876| avg_delta_w: 0.420
+-------- Cumul  method --------
+Eps: 0.70 | Coverage: 84.20% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.210| log w_hat/w: -0.876| avg_delta_w: 0.420
+---------- Evaluating for epsilon = 0.75 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.75 | Coverage: 82.60% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.198 |Avg weights: 0.117| log w_hat/w: -1.460| avg_delta_w: 0.450
+-------- Double quantile method --------
+Eps: 0.75 | Coverage: 81.20% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.531 - 0.854 |Avg weights: 0.117| log w_hat/w: -1.460| avg_delta_w: 0.450
+-------- Cumul  method --------
+Eps: 0.75 | Coverage: 81.50% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-140.00 | Quantile: 85.000 - 140.000 |Avg weights: 0.117| log w_hat/w: -1.460| avg_delta_w: 0.450
+---------- Evaluating for epsilon = 0.8 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.80 | Coverage: 82.60% | Average interval length: 57.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 83.00-140.00 | Quantile: 0.170 |Avg weights: 0.051| log w_hat/w: -2.293| avg_delta_w: 0.479
+-------- Double quantile method --------
+Eps: 0.80 | Coverage: 81.10% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.491 - 0.751 |Avg weights: 0.051| log w_hat/w: -2.293| avg_delta_w: 0.479
+-------- Cumul  method --------
+Eps: 0.80 | Coverage: 81.10% | Average interval length: 56.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-140.00 | Quantile: 84.000 - 140.000 |Avg weights: 0.051| log w_hat/w: -2.293| avg_delta_w: 0.479
+---------- Evaluating for epsilon = 0.8500000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.85 | Coverage: 78.60% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.396 |Avg weights: 0.020| log w_hat/w: -3.217| avg_delta_w: 0.494
+-------- Double quantile method --------
+Eps: 0.85 | Coverage: 77.40% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.816 - 0.891 |Avg weights: 0.020| log w_hat/w: -3.217| avg_delta_w: 0.494
+-------- Cumul  method --------
+Eps: 0.85 | Coverage: 75.80% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.020| log w_hat/w: -3.217| avg_delta_w: 0.494
+---------- Evaluating for epsilon = 0.9 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.90 | Coverage: 70.60% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.227 |Avg weights: 0.006| log w_hat/w: -4.368| avg_delta_w: 0.501
+-------- Double quantile method --------
+Eps: 0.90 | Coverage: 68.50% | Average interval length: 51.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-137.00 | Quantile: -2.175 - -0.725 |Avg weights: 0.006| log w_hat/w: -4.368| avg_delta_w: 0.501
+-------- Cumul  method --------
+Eps: 0.90 | Coverage: 68.80% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-139.00 | Quantile: 86.000 - 139.000 |Avg weights: 0.006| log w_hat/w: -4.368| avg_delta_w: 0.501
+---------- Evaluating for epsilon = 0.9500000000000001 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set
+-------- Original method --------
+Eps: 0.95 | Coverage: 69.90% | Average interval length: 55.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 84.00-139.00 | Quantile: -0.491 |Avg weights: 0.001| log w_hat/w: -5.948| avg_delta_w: 0.504
+-------- Double quantile method --------
+Eps: 0.95 | Coverage: 68.00% | Average interval length: 53.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 85.00-138.00 | Quantile: -1.423 - 0.719 |Avg weights: 0.001| log w_hat/w: -5.948| avg_delta_w: 0.504
+-------- Cumul  method --------
+Eps: 0.95 | Coverage: 66.20% | Average interval length: 54.00 | Avg Original interval: 83.00-140.00 | Avg New interval: 86.00-140.00 | Quantile: 86.000 - 140.000 |Avg weights: 0.001| log w_hat/w: -5.948| avg_delta_w: 0.504
+---------- Evaluating for epsilon = 1.0 ----------
+> Collecting test points
+> Estimating exact weights
+> Estimate weights for calibration data
+> Computing weight of trajectories
+> Computing conformal set

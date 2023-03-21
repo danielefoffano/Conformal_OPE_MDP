@@ -186,10 +186,11 @@ if __name__ == "__main__":
                 # Generate y values for test point
                 print(f'> Computing conformal set')
                 conformal_set = ConformalSet(lower_quantile_net, upper_quantile_net, behaviour_policy, pi_target, model, HORIZON, DISCOUNT_REWARDS)
+                
+                if horizon in [15, 25] and epsilon > 0.3 and epsilon < 0.5:
+                    save_important_dictionary(env, weights_estimator, exact_weights_estimator, conformal_set, weights, scores, path, RUN_NUMBER, epsilon_value)
 
-                save_important_dictionary(env, weights_estimator, exact_weights_estimator, conformal_set, weights, scores, path, RUN_NUMBER, epsilon_value)
-
-
+                
                 intervals = conformal_set.build_set(test_points, weights.copy(), scores.copy(), weights_estimator, N_CPU)
 
                 results_intervals = Interval.analyse_intervals(intervals)
