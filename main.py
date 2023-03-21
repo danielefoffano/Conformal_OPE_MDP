@@ -67,7 +67,7 @@ if __name__ == "__main__":
     NUM_POINTS_WEIGHT_ESTIMATOR = 30000
     NUM_NEURONS_QUANTILE_NETWORKS = 64
     NUM_NEURONS_WEIGHT_ESTIMATOR = 128
-    epsilons = np.linspace(0, 1, 21)
+    epsilons = np.linspace(0,1,21)
     P = np.random.dirichlet(np.ones(NUM_STATES), size=(NUM_STATES, NUM_ACTIONS))        # MDP transition probability functions
     if ENV_NAME == "random_mdp":
         if REWARD_TYPE == "bernoulli":
@@ -182,7 +182,7 @@ if __name__ == "__main__":
                     weight_network = None
                 
                 scores, weights = weights_estimator.evaluate_calibration_data(data_cal)
-                
+             
                 # Generate y values for test point
                 print(f'> Computing conformal set')
                 conformal_set = ConformalSet(lower_quantile_net, upper_quantile_net, behaviour_policy, pi_target, model, HORIZON, DISCOUNT_REWARDS)
@@ -193,6 +193,7 @@ if __name__ == "__main__":
                 intervals = conformal_set.build_set(test_points, weights.copy(), scores.copy(), weights_estimator, N_CPU)
 
                 results_intervals = Interval.analyse_intervals(intervals)
+                log_w_ratio = np.log(weights/(1e-6+true_weights))
                 
                 print('-------- Original method --------')
                 print("Eps: {:.2f} | Coverage: {:.2f}% | Average interval length: {:.2f} "\
@@ -202,7 +203,7 @@ if __name__ == "__main__":
                               results_intervals.lower_vals_behavior.mean(), results_intervals.upper_val_behavior.mean(),
                               results_intervals.lower_vals_target.mean(), results_intervals.upper_vals_target.mean(),
                               results_intervals.avg_quantiles.mean(),
-                              np.mean(weights), np.mean(np.log(weights/(1e-6+true_weights))), 0.5*np.mean(np.abs(true_weights-weights))))
+                              np.mean(weights), log_w_ratio.mean(), 0.5*np.mean(np.abs(true_weights-weights))))
                 print('-------- Double quantile method --------')
                 print("Eps: {:.2f} | Coverage: {:.2f}% | Average interval length: {:.2f} "\
                       "| Avg Original interval: {:.2f}-{:.2f} | Avg New interval: {:.2f}-{:.2f} | Quantile: {:.3f} - {:.3f} |"\
@@ -211,7 +212,7 @@ if __name__ == "__main__":
                               results_intervals.lower_vals_behavior.mean(), results_intervals.upper_val_behavior.mean(),
                               results_intervals.lower_vals_target_double.mean(), results_intervals.upper_vals_target_double.mean(),
                               results_intervals.avg_quantiles_double_low.mean(), results_intervals.avg_quantiles_double_high.mean(),
-                              np.mean(weights), np.mean(np.log(weights/(1e-6+true_weights))), 0.5*np.mean(np.abs(true_weights-weights))))
+                              np.mean(weights), log_w_ratio.mean(), 0.5*np.mean(np.abs(true_weights-weights))))
                 
                 print('-------- Cumul  method --------')
                 print("Eps: {:.2f} | Coverage: {:.2f}% | Average interval length: {:.2f} "\
@@ -221,9 +222,9 @@ if __name__ == "__main__":
                               results_intervals.lower_vals_behavior.mean(), results_intervals.upper_val_behavior.mean(),
                               results_intervals.lower_vals_target_cumul.mean(), results_intervals.upper_vals_target_cumul.mean(),
                               results_intervals.avg_quantiles_cumul_low.mean(), results_intervals.avg_quantiles_cumul_high.mean(),
-                              np.mean(weights), np.mean(np.log(weights/(1e-6+true_weights))), 0.5*np.mean(np.abs(true_weights-weights))))
+                              np.mean(weights), log_w_ratio.mean(), 0.5*np.mean(np.abs(true_weights-weights))))
        
-                
+
                 logger_results = LoggerResults(
                     epsilon = epsilon_value,
                     coverage = results_intervals.coverage,
@@ -282,9 +283,9 @@ if __name__ == "__main__":
                     epsilon_pi_behavior = EPSILON,
                     avg_weights = np.mean(weights),
                     std_weights = np.std(weights, ddof=1),
-                    avg_log_ratio_what_w = np.mean(np.log(weights / (1e-6+true_weights))),
-                    std_log_ratio_what_w = np.std(np.log(weights / (1e-6+true_weights)), ddof=1),
-                    median_log_ratio_what_w = np.median(np.log(weights / (1e-6+true_weights))),
+                    avg_log_ratio_what_w = log_w_ratio.mean(),
+                    std_log_ratio_what_w = log_w_ratio.std(ddof=1),
+                    median_log_ratio_what_w = np.median(log_w_ratio),
                     avg_delta_w = 0.5*np.mean(np.abs(true_weights-weights)),
                     std_delta_w =  np.std(np.abs(true_weights-weights), ddof=1),
                     median_delta_w= 0.5*np.median(np.abs(true_weights-weights))
