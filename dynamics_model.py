@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 import os
-
+import lzma
 class DynamicsModel(object):
 
     def __init__(self, num_states: int, num_actions: int):
@@ -116,17 +116,17 @@ class DiscreteRewardDynamicsModel(object):
     def set_state(self, state):
         self.cur_state = state
     
-    def save_functions(self, path):
+    def save_functions(self, path: str, id: int):
         os.makedirs(os.path.dirname(path + "data/"), exist_ok=True)
-        with open(path + "data/transition_model.pkl", "wb") as f2:
+        with lzma.open(path + f"data/transition_model_{id}.pkl", "wb") as f2:
             pickle.dump(self.transition_function, f2)
-        with open(path + "data/reward_model.pkl", "wb") as f3:
+        with lzma.open(path + f"data/reward_model_{id}.pkl", "wb") as f3:
             pickle.dump(self.reward_function, f3)
 
-    def load_functions(self, path):
-        with open(path + "data/transition_model.pkl", "rb") as f2:
+    def load_functions(self, path: str, id: int):
+        with lzma.open(path + f"data/transition_model_{id}.pkl", "rb") as f2:
             self.transition_function = pickle.load(f2)
-        with open(path + "data/reward_model.pkl", "rb") as f3:
+        with lzma.open(path + f"data/reward_model_{id}.pkl", "rb") as f3:
             self.reward_function = pickle.load(f3)
 
 class ContinuousRewardDynamicsModel(object):

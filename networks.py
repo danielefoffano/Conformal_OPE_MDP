@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import pickle
-
+import lzma
 
 class MLP(nn.Module):
         def __init__(self, input_size: int, hidden_size: int, output_size: int, softmax: bool):
@@ -34,7 +34,7 @@ class MLP(nn.Module):
         
         def save(self, filename: str) -> bool:
             try:
-                with open(filename, 'wb') as filehandler: 
+                with lzma.open(filename, 'wb') as filehandler: 
                     pickle.dump({
                         'state_dict': self.state_dict(),
                         'mean': self.mean,
@@ -46,7 +46,7 @@ class MLP(nn.Module):
                 
         def load(self, filename: str) -> bool:
             try:
-                with open(filename, 'rb') as filehandler: 
+                with lzma.open(filename, 'rb') as filehandler: 
                     data = pickle.load(filehandler)
                     self.mean = data['mean']
                     self.set_normalization(data['mean'], data['std'])

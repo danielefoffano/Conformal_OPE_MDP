@@ -95,18 +95,18 @@ class EarlyStopping(object):
             self.best_score = score
             self.counter = 0      
                 
-def get_data(env, n_trajectories: int, behaviour_policy: Policy, model, horizon: int, path: str, discount: float) -> Tuple[any, Sequence[Trajectory]]:
+def get_data(id: int, env, n_trajectories: int, behaviour_policy: Policy, model, horizon: int, path: str, discount: float) -> Tuple[any, Sequence[Trajectory]]:
     print('> Loading/collecting data')
     try:
-        with open(path + "data/saved_dataset.pkl", "rb") as f1:
+        with lzma.open(path + f"data/saved_dataset_{id}.pkl", "rb") as f1:
             dataset = pickle.load(f1)
-        model.load_functions(path)
+        model.load_functions(path, id)
     except:
         dataset = collect_exp(env, n_trajectories, horizon, behaviour_policy, model, None, discount=discount)
         os.makedirs(os.path.dirname(path + "data/"), exist_ok=True)
-        with open(path + "data/saved_dataset.pkl", "wb") as f1:
+        with lzma.open(path + f"data/saved_dataset_{id}.pkl", "wb") as f1:
             pickle.dump(dataset, f1)
-        model.save_functions(path)
+        model.save_functions(path, id)
     return model, dataset
 
 def collect_exp(env, n_trajectories: int, horizon: int, policy: Policy, model, start_state: int, discount: float = 1) -> Sequence[Trajectory]:

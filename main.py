@@ -131,7 +131,7 @@ if __name__ == "__main__":
         for RUN_NUMBER in runs_values:
             file_logger = Logger(path+f"run_{RUN_NUMBER}.csv", columns)
             #Collect experience data using behaviour policy and train model
-            model, dataset = get_data(env, N_TRAJECTORIES, behaviour_policy, model, HORIZON, path, DISCOUNT_REWARDS)
+            model, dataset = get_data(RUN_NUMBER, env, N_TRAJECTORIES, behaviour_policy, model, HORIZON, path, DISCOUNT_REWARDS)
 
             #Split dataset into training (90%) and calibration data (10%)
             calibration_trajectories = N_TRAJECTORIES // 10
@@ -143,17 +143,19 @@ if __name__ == "__main__":
             upper_quantile_net = MLP(1, NUM_NEURONS_QUANTILE_NETWORKS, 1, False)
             lower_quantile_net = MLP(1, NUM_NEURONS_QUANTILE_NETWORKS, 1, False)
 
-            if not lower_quantile_net.load(path + 'data/networks/lower_quantile_net.pth'):
+            lower_str_path = path + f'data/networks/lower_quantile_net_{RUN_NUMBER}.pth'
+            if not lower_quantile_net.load(lower_str_path):
                 y_avg, y_std = train_predictor(lower_quantile_net, data_tr, epochs=EPOCHS_QUANTILES, quantile=QUANTILE/2, lr=LR_QUANTILES, momentum=MOMENTUM)
                 lower_quantile_net.set_normalization(y_avg, y_std)
-                os.makedirs(os.path.dirname(path + 'data/networks/lower_quantile_net.pth'), exist_ok=True)
-                lower_quantile_net.save(path + 'data/networks/lower_quantile_net.pth')
+                os.makedirs(os.path.dirname(lower_str_path), exist_ok=True)
+                lower_quantile_net.save(lower_str_path)
 
-            if not upper_quantile_net.load(path + 'data/networks/upper_quantile_net.pth'):
+            upper_str_path = path + f'data/networks/upper_quantile_net_{RUN_NUMBER}.pth'
+            if not upper_quantile_net.load(upper_str_path):
                 y_avg, y_std = train_predictor(upper_quantile_net, data_tr, epochs=EPOCHS_QUANTILES, quantile=1-(QUANTILE/2), lr=LR_QUANTILES, momentum=MOMENTUM)
                 upper_quantile_net.set_normalization(y_avg, y_std)
-                os.makedirs(os.path.dirname(path + 'data/networks/upper_quantile_net.pth'), exist_ok=True)
-                upper_quantile_net.save(path + 'data/networks/upper_quantile_net.pth')
+                os.makedirs(os.path.dirname(upper_str_path), exist_ok=True)
+                upper_quantile_net.save(upper_str_path)
 
 
             
