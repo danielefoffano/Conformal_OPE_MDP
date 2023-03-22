@@ -101,7 +101,7 @@ if __name__ == "__main__":
         behaviour_policy = EpsilonGreedyPolicy(q_table, EPSILON, NUM_ACTIONS)
 
     elif ENV_NAME == "inventory":
-        env = Inventory(inventory_size = NUM_STATES, fixed_cost = 1, order_rate = 10, seed = 1)
+        env = Inventory(inventory_size = NUM_STATES, fixed_cost = 1, order_rate = 10)
         NUM_STATES += 1
         NUM_ACTIONS += 1
         NUM_REWARDS = env.max_r - env.min_r + 1
