@@ -33,15 +33,22 @@ def set_seed(seed: int):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Specify horizon')
-    parser.add_argument('--horizon', type=int, help='Horizon length')
+    parser.add_argument('--horizon', type=int, help='Horizon length', required=True)
     parser.add_argument('--method', type=str, default='empirical', help='Possible values: {"empirical", "gradient"}')
+    parser.add_argument('--seed', type=int, default=None)
+    parser.add_argument('-r', '--runs', type=int, help='Runs to execute: use it like -r 1 2 3 to execute run 1 2 and 3', default= None,  nargs='+')
 
+    
     args = parser.parse_args()
-    print(f'Horizon chosen {args.horizon}')
-    set_seed(int(args.horizon))
+    SEED = int(args.horizon) if args.seed is None else args.seed
+    print(f'Horizon chosen {args.horizon} - Seed: {SEED} - Method: {args.method} - Runs: {args.runs}')
+
+    set_seed(SEED)
     assert args.method in ['empirical', 'gradient'], f'Method {args.method} not valid'
 
+    
     RUNS_NUMBER = 30
+    RUNS_RANGE = args.runs
     N_CPU = 1
     ENV_NAME = "inventory"
     REWARD_TYPE = "discrete_multiple"
@@ -120,7 +127,8 @@ if __name__ == "__main__":
 
         exact_weights_estimator = ExactWeightsEstimator(behaviour_policy, HORIZON, env, NUM_STATES, NUM_POINTS_WEIGHT_ESTIMATOR, DISCOUNT_REWARDS)
 
-        for RUN_NUMBER in range(RUNS_NUMBER):
+        runs_values = range(RUNS_NUMBER) if args.runs is None else args.runs
+        for RUN_NUMBER in runs_values:
             file_logger = Logger(path+f"run_{RUN_NUMBER}.csv", columns)
             #Collect experience data using behaviour policy and train model
             model, dataset = get_data(env, N_TRAJECTORIES, behaviour_policy, model, HORIZON, path, DISCOUNT_REWARDS)
