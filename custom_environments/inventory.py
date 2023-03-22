@@ -25,8 +25,6 @@ class Inventory(object):
             Selling price of an item
         order_rate: int
             Items order rate (parameter of the Poisson distribution)
-        seed: int
-            Seed used to initialize numpy
     '''
     def __init__(self, 
                  inventory_size: int = 50,
@@ -34,8 +32,7 @@ class Inventory(object):
                  item_cost: int = 2,
                  holding_cost: int = 2,
                  item_price: int = 4,
-                 order_rate: int = 6,
-                 seed: int = None):
+                 order_rate: int = 6):
         self.inventory_size = inventory_size
         self.fixed_cost = fixed_cost
         self.item_cost = item_cost
@@ -51,7 +48,6 @@ class Inventory(object):
 
         assert item_price > holding_cost
 
-        np.random.seed(seed)
         self.compute_P_matrix()
         self.compute_R_matrix()
         self.reset()
