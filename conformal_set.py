@@ -94,7 +94,7 @@ def evaluate_trajectory(test_point: Point, lower_quantile_network: nn.Module, up
         if s_cumul >= quantile_val_cumul_low and s_cumul <= quantile_val_cumul_high:
                 conf_range_cumul.append(y)
             
-        if max(s_low, s_high) <= quantile_val_low and max(s_low, s_high) <= quantile_val_high:
+        if s_low <= quantile_val_low and s_high <= quantile_val_high:
             conf_range_double.append(y)
 
         if s_orig <= quantile_val or np.isinf(quantile_val):
