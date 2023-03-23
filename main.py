@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     
     args = parser.parse_args()
-    SEED = int(args.horizon) if args.seed is None else args.seed
+    SEED = int(args.horizon*2000) if args.seed is None else args.seed
     print(f'Horizon chosen {args.horizon} - Seed: {SEED} - Method: {args.method} - Runs: {args.runs}')
 
     set_seed(SEED)
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     
     RUNS_NUMBER = 30
     RUNS_RANGE = args.runs
-    N_CPU = 1
+    N_CPU = 4
     ENV_NAME = "inventory"
     REWARD_TYPE = "discrete_multiple"
     WEIGHT_METHOD = args.method
