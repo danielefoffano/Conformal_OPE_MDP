@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # run_sim(){
 #   echo "Runing simulation with horizon $1 ..."
 #   python main.py --horizon $1 --method 'empirical' > output_horizon_$1.log

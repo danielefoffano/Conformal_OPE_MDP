@@ -4,3 +4,4 @@ data/**/*
 __pycache__/**/*
 results/**/*
 custom_environments/__pycache__/**/*
+*.ipynb_checkpoints
