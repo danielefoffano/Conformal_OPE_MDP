@@ -215,7 +215,7 @@ def train_weight_function(training_dataset: Sequence[Trajectory], weights_labels
     x_val = xy_val[:,:-1]
     y_val = xy_val[:,-1].unsqueeze(1)
 
-    criterion = torch.nn.HuberLoss()
+    criterion = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(weight_network.parameters(), lr = lr)
     rand_idxs = torch.randperm(xy.size()[0])
     data_batches = torch.utils.data.BatchSampler(xy[rand_idxs], 64, False)
@@ -234,19 +234,19 @@ def train_weight_function(training_dataset: Sequence[Trajectory], weights_labels
   
             optimizer.zero_grad()
 
-            output = weight_network(x_batch).log()
-            loss = criterion(output, torch.clamp(y_batch, 1e-8).log())
+            output = weight_network(x_batch)
+            loss = criterion(output, y_batch)
 
             loss.backward()
-            torch.nn.utils.clip_grad.clip_grad_norm_(weight_network.parameters(), 0.2)
+            #torch.nn.utils.clip_grad.clip_grad_norm_(weight_network.parameters(), 0.2)
             optimizer.step()
             losses.append(loss.item())
 
             weight_network
         if epoch > 19:
             with torch.no_grad():
-                output_val = weight_network(x_val).log()
-                loss_val = criterion(output_val, torch.clamp(y_val, 1e-8).log())
+                output_val = weight_network(x_val)
+                loss_val = criterion(output_val, y_val)
                 desc = "Epoch {} - Training weights network - Loss: {} - Loss val: {}".format(epoch, np.mean(losses), loss_val.item())
                 tqdm_epochs.set_description(desc)
                 #scheduler.step(loss_val)
