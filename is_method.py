@@ -27,9 +27,12 @@ class ISMethod(object):
         ordered_values, ordered_weights = filter_scores_weights(values, weights, enable_fft=False)
 
         cdf = np.cumsum(ordered_weights) / np.sum(ordered_weights)
-                
-        q_low = ordered_values[np.argwhere(cdf >= 0.05)][0].item()
-        q_high = ordered_values[np.argwhere(cdf >= 0.95)][0].item()
+
+        res = ordered_values[np.argwhere(cdf >= 0.05)]
+        q_low = res[0].item() if len(res) > 0 else ordered_values.min()
+        
+        res = ordered_values[np.argwhere(cdf >= 0.95)]
+        q_high = res[0].item() if len(res) > 0 else ordered_values.max()
         return q_low, q_high
     
     def _estimate_bootstrap(self, values: NDArray[np.int64], initial_state: int, alpha: float):
@@ -38,8 +41,10 @@ class ISMethod(object):
         ordered_values, ordered_weights = filter_scores_weights(values, weights, enable_fft=False)
 
         cdf = np.cumsum(ordered_weights) / np.sum(ordered_weights)
-                
-        ret = ordered_values[np.argwhere(cdf >= alpha)][0].item()
+
+        
+        res = ordered_values[np.argwhere(cdf >= alpha)]
+        ret = res[0].item() if len(res) > 0 else (ordered_values.min() if alpha < 0.5 else ordered_values.max())
         # import pdb
         # pdb.set_trace()
         return ret
