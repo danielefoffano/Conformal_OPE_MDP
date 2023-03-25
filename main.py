@@ -46,13 +46,9 @@ if __name__ == "__main__":
 
     
     args = parser.parse_args()
-<<<<<<< HEAD
-    SEED = int(args.horizon) if args.seed is None else args.seed
-    print(f'Horizon chosen {args.horizon} - Seed: {SEED} - Method: {args.weights_estimation_method} - Runs: {args.runs}')
-=======
     SEED = int(args.horizon*2000) if args.seed is None else args.seed
-    print(f'Horizon chosen {args.horizon} - Seed: {SEED} - Method: {args.method} - Runs: {args.runs}')
->>>>>>> c71b5239a1f369e40eef0f5e50566190a2a25149
+    print(f'Horizon chosen {args.horizon} - Seed: {SEED} - Method: {args.weights_estimation_method} - Runs: {args.runs}')
+
 
     set_seed(SEED)
     assert args.weights_estimation_method in ['empirical', 'gradient'], f'Method {args.weights_estimation_method} not valid'
