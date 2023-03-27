@@ -7,7 +7,7 @@ import numpy as np
 from random_mdp import MDPEnv, MDPEnvDiscreteRew, MDPEnvBernoulliRew
 from agent import QlearningAgent
 from policy import EpsilonGreedyPolicy, TableBasedPolicy, MixedPolicy
-from utils import get_data, collect_exp, train_predictor, train_behaviour_policy, value_iteration, save_important_dictionary
+from utils import get_data, collect_exp, train_predictor, train_behaviour_policy, value_iteration, save_important_dictionary, compute_avg_std_dataset
 from networks import MLP, WeightsMLP, WeightsTransformerMLP
 from dynamics_model import DiscreteRewardDynamicsModel, ContinuousRewardDynamicsModel
 import torch
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     
     RUNS_NUMBER = 30
     RUNS_RANGE = args.runs
-    N_CPU = 4
+    N_CPU = os.cpu_count()
     ENV_NAME = "inventory"
     REWARD_TYPE = "discrete_multiple"
     WEIGHT_METHOD = args.weights_estimation_method
@@ -172,6 +172,7 @@ if __name__ == "__main__":
             else:
                 lower_quantile_net = None
                 upper_quantile_net = None
+                y_avg, y_std = compute_avg_std_dataset(data_tr)
 
 
             
@@ -193,9 +194,9 @@ if __name__ == "__main__":
                 weights_estimator: WeightsEstimator = None
                 if WEIGHT_METHOD == 'gradient':
                     if TRANSFORMER:
-                        make_net = lambda:WeightsTransformerMLP(2 + 2*NUM_STATES*NUM_ACTIONS, NUM_NEURONS_WEIGHT_ESTIMATOR, 1, upper_quantile_net.mean, upper_quantile_net.std, behaviour_policy, pi_target)
+                        make_net = lambda:WeightsTransformerMLP(2 + 2*NUM_STATES*NUM_ACTIONS, NUM_NEURONS_WEIGHT_ESTIMATOR, 1, y_avg, y_std, behaviour_policy, pi_target)
                     else:
-                        make_net = lambda:WeightsMLP(2, NUM_NEURONS_WEIGHT_ESTIMATOR, 1, upper_quantile_net.mean, upper_quantile_net.std)
+                        make_net = lambda:WeightsMLP(2, NUM_NEURONS_WEIGHT_ESTIMATOR, 1, y_avg, y_std)
                     weights_estimator = GradientWeightsEstimator(behaviour_policy, pi_target, lower_quantile_net, upper_quantile_net, make_net)
                     weights_estimator.train(data_tr, LR, EPOCHS_WEIGHTS)
                 elif WEIGHT_METHOD == 'empirical':
