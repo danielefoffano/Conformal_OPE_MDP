@@ -57,8 +57,8 @@ class ISMethod(object):
                 values = np.array(values)
                 weights = np.array(weights)
     
-                b_qlow = bootstrap(values[np.newaxis,:], lambda x: self._estimate_bootstrap(x, point.initial_state, 0.05), method='percentile',  vectorized=False)
-                b_qhigh = bootstrap(values[np.newaxis,:], lambda x: self._estimate_bootstrap(x, point.initial_state, 0.95),  method='percentile',vectorized=False)
+                b_qlow = bootstrap(values[np.newaxis,:], lambda x: self._estimate_bootstrap(x, point.initial_state, 0.05), n_resamples=2000, method='percentile',  vectorized=False)
+                b_qhigh = bootstrap(values[np.newaxis,:], lambda x: self._estimate_bootstrap(x, point.initial_state, 0.95),  n_resamples=2000, method='percentile',vectorized=False)
          
                 qlow, qhigh = self._estimate_confidence_set(values, weights)
                 
@@ -71,6 +71,8 @@ class ISMethod(object):
                     'qhigh': b_qhigh
                 }
             
+            results = self._results[point.initial_state]
+            qlow, qhigh = results['qlow'], results['qhigh']
             intervals.append(Interval(Point(point.initial_state, point.cumulative_reward), qlow, qhigh,
                                       qlow, qhigh, qlow, qhigh, qlow, qhigh, [0], [0], [0], [0], [0]))
         

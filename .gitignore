@@ -8,3 +8,4 @@ custom_environments/__pycache__/**/*
 figures/*
 *.log
 *.ipynb
+*.out

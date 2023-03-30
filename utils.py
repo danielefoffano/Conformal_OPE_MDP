@@ -194,6 +194,20 @@ def train_predictor(quantile_net: torch.nn.Module, data_tr: Sequence[Trajectory]
             tqdm_epochs.set_description(desc)
         
     return y_avg, y_std
+
+def compute_avg_std_dataset(data_tr: Sequence[Trajectory]) -> Tuple[float, float]:
+    random.shuffle(data_tr)
+    split_idx = len(data_tr) // 10
+    data_val = data_tr[len(data_tr) - split_idx:len(data_tr)]
+
+    xy = [[traj.initial_state, traj.cumulative_reward] for traj in data_tr]
+
+    xy = torch.tensor(xy, dtype = torch.float32)
+    
+    y = xy[:,1]
+    y_avg = torch.mean(y).item()
+    y_std = torch.std(y).item()
+    return y_avg, y_std
             
 def train_weight_function(training_dataset: Sequence[Trajectory], weights_labels: Sequence[float],
                           weight_network: torch.nn.Module, lr: float, epochs: int, pi_b: Policy, pi_target: Policy):
