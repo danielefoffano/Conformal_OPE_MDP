@@ -1,9 +1,9 @@
 import torch
 import numpy as np
-from utils import compute_weights_gradient, train_weight_function, compute_weight, collect_exp
-from networks import WeightsMLP, MLP
+from utilities.utils import compute_weights_gradient, train_weight_function, compute_weight, collect_exp
+from utilities.networks import WeightsMLP, MLP
 from typing import Callable, List, Tuple, Sequence
-from types_cp import Trajectory, Point, Scores
+from utilities.types_cp import Trajectory, Point, Scores
 import matplotlib.pyplot as plt
 from numpy.typing import NDArray
 from scipy.stats import gaussian_kde

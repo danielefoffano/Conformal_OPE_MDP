@@ -4,23 +4,23 @@ warnings.simplefilter(action='ignore', category=UserWarning)
 
 
 import numpy as np
-from random_mdp import MDPEnv, MDPEnvDiscreteRew, MDPEnvBernoulliRew
+from custom_environments.random_mdp import MDPEnv, MDPEnvDiscreteRew, MDPEnvBernoulliRew
 from agent import QlearningAgent
 from policy import EpsilonGreedyPolicy, TableBasedPolicy, MixedPolicy
-from utils import get_data, collect_exp, train_predictor, train_behaviour_policy, value_iteration, save_important_dictionary, compute_avg_std_dataset
-from networks import MLP, WeightsMLP, WeightsTransformerMLP
+from utilities.utils import get_data, collect_exp, train_predictor, train_behaviour_policy, value_iteration, save_important_dictionary, compute_avg_std_dataset
+from utilities.networks import MLP, WeightsMLP, WeightsTransformerMLP
 from dynamics_model import DiscreteRewardDynamicsModel, ContinuousRewardDynamicsModel
 import torch
 import random
 from weights import WeightsEstimator, GradientWeightsEstimator, EmpiricalWeightsEstimator, ExactWeightsEstimator
 from conformal_set import ConformalSet
 from custom_environments.inventory import Inventory
-from logger import Logger
+from utilities.logger import Logger
 import os
 import argparse
-from types_cp import Interval, LoggerResults, Point
+from utilities.types_cp import Interval, LoggerResults, Point
 from enum import Enum
-from is_method import ISMethod
+from utilities.is_method import ISMethod
 
 class WeightsEstimationMethod(Enum):
     gradient = 'gradient'

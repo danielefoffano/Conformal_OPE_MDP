@@ -1,10 +1,10 @@
 import numpy as np
 import torch
-from networks import MLP
-from utils import compute_weight
+from utilities.networks import MLP
+from utilities.utils import compute_weight
 import multiprocessing as mp
-from utils import collect_exp, filter_scores_weights
-from types_cp import Point, Trajectory, Interval, ScoresWeightsData
+from utilities.utils import collect_exp, filter_scores_weights
+from utilities.types_cp import Point, Trajectory, Interval, ScoresWeightsData
 from typing import Sequence
 import torch.nn as nn
 from numpy.typing import NDArray
