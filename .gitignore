@@ -9,3 +9,4 @@ figures/*
 *.log
 *.ipynb
 *.out
+*.sh
