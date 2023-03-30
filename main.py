@@ -20,7 +20,7 @@ import os
 import argparse
 from utilities.types_cp import Interval, LoggerResults, Point
 from enum import Enum
-from utilities.is_method import ISMethod
+from is_method import ISMethod
 
 class WeightsEstimationMethod(Enum):
     gradient = 'gradient'
