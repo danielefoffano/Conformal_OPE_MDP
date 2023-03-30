@@ -30,7 +30,6 @@ class DynamicsModel(object):
             reward (float): ereward
         """
         self.num_visits_actions[from_state, action, to_state] += 1
-        #self.reward[from_state, action, to_state] = reward
         self.reward_counts[from_state][action].append(reward)
         self.reward_gaussian[from_state][action][0] = np.mean(self.reward_counts[from_state][action])
         self.reward_gaussian[from_state][action][1] = np.std(self.reward_counts[from_state][action])
@@ -49,10 +48,10 @@ class DynamicsModel(object):
         probs_s = self.transition_function[self.cur_state][a]
 
         next_state = np.random.choice(range(self.num_states), 1, p= probs_s)[0]
-        #r = self.reward[self.cur_state][a][next_state]
         r = np.random.normal(self.reward_gaussian[self.cur_state][a][0], self.reward_gaussian[self.cur_state][a][1])
         self.cur_state = next_state
         # return same shape of gym: s', r, done
+
         return self.cur_state, r, False
 
 
@@ -110,6 +109,7 @@ class DiscreteRewardDynamicsModel(object):
         probs_r = self.reward_function[self.cur_state][a]
         r = np.random.choice(range(self.start_reward, self.start_reward + self.num_rewards), 1, p=probs_r)[0]
         self.cur_state = next_state
+
         # return same shape of gym: s', r, done
         return self.cur_state, r, False
     
@@ -188,6 +188,7 @@ class ContinuousRewardDynamicsModel(object):
         r_std = self.reward_function_std[self.cur_state, a]
         r = np.random.normal(r_mean, r_std)
         self.cur_state = next_state
+
         # return same shape of gym: s', r, done
         return self.cur_state, r, False
     

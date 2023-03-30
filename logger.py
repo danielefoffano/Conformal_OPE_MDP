@@ -1,7 +1,5 @@
-from fileinput import filename
 import os
-from typing import List, Union
-from types_cp import LoggerResults
+from typing import List
 
 class Logger(object):
     def __init__(self, file_name: str, columns: List[str], delimiter: str=','):

@@ -1,14 +1,10 @@
 import numpy as np
-import pickle
-import lzma
 from scipy.stats import bootstrap
-from typing import Sequence, Tuple
+from typing import Sequence
 from types_cp import Trajectory, Point, Interval, ScoresWeightsData
 from weights import WeightsEstimator
 from numpy.typing import NDArray
-from custom_environments.inventory import Inventory
-from dynamics_model import DiscreteRewardDynamicsModel
-from utils import value_iteration, collect_exp, filter_scores_weights
+from utils import filter_scores_weights
 from policy import Policy
 
 def evaluate_trajectory(test_point: Trajectory, weights_estimator: WeightsEstimator, data: ScoresWeightsData) -> Interval:
@@ -45,8 +41,6 @@ class ISMethod(object):
         
         res = ordered_values[np.argwhere(cdf >= alpha)]
         ret = res[0].item() if len(res) > 0 else (ordered_values.min() if alpha < 0.5 else ordered_values.max())
-        # import pdb
-        # pdb.set_trace()
         return ret
         
     def build_set(self, test_points: Sequence[Trajectory],n_cpu: int = 2) -> Sequence[Interval]:

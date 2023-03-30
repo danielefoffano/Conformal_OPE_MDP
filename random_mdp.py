@@ -92,6 +92,7 @@ class MDPEnvBernoulliRew():
 
         r = np.random.binomial(1,probs_r)
         self.cur_state = next_state
+        
         # return same shape of gym: s', r, done
         return self.cur_state, r, False
     

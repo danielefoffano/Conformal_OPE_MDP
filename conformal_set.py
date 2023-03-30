@@ -1,9 +1,9 @@
 import numpy as np
 import torch
-from networks import MLP,WeightsMLP
+from networks import MLP
 from utils import compute_weight
 import multiprocessing as mp
-from utils import collect_exp, filter_scores_weights, unique_scores_weights
+from utils import collect_exp, filter_scores_weights
 from types_cp import Point, Trajectory, Interval, ScoresWeightsData
 from typing import Sequence
 import torch.nn as nn
@@ -34,11 +34,6 @@ def compute_weight_iterator(idx, test_point, y, behaviour_policy: Policy, pi_sta
     cumsum = torch.cumsum(ordered_weights, 0)
 
     quantile_val = ordered_scores[cumsum>quantile][0].item()
-
-    #score_test = max(lower_val - y, y - upper_val)
-
-    #if score_test <= quantile_val:
-    #    conf_range.append(y)
     
     return ([test_point[0][0].state, y, lower_val - quantile_val, upper_val + quantile_val, test_point[1]], quantile_val)
 

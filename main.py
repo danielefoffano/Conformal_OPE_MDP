@@ -15,7 +15,6 @@ import random
 from weights import WeightsEstimator, GradientWeightsEstimator, EmpiricalWeightsEstimator, ExactWeightsEstimator
 from conformal_set import ConformalSet
 from custom_environments.inventory import Inventory
-from multiprocessing import freeze_support
 from logger import Logger
 import os
 import argparse
@@ -97,7 +96,6 @@ if __name__ == "__main__":
         elif REWARD_TYPE == "continuous":
             R = np.random.rand(NUM_STATES, NUM_ACTIONS, NUM_STATES)
             env = MDPEnv(NUM_STATES, NUM_ACTIONS, P, R)
-            #model = DiscreteRewardDynamicsModel(NUM_STATES, NUM_ACTIONS, NUM_REWARDS)
             model = ContinuousRewardDynamicsModel(NUM_STATES, NUM_ACTIONS)
         
         pi_star_probs = np.random.dirichlet(np.ones(NUM_ACTIONS), size=(NUM_STATES))
@@ -204,8 +202,6 @@ if __name__ == "__main__":
                     weights_estimator.train(data_tr)
                 else:
                     raise Exception('To be updated')
-                    scores, weights = weights_estimator.model_based(data_tr, data_cal, HORIZON, model, N_CPU)
-                    weight_network = None
                 
                 
              

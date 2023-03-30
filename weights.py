@@ -4,12 +4,9 @@ from utils import compute_weights_gradient, train_weight_function, compute_weigh
 from networks import WeightsMLP, MLP
 from typing import Callable, List, Tuple, Sequence
 from types_cp import Trajectory, Point, Scores
-import multiprocessing as mp
-import seaborn as sns
 import matplotlib.pyplot as plt
 from numpy.typing import NDArray
 from scipy.stats import gaussian_kde
-import multiprocessing as mp
 from policy import Policy
 from abc import ABC, abstractmethod
 
