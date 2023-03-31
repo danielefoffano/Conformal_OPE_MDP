@@ -5,3 +5,8 @@ __pycache__/**/*
 results/**/*
 custom_environments/__pycache__/**/*
 *.ipynb_checkpoints
+figures/*
+*.log
+*.ipynb
+*.out
+*.sh

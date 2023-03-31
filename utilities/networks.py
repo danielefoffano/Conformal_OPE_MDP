@@ -72,7 +72,6 @@ class WeightsTransformerMLP(nn.Module):
             self.stacked_pi = torch.hstack([flatten_pi_b, flatten_pi_target])
 
             self.network = nn.Sequential(*[
-                #nn.Flatten(),
                 nn.TransformerEncoderLayer(self.input_size, nhead = 4, dim_feedforward = self.hidden_size),
                 nn.ReLU(),
                 nn.Linear(self.input_size, self.hidden_size),

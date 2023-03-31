@@ -2,14 +2,13 @@ import numpy as np
 from agent import Experience
 import torch
 from agent import Agent, Experience
-from random_mdp import MDPEnv
-from collections import defaultdict
+from custom_environments.random_mdp import MDPEnv
 import pickle
 from tqdm import tqdm
 from typing import Tuple, Optional, Sequence
 import random
 import os
-from types_cp import Trajectory, Interval
+from utilities.types_cp import Trajectory
 from numpy.typing import NDArray
 import scipy.interpolate as interpolate
 from scipy import signal
@@ -18,8 +17,6 @@ import lzma
 MC_SAMPLES = 500
 
 def unique_scores_weights(scores: NDArray[np.float64], weights: NDArray[np.float64]) -> Tuple[NDArray[np.float64], NDArray[np.float64]]:
-    # argsort = np.argsort(scores)
-    # return scores[argsort], weights[argsort]
     ordered_scores, ordered_indexes, counts = np.unique(scores, return_index=True, return_counts=True)
     ordered_weights = weights[ordered_indexes] * counts
     return ordered_scores, ordered_weights
@@ -197,6 +194,20 @@ def train_predictor(quantile_net: torch.nn.Module, data_tr: Sequence[Trajectory]
             tqdm_epochs.set_description(desc)
         
     return y_avg, y_std
+
+def compute_avg_std_dataset(data_tr: Sequence[Trajectory]) -> Tuple[float, float]:
+    random.shuffle(data_tr)
+    split_idx = len(data_tr) // 10
+    data_val = data_tr[len(data_tr) - split_idx:len(data_tr)]
+
+    xy = [[traj.initial_state, traj.cumulative_reward] for traj in data_tr]
+
+    xy = torch.tensor(xy, dtype = torch.float32)
+    
+    y = xy[:,1]
+    y_avg = torch.mean(y).item()
+    y_std = torch.std(y).item()
+    return y_avg, y_std
             
 def train_weight_function(training_dataset: Sequence[Trajectory], weights_labels: Sequence[float],
                           weight_network: torch.nn.Module, lr: float, epochs: int, pi_b: Policy, pi_target: Policy):
@@ -249,17 +260,13 @@ def train_weight_function(training_dataset: Sequence[Trajectory], weights_labels
                 loss_val = criterion(output_val, torch.clamp(y_val, 1e-8).log())
                 desc = "Epoch {} - Training weights network - Loss: {} - Loss val: {}".format(epoch, np.mean(losses), loss_val.item())
                 tqdm_epochs.set_description(desc)
-                #scheduler.step(loss_val)
                 early_stopping(loss_val.item()) 
-                # if early_stopping.early_stopping:
-                #     return
         else:
             desc = "Epoch {} - Training weights network - Avg Loss: {}".format(epoch, np.mean(losses))
             tqdm_epochs.set_description(desc)
 
 def train_behaviour_policy(env: MDPEnv, agent: Agent, MAX_STEPS):
     
-    #model = EmpiricalModel(env.ns, env.na)
     episode_rewards = []
     episode_steps = []
 
@@ -315,8 +322,6 @@ def compute_weight(s0, y, pi_b, pi_star, model, horizon):
             prev_s = s
             s = next_s
             r_sum += r
-        #if r == y-(r_sum-r):
-        #    tot_sum_pi_star += model.reward_function[s][a][y-(r_sum-r)] #pi_star.get_action_prob(prev_s, a)
         if y-(r_sum - r) in range(model.num_rewards):
             p_r_diff = model.reward_function[s][a][y-(r_sum-r)]
             tot_sum_pi_star += p_r_diff
@@ -327,18 +332,14 @@ def compute_weight(s0, y, pi_b, pi_star, model, horizon):
     while True:
         model.cur_state = s0
         s = s0
-        prev_s = None
         r_sum = 0
         for i in range(horizon):
             a = pi_b.get_action(s)
 
             next_s, r, _ = model.step(a)
 
-            prev_s = s
             s = next_s
             r_sum += r
-        #if r == y-(r_sum-r):
-        #    tot_sum_pi_b += model.reward_function[s][a][y-(r_sum-r)]
         if y-(r_sum - r) in range(model.num_rewards):
             p_r_diff = model.reward_function[s][a][y-(r_sum-r)]
             tot_sum_pi_b += p_r_diff

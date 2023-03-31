@@ -1,7 +1,6 @@
 import numpy as np
 from abc import ABC
-from typing import NamedTuple
-from types_cp import Experience
+from utilities.types_cp import Experience
 
 
 

@@ -4,27 +4,31 @@ warnings.simplefilter(action='ignore', category=UserWarning)
 
 
 import numpy as np
-from random_mdp import MDPEnv, MDPEnvDiscreteRew, MDPEnvBernoulliRew
+from custom_environments.random_mdp import MDPEnv, MDPEnvDiscreteRew, MDPEnvBernoulliRew
 from agent import QlearningAgent
 from policy import EpsilonGreedyPolicy, TableBasedPolicy, MixedPolicy
-from utils import get_data, collect_exp, train_predictor, train_behaviour_policy, value_iteration, save_important_dictionary
-from networks import MLP, WeightsMLP, WeightsTransformerMLP
+from utilities.utils import get_data, collect_exp, train_predictor, train_behaviour_policy, value_iteration, save_important_dictionary, compute_avg_std_dataset
+from utilities.networks import MLP, WeightsMLP, WeightsTransformerMLP
 from dynamics_model import DiscreteRewardDynamicsModel, ContinuousRewardDynamicsModel
 import torch
 import random
 from weights import WeightsEstimator, GradientWeightsEstimator, EmpiricalWeightsEstimator, ExactWeightsEstimator
 from conformal_set import ConformalSet
 from custom_environments.inventory import Inventory
-from multiprocessing import freeze_support
-from logger import Logger
+from utilities.logger import Logger
 import os
 import argparse
-from types_cp import Interval, LoggerResults
+from utilities.types_cp import Interval, LoggerResults, Point
 from enum import Enum
+from is_method import ISMethod
 
-class Methods(Enum):
+class WeightsEstimationMethod(Enum):
     gradient = 'gradient'
     empirical = 'empirical'
+    
+class ConfidenceMethod(Enum):
+    conformal = 'conformal'
+    IS = 'IS'
 
 def set_seed(seed: int):
     random.seed(seed)
@@ -34,25 +38,29 @@ def set_seed(seed: int):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Specify horizon')
     parser.add_argument('--horizon', type=int, help='Horizon length', required=True)
-    parser.add_argument('--method', type=str, default='empirical', help='Possible values: {"empirical", "gradient"}')
+    parser.add_argument('--weights_estimation_method', type=str, default='empirical', help='Possible values: {"empirical", "gradient"}')
     parser.add_argument('--seed', type=int, default=None)
+    parser.add_argument('--confidence_method', type=str, default='conformal', help='Possible values: {"conformal", "IS"}')
     parser.add_argument('-r', '--runs', type=int, help='Runs to execute: use it like -r 1 2 3 to execute run 1 2 and 3', default= None,  nargs='+')
 
     
     args = parser.parse_args()
     SEED = int(args.horizon*2000) if args.seed is None else args.seed
-    print(f'Horizon chosen {args.horizon} - Seed: {SEED} - Method: {args.method} - Runs: {args.runs}')
+    print(f'Horizon chosen {args.horizon} - Seed: {SEED} - Method: {args.weights_estimation_method} - Runs: {args.runs}')
+
 
     set_seed(SEED)
-    assert args.method in ['empirical', 'gradient'], f'Method {args.method} not valid'
+    assert args.weights_estimation_method in ['empirical', 'gradient'], f'Method {args.weights_estimation_method} not valid'
+    assert args.confidence_method in ['conformal', 'IS'], f'Method {args.confidence_method} not valid'
 
     
     RUNS_NUMBER = 30
     RUNS_RANGE = args.runs
-    N_CPU = 4
+    N_CPU = os.cpu_count()
     ENV_NAME = "inventory"
     REWARD_TYPE = "discrete_multiple"
-    WEIGHT_METHOD = args.method
+    WEIGHT_METHOD = args.weights_estimation_method
+    CONFIDENCE_METHOD = args.confidence_method
     TRANSFORMER = False
     EPSILON = 0.4
     QUANTILE = 0.1
@@ -71,7 +79,7 @@ if __name__ == "__main__":
     N_TRAJECTORIES = 40000                                                              # number of trajectories collected as dataset
     HORIZONS = [int(args.horizon)]                                                           # trajectory horizon
     NUM_TEST_POINTS = 1000
-    NUM_POINTS_WEIGHT_ESTIMATOR = 30000
+    NUM_POINTS_WEIGHT_ESTIMATOR = 3000
     NUM_NEURONS_QUANTILE_NETWORKS = 64
     NUM_NEURONS_WEIGHT_ESTIMATOR = 128
     epsilons = np.linspace(0,1,21)
@@ -88,7 +96,6 @@ if __name__ == "__main__":
         elif REWARD_TYPE == "continuous":
             R = np.random.rand(NUM_STATES, NUM_ACTIONS, NUM_STATES)
             env = MDPEnv(NUM_STATES, NUM_ACTIONS, P, R)
-            #model = DiscreteRewardDynamicsModel(NUM_STATES, NUM_ACTIONS, NUM_REWARDS)
             model = ContinuousRewardDynamicsModel(NUM_STATES, NUM_ACTIONS)
         
         pi_star_probs = np.random.dirichlet(np.ones(NUM_ACTIONS), size=(NUM_STATES))
@@ -125,37 +132,45 @@ if __name__ == "__main__":
         
         path = f"results/{ENV_NAME}/{WEIGHT_METHOD}/horizon_{HORIZON}/"
 
+        print('> Getting data for exact weights estimator')
         exact_weights_estimator = ExactWeightsEstimator(behaviour_policy, HORIZON, env, NUM_STATES, NUM_POINTS_WEIGHT_ESTIMATOR, DISCOUNT_REWARDS)
 
         runs_values = range(RUNS_NUMBER) if args.runs is None else args.runs
         for RUN_NUMBER in runs_values:
-            file_logger = Logger(path+f"run_{RUN_NUMBER}.csv", columns)
+            file_logger = Logger(path+f"run_{RUN_NUMBER}_{args.confidence_method}.csv", columns)
             #Collect experience data using behaviour policy and train model
+            print('> Getting training/calibration data')
             model, dataset = get_data(RUN_NUMBER, env, N_TRAJECTORIES, behaviour_policy, model, HORIZON, path, DISCOUNT_REWARDS)
 
+            print('> Splitting dataset')
             #Split dataset into training (90%) and calibration data (10%)
             calibration_trajectories = N_TRAJECTORIES // 10
             data_tr = dataset[:N_TRAJECTORIES - calibration_trajectories]
             data_cal = dataset[N_TRAJECTORIES - calibration_trajectories:N_TRAJECTORIES]
 
-            #Train quantile predictors using training dataset
-            print('> Training/loading quantile networks')
-            upper_quantile_net = MLP(1, NUM_NEURONS_QUANTILE_NETWORKS, 1, False)
-            lower_quantile_net = MLP(1, NUM_NEURONS_QUANTILE_NETWORKS, 1, False)
+            if CONFIDENCE_METHOD == ConfidenceMethod.conformal.value:
+                #Train quantile predictors using training dataset
+                print('> Training/loading quantile networks')
+                upper_quantile_net = MLP(1, NUM_NEURONS_QUANTILE_NETWORKS, 1, False)
+                lower_quantile_net = MLP(1, NUM_NEURONS_QUANTILE_NETWORKS, 1, False)
 
-            lower_str_path = path + f'data/networks/lower_quantile_net_{RUN_NUMBER}.pth'
-            if not lower_quantile_net.load(lower_str_path):
-                y_avg, y_std = train_predictor(lower_quantile_net, data_tr, epochs=EPOCHS_QUANTILES, quantile=QUANTILE/2, lr=LR_QUANTILES, momentum=MOMENTUM)
-                lower_quantile_net.set_normalization(y_avg, y_std)
-                os.makedirs(os.path.dirname(lower_str_path), exist_ok=True)
-                lower_quantile_net.save(lower_str_path)
+                lower_str_path = path + f'data/networks/lower_quantile_net_{RUN_NUMBER}.pth'
+                if not lower_quantile_net.load(lower_str_path):
+                    y_avg, y_std = train_predictor(lower_quantile_net, data_tr, epochs=EPOCHS_QUANTILES, quantile=QUANTILE/2, lr=LR_QUANTILES, momentum=MOMENTUM)
+                    lower_quantile_net.set_normalization(y_avg, y_std)
+                    os.makedirs(os.path.dirname(lower_str_path), exist_ok=True)
+                    lower_quantile_net.save(lower_str_path)
 
-            upper_str_path = path + f'data/networks/upper_quantile_net_{RUN_NUMBER}.pth'
-            if not upper_quantile_net.load(upper_str_path):
-                y_avg, y_std = train_predictor(upper_quantile_net, data_tr, epochs=EPOCHS_QUANTILES, quantile=1-(QUANTILE/2), lr=LR_QUANTILES, momentum=MOMENTUM)
-                upper_quantile_net.set_normalization(y_avg, y_std)
-                os.makedirs(os.path.dirname(upper_str_path), exist_ok=True)
-                upper_quantile_net.save(upper_str_path)
+                upper_str_path = path + f'data/networks/upper_quantile_net_{RUN_NUMBER}.pth'
+                if not upper_quantile_net.load(upper_str_path):
+                    y_avg, y_std = train_predictor(upper_quantile_net, data_tr, epochs=EPOCHS_QUANTILES, quantile=1-(QUANTILE/2), lr=LR_QUANTILES, momentum=MOMENTUM)
+                    upper_quantile_net.set_normalization(y_avg, y_std)
+                    os.makedirs(os.path.dirname(upper_str_path), exist_ok=True)
+                    upper_quantile_net.save(upper_str_path)
+            else:
+                lower_quantile_net = None
+                upper_quantile_net = None
+                y_avg, y_std = compute_avg_std_dataset(data_tr)
 
 
             
@@ -177,31 +192,38 @@ if __name__ == "__main__":
                 weights_estimator: WeightsEstimator = None
                 if WEIGHT_METHOD == 'gradient':
                     if TRANSFORMER:
-                        make_net = lambda:WeightsTransformerMLP(2 + 2*NUM_STATES*NUM_ACTIONS, NUM_NEURONS_WEIGHT_ESTIMATOR, 1, upper_quantile_net.mean, upper_quantile_net.std, behaviour_policy, pi_target)
+                        make_net = lambda:WeightsTransformerMLP(2 + 2*NUM_STATES*NUM_ACTIONS, NUM_NEURONS_WEIGHT_ESTIMATOR, 1, y_avg, y_std, behaviour_policy, pi_target)
                     else:
-                        make_net = lambda:WeightsMLP(2, NUM_NEURONS_WEIGHT_ESTIMATOR, 1, upper_quantile_net.mean, upper_quantile_net.std)
+                        make_net = lambda:WeightsMLP(2, NUM_NEURONS_WEIGHT_ESTIMATOR, 1, y_avg, y_std)
                     weights_estimator = GradientWeightsEstimator(behaviour_policy, pi_target, lower_quantile_net, upper_quantile_net, make_net)
                     weights_estimator.train(data_tr, LR, EPOCHS_WEIGHTS)
                 elif WEIGHT_METHOD == 'empirical':
                     # @TODO Fix 500 
-                    weights_estimator = EmpiricalWeightsEstimator(behaviour_policy, pi_target, lower_quantile_net, upper_quantile_net, NUM_STATES, 2*500)
+                    weights_estimator = EmpiricalWeightsEstimator(behaviour_policy, pi_target, lower_quantile_net, upper_quantile_net, NUM_STATES, 4*500)
                     weights_estimator.train(data_tr)
                 else:
                     raise Exception('To be updated')
-                    scores, weights = weights_estimator.model_based(data_tr, data_cal, HORIZON, model, N_CPU)
-                    weight_network = None
                 
-                scores, weights = weights_estimator.evaluate_calibration_data(data_cal)
+                
              
                 # Generate y values for test point
                 print(f'> Computing conformal set')
-                conformal_set = ConformalSet(lower_quantile_net, upper_quantile_net, behaviour_policy, pi_target, model, HORIZON, DISCOUNT_REWARDS)
+                if CONFIDENCE_METHOD == ConfidenceMethod.conformal.value:   
+                    scores, weights = weights_estimator.evaluate_calibration_data(data_cal)
+                    conformal_set = ConformalSet(lower_quantile_net, upper_quantile_net, behaviour_policy, pi_target, model, HORIZON, DISCOUNT_REWARDS)
                 
-                if HORIZON in [15, 25] and epsilon_value > 0.3 and epsilon_value < 0.5:
-                    save_important_dictionary(env, weights_estimator, exact_weights_estimator, conformal_set, weights, scores, path, RUN_NUMBER, epsilon_value)
-
-                
-                intervals = conformal_set.build_set(test_points, weights.copy(), scores.copy(), weights_estimator, N_CPU)
+                    
+                    if HORIZON in [15, 25, 40] and epsilon_value > 0.3 and epsilon_value < 0.5:
+                        save_important_dictionary(env, weights_estimator, exact_weights_estimator, conformal_set, weights, scores, path, RUN_NUMBER, epsilon_value)
+                    intervals = conformal_set.build_set(test_points, weights.copy(), scores.copy(), weights_estimator, N_CPU)
+                elif CONFIDENCE_METHOD == ConfidenceMethod.IS.value:
+                    weights = list(map(lambda x: weights_estimator.evaluate_point(Point(x.initial_state, x.cumulative_reward)), data_cal))
+                    weights = np.array(weights)
+                    is_method = ISMethod(pi_target, HORIZON, DISCOUNT_REWARDS, data_cal, weights_estimator)
+                    intervals = is_method.build_set(test_points, N_CPU)
+                else:
+                    raise Exception('Wrong confidence method')
+                    
 
                 results_intervals = Interval.analyse_intervals(intervals)
                 log_w_ratio = np.log(weights/(1e-6+true_weights))
